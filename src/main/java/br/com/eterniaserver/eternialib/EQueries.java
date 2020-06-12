@@ -1,6 +1,4 @@
-package br.com.eterniaserver.eternialib.sql;
-
-import br.com.eterniaserver.eternialib.EterniaLib;
+package br.com.eterniaserver.eternialib;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Queries {
+public class EQueries {
 
     public static boolean queryBoolean(final String query, final String value) {
         AtomicBoolean result = new AtomicBoolean(false);
@@ -38,6 +36,24 @@ public class Queries {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getString(value) != null) {
                 result.set(resultSet.getDouble(value2));
+            }
+            resultSet.close();
+            statement.close();
+        });
+        return result.get();
+    }
+
+    public static double queryFloat(final String query, final String value) {
+        return queryFloat(query, value, value);
+    }
+
+    public static double queryFloat(final String query, final String value, final String value2) {
+        AtomicReference<Float> result = new AtomicReference<>((float) 0);
+        EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next() && resultSet.getString(value) != null) {
+                result.set(resultSet.getFloat(value2));
             }
             resultSet.close();
             statement.close();
@@ -105,6 +121,5 @@ public class Queries {
             statement.close();
         }, true);
     }
-
 
 }

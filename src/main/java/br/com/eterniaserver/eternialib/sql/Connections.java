@@ -1,11 +1,11 @@
 package br.com.eterniaserver.eternialib.sql;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.configs.FileCreator;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,21 +14,22 @@ import java.sql.SQLException;
 
 public class Connections {
 
-    private final EterniaLib plugin;
+    boolean mysql;
     private HikariDataSource hikari;
-    private FileConfiguration file;
-    private boolean mysql;
+    private final FileConfiguration file = new YamlConfiguration();
 
-    public Connections(final EterniaLib plugin) throws IOException, InvalidConfigurationException {
-        this.plugin = plugin;
+    public Connections() throws IOException, InvalidConfigurationException {
+        final File files = new File(EterniaLib.getPlugin().getDataFolder(), "configs.yml");
+        if (!files.exists()) EterniaLib.getPlugin().saveResource("configs.yml", false);
+        file.load(files);
         this.Connect();
-        file.load(FileCreator.fileLoad(plugin, "configs.yml"));
-        mysql = file.getBoolean("sql.mysql");
     }
 
     public void Connect() {
+        mysql = file.getBoolean("sql.mysql");
         hikari = new HikariDataSource();
         if (mysql) {
+            System.out.println("oi");
             hikari.setPoolName("EterniaServer MySQL Pool");
             hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
             hikari.addDataSourceProperty("serverName", file.getString("sql.host"));
@@ -41,7 +42,7 @@ public class Connections {
         } else {
             hikari.setPoolName("EterniaServer SQLite Pool");
             hikari.setDriverClassName("org.sqlite.JDBC");
-            hikari.setJdbcUrl("jdbc:sqlite:" + new File(plugin.getDataFolder(), "eternia.db"));
+            hikari.setJdbcUrl("jdbc:sqlite:" + new File(EterniaLib.getPlugin().getDataFolder(), "eternia.db"));
             hikari.setMaximumPoolSize(50);
             Bukkit.getConsoleSender().sendMessage(file.getString("messages.sql-ok"));
         }

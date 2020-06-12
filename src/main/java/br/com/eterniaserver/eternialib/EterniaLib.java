@@ -18,7 +18,7 @@ public class EterniaLib extends JavaPlugin {
         plugin = this;
 
         try {
-            connections = new Connections(this);
+            connections = new Connections();
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
