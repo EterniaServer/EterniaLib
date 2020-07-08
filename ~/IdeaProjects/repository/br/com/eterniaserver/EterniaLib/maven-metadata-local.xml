@@ -3,10 +3,10 @@
   <groupId>br.com.eterniaserver</groupId>
   <artifactId>EterniaLib</artifactId>
   <versioning>
-    <release>1.4</release>
+    <release>1.5</release>
     <versions>
-      <version>1.4</version>
+      <version>1.5</version>
     </versions>
-    <lastUpdated>20200625184024</lastUpdated>
+    <lastUpdated>20200708004952</lastUpdated>
   </versioning>
 </metadata>
