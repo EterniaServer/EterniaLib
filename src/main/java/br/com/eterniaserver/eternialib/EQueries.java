@@ -1,14 +1,10 @@
 package br.com.eterniaserver.eternialib;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -127,23 +123,22 @@ public class EQueries {
         }, true);
     }
 
-    public static HashMap<String, Location> getMap(final String query, final String value, final String value2) {
-        AtomicReference<HashMap<String, Location>> map = new AtomicReference<>();
+    public static void executeQuery(final String query, boolean async) {
         EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
-            final HashMap<String, Location> tempMap = new HashMap<>();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.execute();
+            statement.close();
+        }, async);
+    }
+
+    public static HashMap<String, String> getMapString(final String query, final String value, final String value2) {
+        AtomicReference<HashMap<String, String>> map = new AtomicReference<>(new HashMap<>());
+        EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
             PreparedStatement getHashMap = connection.prepareStatement(query);
             ResultSet resultSet = getHashMap.executeQuery();
-            String[] values;
             while (resultSet.next()) {
-                values = resultSet.getString(value2).split(":");
-                tempMap.put(resultSet.getString(value), new Location(Bukkit.getWorld(values[0]),
-                        Double.parseDouble(values[1]),
-                        (Double.parseDouble(values[2]) + 1),
-                        Double.parseDouble(values[3]),
-                        Float.parseFloat(values[4]),
-                        Float.parseFloat(values[5])));
+                map.get().put(resultSet.getString(value), resultSet.getString(value2));
             }
-            map.set(tempMap);
         });
         return map.get();
     }
