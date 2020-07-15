@@ -1,36 +1,35 @@
 package br.com.eterniaserver.eternialib;
 
-import br.com.eterniaserver.eternialib.sql.Connections;
-
 import org.bukkit.configuration.InvalidConfigurationException;
+import java.io.IOException;
+import br.com.eterniaserver.eternialib.sql.Connections;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-
-public class EterniaLib extends JavaPlugin {
-
+public class EterniaLib extends JavaPlugin
+{
     private static EterniaLib plugin;
     public Connections connections;
+    public static boolean mysql;
 
-    @Override
     public void onEnable() {
-
-        plugin = this;
-
+        EterniaLib.plugin = this;
         try {
-            connections = new Connections();
-        } catch (IOException | InvalidConfigurationException e) {
+            this.connections = new Connections();
+        }
+        catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-
     }
 
     public void onDisable() {
-        connections.Close();
+        this.connections.Close();
     }
 
     public static EterniaLib getPlugin() {
-        return plugin;
+        return EterniaLib.plugin;
     }
 
+    public static boolean getMySQL() {
+        return EterniaLib.mysql;
+    }
 }

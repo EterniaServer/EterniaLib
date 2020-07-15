@@ -5,7 +5,6 @@ sql:
   database: 'admin'
   user: 'admin'
   password: 'admin'
-
 messages:
   mysql-ok: '&7Conectado com sucesso a database &3MySQL&8.'
   sql-ok: '&7Conectado com sucesso a database &3SQLite&8.'
