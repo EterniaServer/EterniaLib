@@ -7,8 +7,7 @@ import java.io.File;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class EFiles
-{
+public class EFiles {
     private final FileConfiguration fileConfiguration;
 
     public static File fileLoad(final Plugin plugin, final String fileName) {
@@ -24,15 +23,15 @@ public class EFiles
     }
 
     public void broadcastMessage(final String message) {
-        this.broadcastMessage(message, null, null, null, null, null, null);
+        broadcastMessage(message, null, null, null, null, null, null);
     }
 
     public void broadcastMessage(final String message, final String from, final Object to) {
-        this.broadcastMessage(message, from, to, null, null, null, null);
+        broadcastMessage(message, from, to, null, null, null, null);
     }
 
     public void broadcastMessage(final String message, final String from, final Object to, final String from_2, final Object to_2) {
-        this.broadcastMessage(message, from, to, from_2, to_2, null, null);
+        broadcastMessage(message, from, to, from_2, to_2, null, null);
     }
 
     public void broadcastMessage(final String message, final String from, final Object to, final String from_2, final Object to_2, final String from_3, final Object to_3) {
@@ -40,15 +39,15 @@ public class EFiles
     }
 
     public void sendConsole(final String message) {
-        this.sendConsole(message, null, null, null, null, null, null);
+        sendConsole(message, null, null, null, null, null, null);
     }
 
     public void sendConsole(final String message, final String from, final Object to) {
-        this.sendConsole(message, from, to, null, null, null, null);
+        sendConsole(message, from, to, null, null, null, null);
     }
 
     public void sendConsole(final String message, final String from, final Object to, final String from_2, final Object to_2) {
-        this.sendConsole(message, from, to, from_2, to_2, null, null);
+        sendConsole(message, from, to, from_2, to_2, null, null);
     }
 
     public void sendConsole(final String message, final String from, final Object to, final String from_2, final Object to_2, final String from_3, final Object to_3) {
@@ -56,15 +55,15 @@ public class EFiles
     }
 
     public void sendMessage(final String message, final CommandSender sender) {
-        this.sendMessage(message, null, null, null, null, null, null, sender);
+        sendMessage(message, null, null, null, null, null, null, sender);
     }
 
     public void sendMessage(final String message, final String from, final Object to, final CommandSender sender) {
-        this.sendMessage(message, from, to, null, null, null, null, sender);
+        sendMessage(message, from, to, null, null, null, null, sender);
     }
 
     public void sendMessage(final String message, final String from, final Object to, final String from_2, final Object to_2, final CommandSender sender) {
-        this.sendMessage(message, from, to, from_2, to_2, null, null, sender);
+        sendMessage(message, from, to, from_2, to_2, null, null, sender);
     }
 
     public void sendMessage(final String message, final String from, final Object to, final String from_2, final Object to_2, final String from_3, final Object to_3, final CommandSender sender) {

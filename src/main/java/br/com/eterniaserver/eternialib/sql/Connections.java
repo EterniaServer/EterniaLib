@@ -5,14 +5,19 @@ import java.sql.DriverManager;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+
 import java.io.IOException;
 import java.io.File;
+
 import br.com.eterniaserver.eternialib.EterniaLib;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
+
 import java.sql.Connection;
 
 public class Connections

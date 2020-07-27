@@ -6,6 +6,15 @@
   <version>1.6</version>
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>*</include>
+        </includes>
+      </resource>
+    </resources>
     <finalName>${project.name} v${project.version}</finalName>
     <plugins>
       <plugin>
@@ -21,11 +30,56 @@
               <relocations>
                 <relocation>
                   <pattern>com.zaxxer.hikari</pattern>
-                  <shadedPattern>br.com.eterniaserver.eternialib.hikaricp</shadedPattern>
+                  <shadedPattern>br.com.eterniaserver.hikaricp</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>io.papermc.lib</pattern>
+                  <shadedPattern>br.com.eterniaserver.paperlib</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>co.aikar.commands</pattern>
+                  <shadedPattern>br.com.eterniaserver.acf</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>co.aikar.locales</pattern>
+                  <shadedPattern>br.com.eterniaserver.locales</shadedPattern>
                 </relocation>
               </relocations>
-              <outputDirectory>${basedir}/target/classes</outputDirectory>
-              <minimizeJar>true</minimizeJar>
+              <outputDirectory>${basedir}/target/classes/</outputDirectory>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/MANIFEST.*</exclude>
+                    <exclude>acf-core_bg.properties</exclude>
+                    <exclude>acf-core_cs.properties</exclude>
+                    <exclude>acf-core_de.properties</exclude>
+                    <exclude>acf-core_es.properties</exclude>
+                    <exclude>acf-core_fr.properties</exclude>
+                    <exclude>acf-core_hu.properties</exclude>
+                    <exclude>acf-core_nb.properties</exclude>
+                    <exclude>acf-core_nn.properties</exclude>
+                    <exclude>acf-core_pl.properties</exclude>
+                    <exclude>acf-core_pt.properties</exclude>
+                    <exclude>acf-core_ru.properties</exclude>
+                    <exclude>acf-core_sv.properties</exclude>
+                    <exclude>acf-core_tr.properties</exclude>
+                    <exclude>acf-minecraft_bg.properties</exclude>
+                    <exclude>acf-minecraft_cs.properties</exclude>
+                    <exclude>acf-minecraft_de.properties</exclude>
+                    <exclude>acf-minecraft_es.properties</exclude>
+                    <exclude>acf-minecraft_fr.properties</exclude>
+                    <exclude>acf-minecraft_hu.properties</exclude>
+                    <exclude>acf-minecraft_nb.properties</exclude>
+                    <exclude>acf-minecraft_nn.properties</exclude>
+                    <exclude>acf-minecraft_pl.properties</exclude>
+                    <exclude>acf-minecraft_pt.properties</exclude>
+                    <exclude>acf-minecraft_ru.properties</exclude>
+                    <exclude>acf-minecraft_sv.properties</exclude>
+                    <exclude>acf-minecraft_tr.properties</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
@@ -36,6 +90,10 @@
     <repository>
       <id>papermc</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
+    </repository>
+    <repository>
+      <id>aikar</id>
+      <url>https://repo.aikar.co/content/groups/aikar/</url>
     </repository>
   </repositories>
   <dependencies>

@@ -1,13 +1,10 @@
 package br.com.eterniaserver.eternialib.sql;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
-public class SQLTask extends BukkitRunnable {
-
+public class SQLTask implements Runnable {
 
     private final Connections connections;
     private final SQLCallback sqlCallBack;
@@ -21,7 +18,7 @@ public class SQLTask extends BukkitRunnable {
     public void run() {
         if(connections.isClosed()) return;
 
-        try (Connection connection = connections.getConnection()){
+        try (Connection connection = connections.getConnection()) {
             sqlCallBack.call(connection);
         } catch(SQLException e) {
             e.printStackTrace();
@@ -29,7 +26,7 @@ public class SQLTask extends BukkitRunnable {
     }
 
     void executeAsync() {
-        runTaskAsynchronously(EterniaLib.getPlugin());
+        CompletableFuture.runAsync(this);
     }
 
 
