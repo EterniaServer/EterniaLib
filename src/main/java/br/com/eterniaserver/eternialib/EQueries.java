@@ -7,8 +7,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import br.com.eterniaserver.eternialib.sql.Connections;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import br.com.eterniaserver.eternialib.sql.Connections;
 
 public class EQueries {
 
@@ -257,6 +258,32 @@ public class EQueries {
                 final ResultSet resultSet2 = statement.executeQuery();
                 while (resultSet2.next()) {
                     map2.put(resultSet2.getString(value), resultSet2.getString(value2));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return map2;
+        }
+    }
+
+    public static HashMap<byte[], String> getMapBytesString(final String query, final String value, final String value2) {
+        if (EterniaLib.mysql) {
+            final AtomicReference<HashMap<byte[], String>> map = new AtomicReference<>(new HashMap<>());
+            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+                PreparedStatement getHashMap = connection.prepareStatement(query);
+                ResultSet resultSet = getHashMap.executeQuery();
+                while (resultSet.next()) {
+                    map.get().put(resultSet.getBytes(value), resultSet.getString(value2));
+                }
+            });
+            return map.get();
+        } else {
+            final HashMap<byte[], String> map2 = new HashMap<>();
+            try {
+                final PreparedStatement statement = Connections.connection.prepareStatement(query);
+                final ResultSet resultSet2 = statement.executeQuery();
+                while (resultSet2.next()) {
+                    map2.put(resultSet2.getBytes(value), resultSet2.getString(value2));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
