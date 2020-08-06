@@ -2,6 +2,7 @@ package br.com.eterniaserver.eternialib;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.collect.ImmutableList;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
@@ -28,7 +29,10 @@ public class EterniaLib extends JavaPlugin {
     public Connections connections;
     public static boolean mysql;
 
+    @Override
     public void onEnable() {
+        new Metrics(this, 8442);
+
         manager = new PaperCommandManager(this);
 
         EterniaLib.plugin = this;
@@ -49,6 +53,7 @@ public class EterniaLib extends JavaPlugin {
 
     }
 
+    @Override
     public void onDisable() {
         this.connections.Close();
     }
