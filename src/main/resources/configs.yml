@@ -6,6 +6,7 @@ sql:
   user: 'admin'
   password: 'admin'
 messages:
+  load: '&8[&aE&9L&8] &7Carregados &3%size%&7 arquivos de jogadores&8.'
   mysql-ok: '&8[&aE&9L&8] &7Conectado com sucesso a database &3MySQL&8.'
   sql-ok: '&8[&aE&9L&8] &7Conectado com sucesso a database &3SQLite&8.'
   sql-finish: '&8[&aE&9L&8] &7Conexão &3SQLite &7finalizada&8.'

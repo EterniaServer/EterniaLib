@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <pattern value="br.com.eterniaserver.eternialib.AsyncPlayerPreLogin" />
+    <pattern value="br.com.eterniaserver.eternialib.sql.Connections" />
+    <pattern value="br.com.eterniaserver.eternialib.sql.Connections" method="Connections" />
+    <pattern value="br.com.eterniaserver.eternialib.EQueries" />
+    <pattern value="br.com.eterniaserver.eternialib.EterniaLib" />
+    <pattern value="br.com.eterniaserver.eternialib.EQueries" method="executeQuery" />
+    <pattern value="br.com.eterniaserver.eternialib.EterniaLib" method="getManager" />
+    <pattern value="br.com.eterniaserver.eternialib.EterniaLib" method="getMySQL" />
+    <pattern value="br.com.eterniaserver.eternialib.UUIDFetcher" method="getNameOf" />
+    <pattern value="br.com.eterniaserver.eternialib.AsyncPlayerPreLogin" method="onAsyncPlayerPreLogin" />
+    <pattern value="br.com.eterniaserver.eternialib.EQueries" method="queryStringList" />
+    <pattern value="br.com.eterniaserver.eternialib.sql.SQLTask" />
+    <pattern value="br.com.eterniaserver.eternialib.sql.SQLTask" method="SQLTask" />
+    <pattern value="br.com.eterniaserver.eternialib.UUIDFetcher" />
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">

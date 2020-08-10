@@ -52,7 +52,7 @@ public class EterniaLib extends JavaPlugin {
         manager.getCommandCompletions().registerCompletion("entidades", c -> entityList);
 
 
-        getServer().getPluginManager().registerEvents(new AsyncPlayerPreLogin(), this);
+        this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLogin(), this);
 
     }
 

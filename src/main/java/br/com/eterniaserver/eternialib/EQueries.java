@@ -12,39 +12,6 @@ import br.com.eterniaserver.eternialib.sql.Connections;
 
 public class EQueries {
 
-    public static String queryString(final String query, final String value) {
-        return queryString(query, value, value);
-    }
-
-    public static String queryString(final String query, final String value, final String value2) {
-        if (EterniaLib.mysql) {
-            final AtomicReference<String> result = new AtomicReference<>("");
-            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
-                PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next() && resultSet.getString(value) != null) {
-                    result.set(resultSet.getString(value2));
-                }
-                resultSet.close();
-                statement.close();
-            });
-            return result.get();
-        }
-        String result2 = "";
-        try {
-            final PreparedStatement statement2 = Connections.connection.prepareStatement(query);
-            final ResultSet resultSet2 = statement2.executeQuery();
-            if (resultSet2.next() && resultSet2.getString(value) != null) {
-                result2 = resultSet2.getString(value2);
-            }
-            resultSet2.close();
-            statement2.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result2;
-    }
-
     public static List<String> queryStringList(final String query, final String value) {
         if (EterniaLib.mysql) {
             final List<String> accounts = new ArrayList<>();

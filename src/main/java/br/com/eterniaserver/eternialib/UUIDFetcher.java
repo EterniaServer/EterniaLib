@@ -27,13 +27,10 @@ public class UUIDFetcher {
 
     private static final Random RANDOM = new Random();
 
+    public static final HashMap<UUID, String> firstLookupCache = new HashMap<>();
+
     public static final HashMap<String, UUID> lookupCache = new HashMap<>();
     public static final HashMap<UUID, String> lookupNameCache = new HashMap<>();
-
-    public static void putUUIDAndName(UUID uuid, String playerName) {
-        lookupCache.put(playerName, uuid);
-        lookupNameCache.put(uuid, playerName);
-    }
 
     public static UUID getUUIDOf(String name) {
         UUID result = lookupCache.get(name);
@@ -67,28 +64,6 @@ public class UUIDFetcher {
             lookupNameCache.put(result, name);
         }
         return result;
-    }
-
-    private static UUID parseUUIDFromString(String uuidAsString) {
-        String[] parts = {
-                "0x" + uuidAsString.substring(0, 8),
-                "0x" + uuidAsString.substring(8, 12),
-                "0x" + uuidAsString.substring(12, 16),
-                "0x" + uuidAsString.substring(16, 20),
-                "0x" + uuidAsString.substring(20, 32)
-        };
-
-        long mostSigBits = Long.decode(parts[0]);
-        mostSigBits <<= 16;
-        mostSigBits |= Long.decode(parts[1]);
-        mostSigBits <<= 16;
-        mostSigBits |= Long.decode(parts[2]);
-
-        long leastSigBits = Long.decode(parts[3]);
-        leastSigBits <<= 48;
-        leastSigBits |= Long.decode(parts[4]);
-
-        return new UUID(mostSigBits, leastSigBits);
     }
 
     public static String getNameOf(UUID uuid) {
@@ -125,6 +100,28 @@ public class UUIDFetcher {
             lookupNameCache.put(uuid, result);
         }
         return result;
+    }
+
+    private static UUID parseUUIDFromString(String uuidAsString) {
+        String[] parts = {
+                "0x" + uuidAsString.substring(0, 8),
+                "0x" + uuidAsString.substring(8, 12),
+                "0x" + uuidAsString.substring(12, 16),
+                "0x" + uuidAsString.substring(16, 20),
+                "0x" + uuidAsString.substring(20, 32)
+        };
+
+        long mostSigBits = Long.decode(parts[0]);
+        mostSigBits <<= 16;
+        mostSigBits |= Long.decode(parts[1]);
+        mostSigBits <<= 16;
+        mostSigBits |= Long.decode(parts[2]);
+
+        long leastSigBits = Long.decode(parts[3]);
+        leastSigBits <<= 48;
+        leastSigBits |= Long.decode(parts[4]);
+
+        return new UUID(mostSigBits, leastSigBits);
     }
 
 }
