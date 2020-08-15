@@ -1,8 +1,6 @@
 package br.com.eterniaserver.eternialib.sql;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.EQueries;
-import br.com.eterniaserver.eternialib.UUIDFetcher;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,8 +16,6 @@ import java.sql.DriverManager;
 import java.io.IOException;
 import java.io.File;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class Connections {
 
@@ -28,7 +24,7 @@ public class Connections {
     private final FileConfiguration file;
 
     public static Connection connection;
-    private final String MSG_LOAD;
+    public static String MSG_LOAD;
 
     private final String MSG_MYSQL_OK;
     private final String MSG_MYSQL_FINISH;
@@ -81,16 +77,6 @@ public class Connections {
                 e.printStackTrace();
             }
         }
-        EQueries.executeQuery("CREATE TABLE IF NOT EXISTS el_cache (uuid varchar(36), player_name varchar(16));", false);
-
-        final HashMap<String, String> temp = EQueries.getMapString("SELECT * FROM el_cache;", "uuid", "player_name");
-        temp.forEach((k, v) -> {
-            UUID uuid = UUID.fromString(k);
-            UUIDFetcher.lookupCache.put(v, uuid);
-            UUIDFetcher.lookupNameCache.put(uuid, v);
-            UUIDFetcher.firstLookupCache.put(uuid, v);
-        });
-        Bukkit.getServer().getConsoleSender().sendMessage(MSG_LOAD.replace("%size%", String.valueOf(temp.size())));
     }
 
     public boolean isClosed() {

@@ -27,14 +27,10 @@ public class EQueries {
             return accounts;
         }
         final List<String> result = new ArrayList<>();
-        try {
-            final PreparedStatement statement = Connections.connection.prepareStatement(query);
-            final ResultSet resultSet2 = statement.executeQuery();
+        try (PreparedStatement statement = Connections.connection.prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
             while (resultSet2.next()) {
                 result.add(resultSet2.getString(value));
             }
-            resultSet2.close();
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,10 +45,8 @@ public class EQueries {
                 statement.close();
             }, true);
         } else {
-            try {
-                final PreparedStatement statement2 = Connections.connection.prepareStatement(query);
-                statement2.execute();
-                statement2.close();
+            try (PreparedStatement statement = Connections.connection.prepareStatement(query)) {
+                statement.execute();
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -68,10 +62,8 @@ public class EQueries {
                 statement.close();
             }, async);
         } else {
-            try {
-                final PreparedStatement statement2 = Connections.connection.prepareStatement(query);
-                statement2.execute();
-                statement2.close();
+            try (PreparedStatement statement = Connections.connection.prepareStatement(query)) {
+                statement.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -93,9 +85,7 @@ public class EQueries {
             return map.get();
         } else {
             final HashMap<String, String> map2 = new HashMap<>();
-            try {
-                final PreparedStatement statement = Connections.connection.prepareStatement(query);
-                final ResultSet resultSet2 = statement.executeQuery();
+            try (PreparedStatement statement = Connections.connection.prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
                 while (resultSet2.next()) {
                     map2.put(resultSet2.getString(value), resultSet2.getString(value2));
                 }

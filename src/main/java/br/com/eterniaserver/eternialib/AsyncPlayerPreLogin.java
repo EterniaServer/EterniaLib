@@ -13,6 +13,7 @@ public class AsyncPlayerPreLogin implements Listener {
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         final String playerName = event.getName();
         final UUID uuid = UUIDFetcher.getUUIDOf(playerName);
+
         if (!UUIDFetcher.firstLookupCache.containsKey(uuid)) {
             EQueries.executeQuery("INSERT INTO el_cache (uuid, player_name) VALUES ('" + uuid.toString() + "', '" + playerName + "');", false);
             UUIDFetcher.firstLookupCache.put(uuid, playerName);
@@ -20,6 +21,7 @@ public class AsyncPlayerPreLogin implements Listener {
             UUIDFetcher.firstLookupCache.put(uuid, playerName);
             EQueries.executeQuery("UPDATE el_cache SET player_name='" + playerName + "' WHERE uuid='" + uuid.toString() + "';", false);
         }
+
         UUIDFetcher.lookupCache.put(playerName, uuid);
         UUIDFetcher.lookupNameCache.put(uuid, playerName);
     }

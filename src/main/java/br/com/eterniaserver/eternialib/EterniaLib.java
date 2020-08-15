@@ -3,12 +3,16 @@ package br.com.eterniaserver.eternialib;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.collect.ImmutableList;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import br.com.eterniaserver.eternialib.sql.Connections;
 
@@ -53,6 +57,17 @@ public class EterniaLib extends JavaPlugin {
 
 
         this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLogin(), this);
+
+        EQueries.executeQuery("CREATE TABLE IF NOT EXISTS el_cache (uuid varchar(36), player_name varchar(16));", false);
+
+        final HashMap<String, String> temp = EQueries.getMapString("SELECT * FROM el_cache;", "uuid", "player_name");
+        temp.forEach((k, v) -> {
+            UUID uuid = UUID.fromString(k);
+            UUIDFetcher.lookupCache.put(v, uuid);
+            UUIDFetcher.lookupNameCache.put(uuid, v);
+            UUIDFetcher.firstLookupCache.put(uuid, v);
+        });
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', Connections.MSG_LOAD.replace("%size%", String.valueOf(temp.size()))));
 
     }
 
