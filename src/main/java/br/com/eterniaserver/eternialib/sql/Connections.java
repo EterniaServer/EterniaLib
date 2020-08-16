@@ -19,16 +19,15 @@ import java.sql.Connection;
 
 public class Connections {
 
-    boolean mysql;
     private HikariDataSource hikari;
     private final FileConfiguration file;
 
     public static Connection connection;
-    public static String MSG_LOAD;
 
+    public static String MSG_LOAD;
     private final String MSG_MYSQL_OK;
     private final String MSG_MYSQL_FINISH;
-
+    private final String MSG_ERROR;
     private final String MSG_SQL_OK;
     private final String MSG_SQL_FINISH;
 
@@ -41,14 +40,14 @@ public class Connections {
         MSG_SQL_OK = file.getString("messages.sql-ok");
         MSG_MYSQL_FINISH = file.getString("messages.mysql-finish");
         MSG_SQL_FINISH = file.getString("messages.sql-finish");
+        MSG_ERROR = file.getString("messages.error");
         MSG_LOAD = file.getString("messages.load");
         Connect();
     }
 
     public void Connect() {
-        mysql = file.getBoolean("sql.mysql");
-        EterniaLib.mysql = mysql;
-        if (this.mysql) {
+        EterniaLib.setMysql(file.getBoolean("sql.mysql"));
+        if (EterniaLib.getMySQL()) {
             final HikariConfig config = new HikariConfig();
             config.setPoolName("EterniaServer MySQL Pool");
             config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
@@ -66,8 +65,11 @@ public class Connections {
         } else {
             final File dataFolder = new File(EterniaLib.getPlugin().getDataFolder(), "eternia.db");
             if (!dataFolder.exists()) {
-                try { dataFolder.createNewFile(); }
-                catch (IOException ignored) {}
+                try {
+                    dataFolder.createNewFile();
+                } catch (IOException ignored) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_ERROR));
+                }
             }
             try {
                 Class.forName("org.sqlite.JDBC");
@@ -84,7 +86,7 @@ public class Connections {
     }
 
     public void Close() {
-        if (mysql) {
+        if (EterniaLib.getMySQL()) {
             hikari.close();
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_MYSQL_FINISH));
         }

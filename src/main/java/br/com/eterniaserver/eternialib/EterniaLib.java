@@ -1,22 +1,21 @@
 package br.com.eterniaserver.eternialib;
 
 import co.aikar.commands.PaperCommandManager;
+
 import com.google.common.collect.ImmutableList;
+
 import org.bstats.bukkit.Metrics;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 import br.com.eterniaserver.eternialib.sql.Connections;
-
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class EterniaLib extends JavaPlugin {
 
@@ -30,20 +29,23 @@ public class EterniaLib extends JavaPlugin {
 
     private static PaperCommandManager manager;
     private static EterniaLib plugin;
+    private static boolean mysql;
     public Connections connections;
-    public static boolean mysql;
 
     @Override
     public void onEnable() {
+        setPlugin(this);
+
         new Metrics(this, 8442);
 
-        manager = new PaperCommandManager(this);
+        setManager(new PaperCommandManager(this));
 
-        EterniaLib.plugin = this;
-        final File files = new File(getDataFolder(), "acf_messages.yml");
-        if (!files.exists()) saveResource("acf_messages.yml", false);
+        final String acf = "acf_messages.yml";
+        final File files = new File(getDataFolder(), acf);
+        if (!files.exists()) saveResource(acf, false);
         try {
-            manager.getLocales().loadYamlLanguageFile("acf_messages.yml", Locale.ENGLISH);
+            manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
+            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
             this.connections = new Connections();
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
@@ -60,7 +62,7 @@ public class EterniaLib extends JavaPlugin {
 
         EQueries.executeQuery("CREATE TABLE IF NOT EXISTS el_cache (uuid varchar(36), player_name varchar(16));", false);
 
-        final HashMap<String, String> temp = EQueries.getMapString("SELECT * FROM el_cache;", "uuid", "player_name");
+        final Map<String, String> temp = EQueries.getMapString("SELECT * FROM el_cache;", "uuid", "player_name");
         temp.forEach((k, v) -> {
             UUID uuid = UUID.fromString(k);
             UUIDFetcher.lookupCache.put(v, uuid);
@@ -74,6 +76,18 @@ public class EterniaLib extends JavaPlugin {
     @Override
     public void onDisable() {
         this.connections.Close();
+    }
+
+    private static void setManager(PaperCommandManager paperCommandManager) {
+        manager = paperCommandManager;
+    }
+
+    private static void setPlugin(EterniaLib eterniaLib) {
+        plugin = eterniaLib;
+    }
+
+    public static void setMysql(boolean istrue) {
+        mysql = istrue;
     }
 
     public static EterniaLib getPlugin() {

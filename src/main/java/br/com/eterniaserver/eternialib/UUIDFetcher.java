@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -27,10 +28,9 @@ public class UUIDFetcher {
 
     private static final Random RANDOM = new Random();
 
-    public static final HashMap<UUID, String> firstLookupCache = new HashMap<>();
-
-    public static final HashMap<String, UUID> lookupCache = new HashMap<>();
-    public static final HashMap<UUID, String> lookupNameCache = new HashMap<>();
+    protected static final Map<UUID, String> firstLookupCache = new HashMap<>();
+    protected static final Map<String, UUID> lookupCache = new HashMap<>();
+    protected static final Map<UUID, String> lookupNameCache = new HashMap<>();
 
     public static UUID getUUIDOf(String name) {
         UUID result = lookupCache.get(name);
@@ -42,7 +42,6 @@ public class UUIDFetcher {
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
                     if (connection.getResponseCode() == 400) {
-                        System.err.println("There is no player with the name \"" + name + "\"!");
                         result = UUID.randomUUID();
                     } else {
                         InputStream inputStream = connection.getInputStream();
@@ -78,7 +77,6 @@ public class UUIDFetcher {
                     connection.connect();
 
                     if(connection.getResponseCode() == 400) {
-                        System.err.println("There is no player with the UUID \"" + uuid.toString() + "\"!");
                         result = Long.toHexString(RANDOM.nextLong());
                     } else {
                         InputStream inputStream = connection.getInputStream();

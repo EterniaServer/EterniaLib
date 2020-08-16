@@ -3,6 +3,7 @@ package br.com.eterniaserver.eternialib;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
@@ -12,8 +13,12 @@ import br.com.eterniaserver.eternialib.sql.Connections;
 
 public class EQueries {
 
+    private EQueries() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static List<String> queryStringList(final String query, final String value) {
-        if (EterniaLib.mysql) {
+        if (EterniaLib.getMySQL()) {
             final List<String> accounts = new ArrayList<>();
             EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
                 PreparedStatement getbaltop = connection.prepareStatement(query);
@@ -38,7 +43,7 @@ public class EQueries {
     }
 
     public static void executeQuery(final String query) {
-        if (EterniaLib.mysql) {
+        if (EterniaLib.getMySQL()) {
             EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.execute();
@@ -55,7 +60,7 @@ public class EQueries {
     }
 
     public static void executeQuery(final String query, final boolean async) {
-        if (EterniaLib.mysql) {
+        if (EterniaLib.getMySQL()) {
             EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.execute();
@@ -70,8 +75,8 @@ public class EQueries {
         }
     }
 
-    public static HashMap<String, String> getMapString(final String query, final String value, final String value2) {
-        if (EterniaLib.mysql) {
+    public static Map<String, String> getMapString(final String query, final String value, final String value2) {
+        if (EterniaLib.getMySQL()) {
             final AtomicReference<HashMap<String, String>> map = new AtomicReference<>(new HashMap<>());
             EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
                 PreparedStatement getHashMap = connection.prepareStatement(query);
