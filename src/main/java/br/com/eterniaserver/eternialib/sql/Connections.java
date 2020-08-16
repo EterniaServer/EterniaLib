@@ -20,11 +20,11 @@ import java.sql.Connection;
 public class Connections {
 
     private HikariDataSource hikari;
-    private final FileConfiguration file;
+    private final FileConfiguration file = new YamlConfiguration();
 
     public static Connection connection;
 
-    public static String MSG_LOAD;
+    private final String MSG_LOAD;
     private final String MSG_MYSQL_OK;
     private final String MSG_MYSQL_FINISH;
     private final String MSG_ERROR;
@@ -32,16 +32,17 @@ public class Connections {
     private final String MSG_SQL_FINISH;
 
     public Connections() throws IOException, InvalidConfigurationException {
-        file = new YamlConfiguration();
         final File files = new File(EterniaLib.getPlugin().getDataFolder(), "configs.yml");
         if (!files.exists()) EterniaLib.getPlugin().saveResource("configs.yml", false);
         file.load(files);
+
         MSG_MYSQL_OK = file.getString("messages.mysql-ok");
         MSG_SQL_OK = file.getString("messages.sql-ok");
         MSG_MYSQL_FINISH = file.getString("messages.mysql-finish");
         MSG_SQL_FINISH = file.getString("messages.sql-finish");
         MSG_ERROR = file.getString("messages.error");
         MSG_LOAD = file.getString("messages.load");
+
         Connect();
     }
 
@@ -59,25 +60,31 @@ public class Connections {
             config.setConnectionTestQuery("SELECT 1");
             config.setMaxLifetime(60000L);
             config.setIdleTimeout(45000L);
-            config.setMaximumPoolSize(20);
             hikari = new HikariDataSource(config);
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_MYSQL_OK));
         } else {
             final File dataFolder = new File(EterniaLib.getPlugin().getDataFolder(), "eternia.db");
             if (!dataFolder.exists()) {
                 try {
-                    dataFolder.createNewFile();
+                    if (!dataFolder.createNewFile()) loadSQLite(dataFolder);
                 } catch (IOException ignored) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_ERROR));
+                    Bukkit.getPluginManager().disablePlugin(EterniaLib.getPlugin());
                 }
+                return;
             }
-            try {
-                Class.forName("org.sqlite.JDBC");
-                Connections.connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_SQL_OK));
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            loadSQLite(dataFolder);
+        }
+    }
+
+    public void loadSQLite(File dataFolder) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connections.connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_SQL_OK));
+        } catch (SQLException | ClassNotFoundException e) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MSG_ERROR));
+            Bukkit.getPluginManager().disablePlugin(EterniaLib.getPlugin());
         }
     }
 
@@ -111,5 +118,9 @@ public class Connections {
 
     public Connection getConnection() throws SQLException {
         return (hikari != null) ? hikari.getConnection() : null;
+    }
+
+    public String getMsgLoad() {
+        return MSG_LOAD;
     }
 }

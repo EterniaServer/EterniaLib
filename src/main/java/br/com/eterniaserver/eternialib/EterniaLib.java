@@ -69,7 +69,7 @@ public class EterniaLib extends JavaPlugin {
             UUIDFetcher.lookupNameCache.put(uuid, v);
             UUIDFetcher.firstLookupCache.put(uuid, v);
         });
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', Connections.MSG_LOAD.replace("%size%", String.valueOf(temp.size()))));
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', connections.getMsgLoad().replace("%size%", String.valueOf(temp.size()))));
 
     }
 
