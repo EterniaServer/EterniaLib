@@ -28,7 +28,6 @@ public class EterniaLib extends JavaPlugin {
             "WITHER_SKELETON", "WOLF", "ZOGLIN", "ZOMBIE", "ZOMBIE_HORSE", "ZOMBIFIED_PIGLIN", "ZOMBIE_VILLAGER");
 
     private static PaperCommandManager manager;
-    private static EterniaLib plugin;
     private static Connections connections;
 
     private static boolean mysql;
@@ -45,7 +44,7 @@ public class EterniaLib extends JavaPlugin {
         try {
             manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
             manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            connections = new Connections(this);
+            setConnections(new Connections(this));
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -75,6 +74,10 @@ public class EterniaLib extends JavaPlugin {
     @Override
     public void onDisable() {
         connections.close();
+    }
+
+    private static void setConnections(Connections cnct) {
+        connections = cnct;
     }
 
     private static void setManager(PaperCommandManager paperCommandManager) {
