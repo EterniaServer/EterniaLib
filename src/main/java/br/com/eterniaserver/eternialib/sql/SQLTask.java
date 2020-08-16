@@ -9,8 +9,8 @@ public class SQLTask implements Runnable {
     private final Connections connections;
     private final SQLCallback sqlCallBack;
 
-    SQLTask(Connections Connection, SQLCallback sqlCallBack) {
-        this.connections = Connection;
+    SQLTask(Connections connect, SQLCallback sqlCallBack) {
+        this.connections = connect;
         this.sqlCallBack = sqlCallBack;
     }
 

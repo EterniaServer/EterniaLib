@@ -20,7 +20,7 @@ public class EQueries {
     public static List<String> queryStringList(final String query, final String value) {
         if (EterniaLib.getMySQL()) {
             final List<String> accounts = new ArrayList<>();
-            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+            EterniaLib.getConnections().executeSQLQuery(connection -> {
                 PreparedStatement getbaltop = connection.prepareStatement(query);
                 ResultSet resultSet = getbaltop.executeQuery();
                 while (resultSet.next()) {
@@ -32,7 +32,7 @@ public class EQueries {
             return accounts;
         }
         final List<String> result = new ArrayList<>();
-        try (PreparedStatement statement = Connections.connection.prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
+        try (PreparedStatement statement = Connections.getSQLite().prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
             while (resultSet2.next()) {
                 result.add(resultSet2.getString(value));
             }
@@ -44,13 +44,13 @@ public class EQueries {
 
     public static void executeQuery(final String query) {
         if (EterniaLib.getMySQL()) {
-            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+            EterniaLib.getConnections().executeSQLQuery(connection -> {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.execute();
                 statement.close();
             }, true);
         } else {
-            try (PreparedStatement statement = Connections.connection.prepareStatement(query)) {
+            try (PreparedStatement statement = Connections.getSQLite().prepareStatement(query)) {
                 statement.execute();
             }
             catch (SQLException e) {
@@ -61,13 +61,13 @@ public class EQueries {
 
     public static void executeQuery(final String query, final boolean async) {
         if (EterniaLib.getMySQL()) {
-            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+            EterniaLib.getConnections().executeSQLQuery(connection -> {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.execute();
                 statement.close();
             }, async);
         } else {
-            try (PreparedStatement statement = Connections.connection.prepareStatement(query)) {
+            try (PreparedStatement statement = Connections.getSQLite().prepareStatement(query)) {
                 statement.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -78,7 +78,7 @@ public class EQueries {
     public static Map<String, String> getMapString(final String query, final String value, final String value2) {
         if (EterniaLib.getMySQL()) {
             final AtomicReference<HashMap<String, String>> map = new AtomicReference<>(new HashMap<>());
-            EterniaLib.getPlugin().connections.executeSQLQuery(connection -> {
+            EterniaLib.getConnections().executeSQLQuery(connection -> {
                 PreparedStatement getHashMap = connection.prepareStatement(query);
                 ResultSet resultSet = getHashMap.executeQuery();
                 while (resultSet.next()) {
@@ -90,7 +90,7 @@ public class EQueries {
             return map.get();
         } else {
             final HashMap<String, String> map2 = new HashMap<>();
-            try (PreparedStatement statement = Connections.connection.prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
+            try (PreparedStatement statement = Connections.getSQLite().prepareStatement(query); ResultSet resultSet2 = statement.executeQuery()) {
                 while (resultSet2.next()) {
                     map2.put(resultSet2.getString(value), resultSet2.getString(value2));
                 }

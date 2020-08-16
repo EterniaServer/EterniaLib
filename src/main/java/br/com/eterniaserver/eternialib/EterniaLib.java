@@ -29,13 +29,12 @@ public class EterniaLib extends JavaPlugin {
 
     private static PaperCommandManager manager;
     private static EterniaLib plugin;
+    private static Connections connections;
+
     private static boolean mysql;
-    public Connections connections;
 
     @Override
     public void onEnable() {
-        setPlugin(this);
-
         new Metrics(this, 8442);
 
         setManager(new PaperCommandManager(this));
@@ -46,7 +45,7 @@ public class EterniaLib extends JavaPlugin {
         try {
             manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
             manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            this.connections = new Connections();
+            connections = new Connections(this);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -75,27 +74,23 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.connections.Close();
+        connections.close();
     }
 
     private static void setManager(PaperCommandManager paperCommandManager) {
         manager = paperCommandManager;
     }
 
-    private static void setPlugin(EterniaLib eterniaLib) {
-        plugin = eterniaLib;
-    }
-
     public static void setMysql(boolean istrue) {
         mysql = istrue;
     }
 
-    public static EterniaLib getPlugin() {
-        return EterniaLib.plugin;
+    public static Connections getConnections() {
+        return connections;
     }
 
     public static boolean getMySQL() {
-        return EterniaLib.mysql;
+        return mysql;
     }
 
     public static PaperCommandManager getManager() {
