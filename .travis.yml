@@ -1,6 +1,13 @@
 language: java
+addons:
+  sonarcloud:
+    organization: eterniaserver
+    token:
+      secure: NCWqODNvdum5GYFe30mAApMRwC9HLq8chk7xOpzvTEWszCVKJRfEcZmAA4PzAeb3tZmB6tLsmRjFpG5I6LTxTtr0npPjXiCGDZGLv/AC+kRBunjSw/IguSOMOt/+lvJzlQ9l/T2+R2II15F2BSBGuEreoJ/UFdCd6nUkQkN6FsmiFVOHrB9hK6Jle7MHu97VWHcNqw/nwP71qfoywF/XHcy5PlFbQRed1+gkfblP638f7Weh3c+1hwv0yalinUSXHhpS8AZHETgKDMedKFnCfWk8ebzWQsSO3IRZ96Ks48w97vG069YxV0bWCj3dKTgE1MR1KYYXSlB0jQgIsJE+nwhH0Gj8YA/U62irUCLWi+vub63BmId8uC5vuGsu2odIQVJ9+u1Xx0KliUcgrDgznuJbUvOccPJzQD53HdsKJWka1PXIjYi7qeJ8dWJSYgXAL1TFT0Z81HuEdxxgkIjOzdal1rMFGUmVkk+n+9a3FWAzrldnevvSyE4pRFHVM/M31ZZ6J/9+3tLdYi+1ztnjB3udz6i6/1YYR17XczfzTaJ989/EjzkjrQ8cOaXc+Vv9ZrwVwz7oFtS5LCngkfj09NzEMwwJd143Vt3b9t5eEa957rBMbgE1ceFeid/Zq54EETWdrv2mhDx6ngZYg4CJpfKzPlCkzmHhA8gxYZ8C5Hc=
 script:
-  - mvn clean
-  - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=EterniaServer_EterniaLib
 jdk:
   - openjdk8
+env:
+  global:
+    secure: NCWqODNvdum5GYFe30mAApMRwC9HLq8chk7xOpzvTEWszCVKJRfEcZmAA4PzAeb3tZmB6tLsmRjFpG5I6LTxTtr0npPjXiCGDZGLv/AC+kRBunjSw/IguSOMOt/+lvJzlQ9l/T2+R2II15F2BSBGuEreoJ/UFdCd6nUkQkN6FsmiFVOHrB9hK6Jle7MHu97VWHcNqw/nwP71qfoywF/XHcy5PlFbQRed1+gkfblP638f7Weh3c+1hwv0yalinUSXHhpS8AZHETgKDMedKFnCfWk8ebzWQsSO3IRZ96Ks48w97vG069YxV0bWCj3dKTgE1MR1KYYXSlB0jQgIsJE+nwhH0Gj8YA/U62irUCLWi+vub63BmId8uC5vuGsu2odIQVJ9+u1Xx0KliUcgrDgznuJbUvOccPJzQD53HdsKJWka1PXIjYi7qeJ8dWJSYgXAL1TFT0Z81HuEdxxgkIjOzdal1rMFGUmVkk+n+9a3FWAzrldnevvSyE4pRFHVM/M31ZZ6J/9+3tLdYi+1ztnjB3udz6i6/1YYR17XczfzTaJ989/EjzkjrQ8cOaXc+Vv9ZrwVwz7oFtS5LCngkfj09NzEMwwJd143Vt3b9t5eEa957rBMbgE1ceFeid/Zq54EETWdrv2mhDx6ngZYg4CJpfKzPlCkzmHhA8gxYZ8C5Hc=
