@@ -66,12 +66,14 @@ public class Connections {
             final File dataFolder = new File(plugin.getDataFolder(), "eternia.db");
             if (!dataFolder.exists()) {
                 try {
-                    if (!dataFolder.createNewFile()) loadSQLite(dataFolder);
+                    if (dataFolder.createNewFile()) {
+                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&aE&9L&8] &7Criando arquivo SQLite&8."));
+                    }
                 } catch (IOException ignored) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgError));
                     Bukkit.getPluginManager().disablePlugin(plugin);
+                    return;
                 }
-                return;
             }
             loadSQLite(dataFolder);
         }

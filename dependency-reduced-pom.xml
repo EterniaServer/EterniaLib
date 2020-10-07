@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.eterniaserver</groupId>
   <artifactId>EterniaLib</artifactId>
-  <version>1.1.2</version>
+  <version>1.1.5</version>
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
@@ -117,11 +117,8 @@
     </dependency>
   </dependencies>
   <properties>
-    <sonar.projectKey>yurinogueira_EterniaLib</sonar.projectKey>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.organization>yurinogueira</sonar.organization>
   </properties>
 </project>

@@ -36,15 +36,14 @@ public class UUIDFetcher {
     public static UUID getUUIDOf(String name) {
         UUID result = lookupCache.get(name);
         if (result == null) {
+            result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
             if (ONLINE_MODE) {
                 try {
                     // Get response from Mojang API
                     URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
-                    if (connection.getResponseCode() == 400) {
-                        result = UUID.randomUUID();
-                    } else {
+                    if (connection.getResponseCode() != 400) {
                         InputStream inputStream = connection.getInputStream();
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                         // Parse JSON response and get UUID
@@ -54,11 +53,7 @@ public class UUIDFetcher {
                         // Return UUID
                         result = parseUUIDFromString(uuidAsString);
                     }
-                } catch (IOException e) {
-                    result = UUID.randomUUID();
-                }
-            } else {
-                result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+                } catch (IOException ignore) { }
             }
             lookupCache.put(name, result);
             lookupNameCache.put(result, name);
