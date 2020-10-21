@@ -25,8 +25,6 @@ public class UUIDFetcher {
         throw new IllegalStateException("Utility class");
     }
 
-    private static final boolean ONLINE_MODE = Bukkit.getOnlineMode();
-
     private static final Random RANDOM = new Random();
 
     protected static final Map<UUID, String> firstLookupCache = new HashMap<>();
@@ -37,7 +35,7 @@ public class UUIDFetcher {
         UUID result = lookupCache.get(name);
         if (result == null) {
             result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-            if (ONLINE_MODE) {
+            if (Bukkit.getOnlineMode()) {
                 try {
                     // Get response from Mojang API
                     URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
@@ -53,7 +51,7 @@ public class UUIDFetcher {
                         // Return UUID
                         result = parseUUIDFromString(uuidAsString);
                     }
-                } catch (IOException ignore) { }
+                } catch (IOException ignore) {}
             }
             lookupCache.put(name, result);
             lookupNameCache.put(result, name);
@@ -65,7 +63,7 @@ public class UUIDFetcher {
         String result = lookupNameCache.get(uuid);
 
         if (result == null) {
-            if (ONLINE_MODE) {
+            if (Bukkit.getOnlineMode()) {
                 try {
                     // Get response from Mojang API
                     URL url = new URL("https://api.mojang.com/user/profiles/" + uuid.toString().replace("-", "") + "/names");

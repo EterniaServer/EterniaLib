@@ -26,7 +26,7 @@ acf-core:
   permission_denied_parameter: '§8[§aE§9S§8] §7Você não tem permissão para isso§8.'
   error_generic_logged: '§8[§aE§9S§8] §7Ocorreu um erro§8, §7lamentamos§8.'
   unknown_command: '§8[§aE§9S§8] §7Comando desconhecido§8.'
-  invalid_syntax: '§8[§aE§9S§8] §7Use §6{command} §3{syntax}§8.'
+  invalid_syntax: '§8[§aE§9S§8] §7Use §6{command}§3{syntax}§8.'
   error_prefix: '§8[§aE§9S§8] §7Erro§8: §7{message}§8.'
   error_performing_command: '§8[§aE§9S§8] §7Ocorreu um erro§8, §7lamentamos§8.'
   info_message: '§8[§aE§9S§8] §7{message}§8.'
