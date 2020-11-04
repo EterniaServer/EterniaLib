@@ -37,18 +37,15 @@ public class UUIDFetcher {
             result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
             if (Bukkit.getOnlineMode()) {
                 try {
-                    // Get response from Mojang API
                     URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
                     if (connection.getResponseCode() != 400) {
                         InputStream inputStream = connection.getInputStream();
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        // Parse JSON response and get UUID
                         JsonElement element = new JsonParser().parse(bufferedReader);
                         JsonObject object = element.getAsJsonObject();
                         String uuidAsString = object.get("id").getAsString();
-                        // Return UUID
                         result = parseUUIDFromString(uuidAsString);
                     }
                 } catch (IOException ignore) {}
@@ -65,7 +62,6 @@ public class UUIDFetcher {
         if (result == null) {
             if (Bukkit.getOnlineMode()) {
                 try {
-                    // Get response from Mojang API
                     URL url = new URL("https://api.mojang.com/user/profiles/" + uuid.toString().replace("-", "") + "/names");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
@@ -75,8 +71,6 @@ public class UUIDFetcher {
                     } else {
                         InputStream inputStream = connection.getInputStream();
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                        // Parse JSON response and return name
                         JsonElement element = new JsonParser().parse(bufferedReader);
                         JsonArray array = element.getAsJsonArray();
                         JsonObject object = array.get(0).getAsJsonObject();

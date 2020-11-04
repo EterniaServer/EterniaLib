@@ -1,5 +1,8 @@
 package br.com.eterniaserver.eternialib;
 
+import br.com.eterniaserver.eternialib.sql.queries.CreateTable;
+import br.com.eterniaserver.eternialib.sql.queries.Select;
+
 import co.aikar.commands.PaperCommandManager;
 
 import org.bstats.bukkit.Metrics;
@@ -9,53 +12,57 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.sql.rowset.CachedRowSet;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
-
-import br.com.eterniaserver.eternialib.sql.Connections;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static PaperCommandManager manager;
-    private static Connections connections;
-
-    private static boolean mysql;
+    protected static PaperCommandManager manager;
+    protected static Connections connections;
+    protected static Boolean mysql = Boolean.FALSE;
 
     @Override
     public void onEnable() {
         new Metrics(this, 8442);
 
-        setManager(new PaperCommandManager(this));
+        manager = new PaperCommandManager(this);
+        manager.enableUnstableAPI("help");
 
         final String acf = "acf_messages.yml";
         final File files = new File(getDataFolder(), acf);
         if (!files.exists()) saveResource(acf, false);
+
         try {
             manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
             manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            setConnections(new Connections(this));
+            connections = new Connections(this);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
 
-        EQueries.executeQuery("CREATE TABLE IF NOT EXISTS el_cache (uuid varchar(36), player_name varchar(16));", false);
+        CreateTable createTable = new CreateTable("el_cache");
+        createTable.columns.set("uuid varchar(36)", "player_name varchar(16)");
+        SQL.execute(createTable);
 
-        final Map<String, String> temp = EQueries.getMapString("SELECT * FROM el_cache;", "uuid", "player_name");
-        temp.forEach((k, v) -> {
-            UUID uuid = UUID.fromString(k);
-            UUIDFetcher.lookupCache.put(v, uuid);
-            UUIDFetcher.lookupNameCache.put(uuid, v);
-            UUIDFetcher.firstLookupCache.put(uuid, v);
-        });
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', connections.getMsgLoad().replace("%size%", String.valueOf(temp.size()))));
+        try (CachedRowSet cachedRowSet = SQL.getRowSet(new Select("el_cache"))) {
+            while (cachedRowSet.next()) {
+                UUID uuid = UUID.fromString(cachedRowSet.getString("uuid"));
+                String playerName = cachedRowSet.getString("player_name");
+                UUIDFetcher.lookupCache.put(playerName, uuid);
+                UUIDFetcher.lookupNameCache.put(uuid, playerName);
+                UUIDFetcher.firstLookupCache.put(uuid, playerName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', connections.getMsgLoad().replace("%size%", String.valueOf(UUIDFetcher.firstLookupCache.size()))));
 
         this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLogin(), this);
-
-
-        manager.enableUnstableAPI("help");
 
     }
 
@@ -63,29 +70,4 @@ public class EterniaLib extends JavaPlugin {
     public void onDisable() {
         connections.close();
     }
-
-    private static void setConnections(Connections cnct) {
-        connections = cnct;
-    }
-
-    private static void setManager(PaperCommandManager paperCommandManager) {
-        manager = paperCommandManager;
-    }
-
-    public static void setMysql(boolean istrue) {
-        mysql = istrue;
-    }
-
-    public static Connections getConnections() {
-        return connections;
-    }
-
-    public static boolean getMySQL() {
-        return mysql;
-    }
-
-    public static PaperCommandManager getManager() {
-        return manager;
-    }
-
 }
