@@ -70,4 +70,9 @@ public class EterniaLib extends JavaPlugin {
     public void onDisable() {
         connections.close();
     }
+
+    public boolean getMySQL() {
+        return mysql;
+    }
+
 }
