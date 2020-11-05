@@ -15,7 +15,7 @@ public class CreateTable implements Query {
 
     @Override
     public String queryString() {
-        return "CREATE TABLE IF NOT EXISTS " + table + " " + columns.get();
+        return "CREATE TABLE IF NOT EXISTS " + table + " " + columns.get() + ";";
     }
 
 }

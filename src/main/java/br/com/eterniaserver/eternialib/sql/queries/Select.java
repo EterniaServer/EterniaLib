@@ -12,6 +12,6 @@ public class Select implements Query {
 
     @Override
     public String queryString() {
-        return "SELECT * FROM " + table;
+        return "SELECT * FROM " + table + ";";
     }
 }

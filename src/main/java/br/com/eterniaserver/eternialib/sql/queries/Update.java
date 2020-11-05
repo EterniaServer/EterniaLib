@@ -16,7 +16,7 @@ public class Update implements Query {
 
     @Override
     public String queryString() {
-        return "UPDATE " + table + " SET " + set.get() + " WHERE " + where.get();
+        return "UPDATE " + table + " SET " + set.get() + " WHERE " + where.get() + ";";
     }
 
 }

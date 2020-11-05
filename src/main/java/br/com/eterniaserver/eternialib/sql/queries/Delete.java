@@ -15,7 +15,7 @@ public class Delete implements Query {
 
     @Override
     public String queryString() {
-        return "DELETE FROM " + table + " WHERE " + where.get();
+        return "DELETE FROM " + table + " WHERE " + where.get() + ";";
     }
 
 }

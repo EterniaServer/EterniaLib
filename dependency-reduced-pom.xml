@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.eterniaserver</groupId>
   <artifactId>EterniaLib</artifactId>
-  <version>1.2.3</version>
+  <version>1.2.6</version>
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>

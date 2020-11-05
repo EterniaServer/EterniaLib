@@ -17,6 +17,6 @@ public class Insert implements Query {
 
     @Override
     public String queryString() {
-        return "INSERT INTO " + table + " " + columns.get() + " VALUES " + values.get();
+        return "INSERT INTO " + table + " " + columns.get() + " VALUES " + values.get() + ";";
     }
 }
