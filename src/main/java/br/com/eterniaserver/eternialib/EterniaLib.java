@@ -7,6 +7,7 @@ import co.aikar.commands.PaperCommandManager;
 
 import org.bstats.bukkit.Metrics;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,8 +24,12 @@ public class EterniaLib extends JavaPlugin {
     protected static PaperCommandManager manager;
     protected static Boolean mysql = Boolean.FALSE;
 
+    private static EterniaLib plugin;
+
     @Override
     public void onEnable() {
+        plugin = this;
+
         new Metrics(this, 8442);
 
         manager = new PaperCommandManager(this);
@@ -68,6 +73,10 @@ public class EterniaLib extends JavaPlugin {
 
         System.out.println("lookup = " + UUIDFetcher.firstLookupCache.size());
 
+    }
+
+    protected static void runAsync(Runnable runnable) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
     }
 
     public static boolean getMySQL() {
