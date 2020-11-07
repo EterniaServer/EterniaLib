@@ -46,6 +46,8 @@ public class Connections {
             hikari.addDataSourceProperty("databaseName", file.getString("sql.database"));
             hikari.addDataSourceProperty("user", file.getString("sql.user"));
             hikari.addDataSourceProperty("password", file.getString("sql.password"));
+            hikari.setMaximumPoolSize(50);
+            hikari.setMinimumIdle(50);
             hikari.setMaxLifetime(60000L);
             hikari.setIdleTimeout(45000L);
             hikari.setConnectionTestQuery("SELECT 1");
