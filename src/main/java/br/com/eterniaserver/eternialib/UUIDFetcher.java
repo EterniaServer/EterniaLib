@@ -27,7 +27,6 @@ public class UUIDFetcher {
 
     private static final Random RANDOM = new Random();
 
-    protected static final Map<UUID, String> firstLookupCache = new HashMap<>();
     protected static final Map<String, UUID> lookupCache = new HashMap<>();
     protected static final Map<UUID, String> lookupNameCache = new HashMap<>();
 

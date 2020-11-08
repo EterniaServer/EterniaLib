@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.sql.queries.Select;
 
 import co.aikar.commands.PaperCommandManager;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.bstats.bukkit.Metrics;
 
 import org.bukkit.Bukkit;
@@ -13,6 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,32 +24,20 @@ import java.util.UUID;
 
 public class EterniaLib extends JavaPlugin {
 
-    protected static PaperCommandManager manager;
-    protected static Boolean mysql = Boolean.FALSE;
+    protected static final ConfigsCfg configs = new ConfigsCfg();
 
-    private static EterniaLib plugin;
+    protected static final HikariDataSource hikari = new HikariDataSource();
+    protected static Connection connection;
+
+    protected static PaperCommandManager manager;
 
     @Override
     public void onEnable() {
-        plugin = this;
 
         new Metrics(this, 8442);
 
-        manager = new PaperCommandManager(this);
-        manager.enableUnstableAPI("help");
-
-        final String acf = "acf_messages.yml";
-        final File files = new File(getDataFolder(), acf);
-        if (!files.exists()) saveResource(acf, false);
-
-        try {
-            manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
-            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            new Connections(this);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-
+        getManager();
+        getConnection();
 
         CreateTable createTable = new CreateTable("el_cache");
         createTable.columns.set("uuid varchar(36)", "player_name varchar(16)");
@@ -54,33 +45,75 @@ public class EterniaLib extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLogin(), this);
 
-        try {
-            PreparedStatement statement = SQL.getConnection().prepareStatement(new Select("el_cache").queryString());
-            statement.execute();
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                String playerName = resultSet.getString("player_name");
-                UUIDFetcher.lookupCache.put(playerName, uuid);
-                UUIDFetcher.lookupNameCache.put(uuid, playerName);
-                UUIDFetcher.firstLookupCache.put(uuid, playerName);
-            }
-            resultSet.close();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    }
 
-        System.out.println("lookup = " + UUIDFetcher.firstLookupCache.size());
+    private void getManager() {
+
+        manager = new PaperCommandManager(this);
+        manager.enableUnstableAPI("help");
+
+
+        try {
+
+            final String acf = "acf_messages.yml";
+            final File files = new File(getDataFolder(), acf);
+
+            if (!files.exists()) {
+                saveResource(acf, false);
+            }
+
+            manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
+            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
+
+        } catch (IOException | InvalidConfigurationException e) {
+
+            e.printStackTrace();
+
+        }
 
     }
 
-    protected static void runAsync(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
+    private void getConnection() {
+
+        if (EterniaLib.getMySQL()) {
+            hikari.setPoolName("EterniaServer MySQL Pool");
+            hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+            hikari.addDataSourceProperty("serverName", EterniaLib.configs.host);
+            hikari.addDataSourceProperty("port", EterniaLib.configs.port);
+            hikari.addDataSourceProperty("databaseName", EterniaLib.configs.database);
+            hikari.addDataSourceProperty("user", EterniaLib.configs.user);
+            hikari.addDataSourceProperty("password", EterniaLib.configs.password);
+            hikari.setMaximumPoolSize(EterniaLib.configs.poolSize);
+            hikari.setMinimumIdle(EterniaLib.configs.poolSize);
+            hikari.setMaxLifetime(60000L);
+            hikari.setIdleTimeout(45000L);
+            hikari.setConnectionTestQuery("SELECT 1;");
+            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgUsingMySQL);
+            return;
+        }
+
+        try {
+
+            File dataFolder = new File(ConfigsCfg.DATABASE_FILE_PATH);
+            if (!dataFolder.exists() && dataFolder.createNewFile()) {
+                Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgCreateFile);
+            }
+
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgUsingSQLite);
+
+        } catch (IOException | SQLException | ClassNotFoundException e) {
+
+            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgError);
+            this.getServer().getPluginManager().disablePlugin(this);
+
+        }
+
     }
 
     public static boolean getMySQL() {
-        return mysql;
+        return configs.mysql;
     }
 
 }

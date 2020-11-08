@@ -18,12 +18,12 @@ public class SQL {
     }
 
     public static Connection getConnection() throws SQLException {
-        return EterniaLib.getMySQL() ? Connections.hikari.getConnection() : Connections.connection;
+        return EterniaLib.getMySQL() ? EterniaLib.hikari.getConnection() : EterniaLib.connection;
     }
 
     public static void executeAsync(Query query) {
-        if (EterniaLib.mysql) {
-            EterniaLib.runAsync(() -> execute(query));
+        if (EterniaLib.getMySQL()) {
+            CompletableFuture.runAsync(() -> execute(query));
         } else {
             execute(query);
         }
