@@ -1,13 +1,9 @@
 package br.com.eterniaserver.eternialib;
 
 import br.com.eterniaserver.eternialib.interfaces.Query;
-import org.bukkit.Bukkit;
 
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 

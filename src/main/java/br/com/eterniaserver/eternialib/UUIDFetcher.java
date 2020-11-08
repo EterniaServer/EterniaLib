@@ -31,6 +31,13 @@ public class UUIDFetcher {
     protected static final Map<UUID, String> lookupNameCache = new HashMap<>();
 
     public static UUID getUUIDOf(String name) {
+        UUID result = getUUIDOfWithoutSave(name);
+        lookupCache.put(name, result);
+        lookupNameCache.put(result, name);
+        return result;
+    }
+
+    public static UUID getUUIDOfWithoutSave(String name) {
         UUID result = lookupCache.get(name);
         if (result == null) {
             result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
@@ -49,8 +56,6 @@ public class UUIDFetcher {
                     }
                 } catch (IOException ignore) {}
             }
-            lookupCache.put(name, result);
-            lookupNameCache.put(result, name);
         }
         return result;
     }

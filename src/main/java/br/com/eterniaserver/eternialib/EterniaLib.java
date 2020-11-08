@@ -1,7 +1,6 @@
 package br.com.eterniaserver.eternialib;
 
 import br.com.eterniaserver.eternialib.sql.queries.CreateTable;
-import br.com.eterniaserver.eternialib.sql.queries.Select;
 
 import co.aikar.commands.PaperCommandManager;
 
@@ -16,11 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
-import java.util.UUID;
 
 public class EterniaLib extends JavaPlugin {
 

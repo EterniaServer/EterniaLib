@@ -43,7 +43,7 @@ public class ConfigsCfg {
 
         this.poolSize = config.getInt("sql.pool-size", 50);
 
-        this.msgLoadCache = config.getString("messages.load-cache" ,"$8[$aE$9L$8] $7Carregados $3%size%$7 arquivos de jogadores$8.").replace('$', (char) 0x00A7);
+        this.msgLoadCache = config.getString("messages.load-cache" ,"$8[$aE$9L$8] $7Carregados $3{0}$7 arquivos de jogadores$8.").replace('$', (char) 0x00A7);
         this.msgUsingMySQL = config.getString("messages.load-mysql", "$8[$aE$9L$8] $7Conexão $3MySQL $7feita com sucesso$8.").replace('$', (char) 0x00A7);
         this.msgUsingSQLite = config.getString("messages.load-sqlite", "$8[$aE$9L$8] $7Conexão $3SQLite $7feita com sucesso$8.").replace('$', (char) 0x00A7);
         this.msgError = config.getString("messages.connection-error", "$8[$aE$9L$8] $7Erro ao se conectar a database$8.").replace('$', (char) 0x00A7);

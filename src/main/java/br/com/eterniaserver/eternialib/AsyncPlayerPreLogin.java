@@ -43,7 +43,7 @@ public class AsyncPlayerPreLogin implements Listener {
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 
         String playerName = event.getName();
-        UUID uuid = UUIDFetcher.getUUIDOf(playerName);
+        UUID uuid = UUIDFetcher.getUUIDOfWithoutSave(playerName);
 
         if (!UUIDFetcher.lookupNameCache.containsKey(uuid)) {
             UUIDFetcher.lookupCache.put(playerName, uuid);
@@ -54,6 +54,7 @@ public class AsyncPlayerPreLogin implements Listener {
             SQL.execute(insert);
             return;
         }
+
 
         if (!UUIDFetcher.lookupNameCache.get(uuid).equals(playerName)) {
             UUIDFetcher.lookupCache.put(playerName, uuid);
