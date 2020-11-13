@@ -41,7 +41,7 @@ public class ConfigsCfg {
         this.user = config.getString("sql.user", "admin");
         this.password = config.getString("sql.password", "admin");
 
-        this.poolSize = config.getInt("sql.pool-size", 50);
+        this.poolSize = config.getInt("sql.pool-size", 15);
 
         this.msgLoadCache = config.getString("messages.load-cache" ,"$8[$aE$9L$8] $7Carregados $3{0}$7 arquivos de jogadores$8.").replace('$', (char) 0x00A7);
         this.msgUsingMySQL = config.getString("messages.load-mysql", "$8[$aE$9L$8] $7Conexão $3MySQL $7feita com sucesso$8.").replace('$', (char) 0x00A7);

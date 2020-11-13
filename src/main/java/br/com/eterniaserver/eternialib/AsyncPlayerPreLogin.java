@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +20,8 @@ public class AsyncPlayerPreLogin implements Listener {
 
     public AsyncPlayerPreLogin() {
 
-        try {
-            PreparedStatement statement = SQL.getConnection().prepareStatement(new Select("el_cache").queryString());
+        try (Connection connection = SQL.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(new Select("el_cache").queryString());
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
             while (resultSet.next()) {
