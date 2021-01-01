@@ -4,11 +4,10 @@ import br.com.eterniaserver.eternialib.sql.queries.Insert;
 import br.com.eterniaserver.eternialib.sql.queries.Select;
 import br.com.eterniaserver.eternialib.sql.queries.Update;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,31 +18,33 @@ import java.util.UUID;
 public class AsyncPlayerPreLogin implements Listener {
 
     public AsyncPlayerPreLogin() {
-
         try (Connection connection = SQL.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(new Select("el_cache").queryString());
-            statement.execute();
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                String playerName = resultSet.getString("player_name");
-                UUIDFetcher.lookupCache.put(playerName, uuid);
-                UUIDFetcher.lookupNameCache.put(uuid, playerName);
+            if (connection != null) {
+                PreparedStatement statement = connection.prepareStatement(new Select("el_cache").queryString());
+                statement.execute();
+                ResultSet resultSet = statement.getResultSet();
+                while (resultSet.next()) {
+                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                    String playerName = resultSet.getString("player_name");
+                    UUIDFetcher.lookupCache.put(playerName, uuid);
+                    UUIDFetcher.lookupNameCache.put(uuid, playerName);
+                }
+                resultSet.close();
+                statement.close();
+                EterniaLib.report(EterniaLib.configs.msgLoadCache.replace("{0}", String.valueOf(UUIDFetcher.lookupNameCache.size())));
+            } else {
+                EterniaLib.report("$8[$aE$9L$8] $7A conecção com a database está fechada$8.".replace('$', (char) 0x00A7));
             }
-            resultSet.close();
-            statement.close();
-            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgLoadCache.replace("{0}", String.valueOf(UUIDFetcher.lookupNameCache.size())));
         } catch (SQLException e) {
-            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgError);
+            EterniaLib.report(EterniaLib.configs.msgError);
             e.printStackTrace();
         }
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
 
-        String playerName = event.getName();
+        String playerName = event.getPlayer().getName();
         UUID uuid = UUIDFetcher.getUUIDOfWithoutSave(playerName);
 
         if (!UUIDFetcher.lookupNameCache.containsKey(uuid)) {
@@ -52,7 +53,7 @@ public class AsyncPlayerPreLogin implements Listener {
             Insert insert = new Insert("el_cache");
             insert.columns.set("uuid", "player_name");
             insert.values.set(uuid.toString(), playerName);
-            SQL.execute(insert);
+            SQL.executeAsync(insert);
             return;
         }
 
@@ -63,7 +64,7 @@ public class AsyncPlayerPreLogin implements Listener {
             Update update = new Update("el_cache");
             update.set.set("player_name", playerName);
             update.where.set("uuid", uuid.toString());
-            SQL.execute(update);
+            SQL.executeAsync(update);
         }
 
     }

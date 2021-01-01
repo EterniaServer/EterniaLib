@@ -3,6 +3,6 @@ main: br.com.eterniaserver.eternialib.EterniaLib
 name: EterniaLib
 version: '${project.version}'
 author: Yuri Nogueira
-description: A lib to load and save in sql.
-api-version: '1.13'
+description: A base lib to Eternia plugins.
+api-version: '1.13.2'
 load: STARTUP

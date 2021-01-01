@@ -18,14 +18,11 @@ import java.util.Locale;
 public class EterniaLib extends JavaPlugin {
 
     protected static final ConfigsCfg configs = new ConfigsCfg();
-
     protected static final HikariDataSource hikari = new HikariDataSource();
-
     protected static File dataFolder;
-
     protected static PaperCommandManager manager;
 
-    protected static EterniaLib plugin;
+    private static EterniaLib plugin;
 
     @Override
     public void onEnable() {
@@ -50,9 +47,7 @@ public class EterniaLib extends JavaPlugin {
         manager = new PaperCommandManager(this);
         manager.enableUnstableAPI("help");
 
-
         try {
-
             final String acf = "acf_messages.yml";
             final File files = new File(getDataFolder(), acf);
 
@@ -62,11 +57,9 @@ public class EterniaLib extends JavaPlugin {
 
             manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
             manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-
         } catch (IOException | InvalidConfigurationException e) {
-
+            report("$8[$aE$9L$8] $3acf_messages.yml $7possui uma configuração invalida$8.".replace('$', (char) 0x00A7));
             e.printStackTrace();
-
         }
 
     }
@@ -85,24 +78,20 @@ public class EterniaLib extends JavaPlugin {
             hikari.setConnectionTimeout(300000);
             hikari.setIdleTimeout(120000);
             hikari.setLeakDetectionThreshold(300000);
-            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgUsingMySQL);
+            report(EterniaLib.configs.msgUsingMySQL);
             return;
         }
 
         try {
-
             dataFolder = new File(ConfigsCfg.DATABASE_FILE_PATH);
             if (!dataFolder.exists() && dataFolder.createNewFile()) {
-                Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgCreateFile);
+                report(EterniaLib.configs.msgCreateFile);
             }
 
-            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgUsingSQLite);
-
+            report(EterniaLib.configs.msgUsingSQLite);
         } catch (IOException e) {
-
-            Bukkit.getConsoleSender().sendMessage(EterniaLib.configs.msgError);
+            report(EterniaLib.configs.msgError);
             this.getServer().getPluginManager().disablePlugin(this);
-
         }
 
     }
@@ -113,6 +102,10 @@ public class EterniaLib extends JavaPlugin {
 
     public static boolean getMySQL() {
         return configs.mysql;
+    }
+
+    protected static void report(String message) {
+        Bukkit.getConsoleSender().sendMessage(message);
     }
 
 }

@@ -54,7 +54,9 @@ public class UUIDFetcher {
                         String uuidAsString = object.get("id").getAsString();
                         result = parseUUIDFromString(uuidAsString);
                     }
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                    EterniaLib.report("$8[$aE$9L$8] $7Erro ao se conectar a $3api.mojang.com$8.".replace('$', (char) 0x00A7));
+                }
             }
         }
         return result;
@@ -81,6 +83,7 @@ public class UUIDFetcher {
                         result = object.get("name").getAsString();
                     }
                 } catch (IOException e) {
+                    EterniaLib.report("$8[$aE$9L$8] $7Erro ao se conectar a $3api.mojang.com$8, $7gerando uma UUID aleatória$8.".replace('$', (char) 0x00A7));
                     result = Long.toHexString(RANDOM.nextLong());
                 }
             } else {

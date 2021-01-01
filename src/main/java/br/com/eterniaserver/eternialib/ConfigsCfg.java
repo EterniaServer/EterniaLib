@@ -68,6 +68,7 @@ public class ConfigsCfg {
         try {
             outConfig.save(CONFIG_FILE_PATH);
         } catch (IOException exception) {
+            EterniaLib.report("$8[$aE$9L$8] $7Erroa o salvar arquivo na pasta$8.".replace('$', (char) 0x00A7));
             exception.printStackTrace();
         }
 
