@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,7 +15,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 public class UUIDFetcher {
@@ -25,73 +23,37 @@ public class UUIDFetcher {
         throw new IllegalStateException("Utility class");
     }
 
-    private static final Random RANDOM = new Random();
-
     protected static final Map<String, UUID> lookupCache = new HashMap<>();
     protected static final Map<UUID, String> lookupNameCache = new HashMap<>();
 
     public static UUID getUUIDOf(String name) {
-        UUID result = getUUIDOfWithoutSave(name);
+        UUID result = lookupCache.get(name);
+
+        if (result != null) {
+            return result;
+        }
+
+        result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+        if (Bukkit.getOnlineMode()) {
+            try {
+                URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                if (connection.getResponseCode() != 400) {
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    JsonElement element = new JsonParser().parse(bufferedReader);
+                    JsonObject object = element.getAsJsonObject();
+                    String uuidAsString = object.get("id").getAsString();
+                    result = parseUUIDFromString(uuidAsString);
+                }
+            } catch (IOException ignore) {
+                EterniaLib.report("$8[$aE$9L$8] $7Erro ao se conectar a $3api.mojang.com$8.".replace('$', (char) 0x00A7));
+            }
+        }
+
         lookupCache.put(name, result);
         lookupNameCache.put(result, name);
-        return result;
-    }
-
-    public static UUID getUUIDOfWithoutSave(String name) {
-        UUID result = lookupCache.get(name);
-        if (result == null) {
-            result = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-            if (Bukkit.getOnlineMode()) {
-                try {
-                    URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-                    if (connection.getResponseCode() != 400) {
-                        InputStream inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        JsonElement element = new JsonParser().parse(bufferedReader);
-                        JsonObject object = element.getAsJsonObject();
-                        String uuidAsString = object.get("id").getAsString();
-                        result = parseUUIDFromString(uuidAsString);
-                    }
-                } catch (IOException ignore) {
-                    EterniaLib.report("$8[$aE$9L$8] $7Erro ao se conectar a $3api.mojang.com$8.".replace('$', (char) 0x00A7));
-                }
-            }
-        }
-        return result;
-    }
-
-    public static String getNameOf(UUID uuid) {
-        String result = lookupNameCache.get(uuid);
-
-        if (result == null) {
-            if (Bukkit.getOnlineMode()) {
-                try {
-                    URL url = new URL("https://api.mojang.com/user/profiles/" + uuid.toString().replace("-", "") + "/names");
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-
-                    if(connection.getResponseCode() == 400) {
-                        result = Long.toHexString(RANDOM.nextLong());
-                    } else {
-                        InputStream inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        JsonElement element = new JsonParser().parse(bufferedReader);
-                        JsonArray array = element.getAsJsonArray();
-                        JsonObject object = array.get(0).getAsJsonObject();
-                        result = object.get("name").getAsString();
-                    }
-                } catch (IOException e) {
-                    EterniaLib.report("$8[$aE$9L$8] $7Erro ao se conectar a $3api.mojang.com$8, $7gerando uma UUID aleatória$8.".replace('$', (char) 0x00A7));
-                    result = Long.toHexString(RANDOM.nextLong());
-                }
-            } else {
-                result = Bukkit.getOfflinePlayer(uuid).getName();
-            }
-            lookupCache.put(result, uuid);
-            lookupNameCache.put(uuid, result);
-        }
         return result;
     }
 

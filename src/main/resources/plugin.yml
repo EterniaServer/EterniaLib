@@ -4,5 +4,7 @@ name: EterniaLib
 version: '${project.version}'
 author: Yuri Nogueira
 description: A base lib to Eternia plugins.
-api-version: '1.13.2'
+api-version: '1.13'
 load: STARTUP
+softdepend:
+  - ProtocolSupport

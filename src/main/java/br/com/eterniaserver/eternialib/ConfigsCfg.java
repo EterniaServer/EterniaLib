@@ -28,6 +28,19 @@ public class ConfigsCfg {
     protected final String msgError;
     protected final String msgCreateFile;
 
+    protected final boolean v1_4;
+    protected final boolean v1_5;
+    protected final boolean v1_6;
+    protected final boolean v1_7;
+    protected final boolean v1_8;
+    protected final boolean v1_9;
+    protected final boolean v1_10;
+    protected final boolean v1_11;
+    protected final boolean v1_12;
+    protected final boolean v1_13;
+    protected final boolean v1_14;
+    protected final boolean v1_15;
+
     public ConfigsCfg() {
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(CONFIG_FILE_PATH));
@@ -64,6 +77,31 @@ public class ConfigsCfg {
         outConfig.set("messages.load-sqlite", this.msgUsingSQLite);
         outConfig.set("messages.connection-error", this.msgError);
         outConfig.set("messages.create-file", this.msgCreateFile);
+
+        this.v1_4 = config.getBoolean("version-enabled.v1_4", false);
+        this.v1_5 = config.getBoolean("version-enabled.v1_5", false);
+        this.v1_6 = config.getBoolean("version-enabled.v1_6", false);
+        this.v1_7 = config.getBoolean("version-enabled.v1_7", false);
+        this.v1_8 = config.getBoolean("version-enabled.v1_8", false);
+        this.v1_9 = config.getBoolean("version-enabled.v1_9", false);
+        this.v1_10 = config.getBoolean("version-enabled.v1_10", false);
+        this.v1_11 = config.getBoolean("version-enabled.v1_11", false);
+        this.v1_12 = config.getBoolean("version-enabled.v1_12", false);
+        this.v1_13 = config.getBoolean("version-enabled.v1_13", false);
+        this.v1_14 = config.getBoolean("version-enabled.v1_14", false);
+        this.v1_15 = config.getBoolean("version-enabled.v1_15", false);
+        outConfig.set("version-enabled.v1_4", this.v1_4);
+        outConfig.set("version-enabled.v1_5", this.v1_5);
+        outConfig.set("version-enabled.v1_6", this.v1_6);
+        outConfig.set("version-enabled.v1_7", this.v1_7);
+        outConfig.set("version-enabled.v1_8", this.v1_8);
+        outConfig.set("version-enabled.v1_9", this.v1_9);
+        outConfig.set("version-enabled.v1_10", this.v1_10);
+        outConfig.set("version-enabled.v1_11", this.v1_11);
+        outConfig.set("version-enabled.v1_12", this.v1_12);
+        outConfig.set("version-enabled.v1_13", this.v1_13);
+        outConfig.set("version-enabled.v1_14", this.v1_14);
+        outConfig.set("version-enabled.v1_15", this.v1_15);
 
         try {
             outConfig.save(CONFIG_FILE_PATH);

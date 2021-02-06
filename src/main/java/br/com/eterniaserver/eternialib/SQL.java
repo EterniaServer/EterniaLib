@@ -47,7 +47,7 @@ public class SQL {
                 EterniaLib.report("$8[$aE$9L$8] $7A conecção com a database está fechada$8.".replace('$', (char) 0x00A7));
             }
         } catch (SQLException error) {
-            EterniaLib.report("$8[$aE$9L$8] $7A conecção com a database está fechada$8.".replace('$', (char) 0x00A7));
+            EterniaLib.report("$8[$aE$9L$8] $7Erro ao executar querry$8.".replace('$', (char) 0x00A7));
             error.printStackTrace();
         }
 
