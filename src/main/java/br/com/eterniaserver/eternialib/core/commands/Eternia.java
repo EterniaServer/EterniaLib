@@ -54,13 +54,14 @@ public class Eternia extends BaseCommand {
             return;
         }
 
-        if (reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && sep.length > 1 && !sep[1].equals("t")) {
+        if ((reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && sep[1] == null)
+                || reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && !sep[1].equals("t")) {
             plugin.sendMessage(sender, Messages.CONFIG_WARNING);
             return;
         }
 
         reloadableConfiguration.executeConfig();
-        plugin.sendMessage(sender, Messages.CONFIG_RELOADED);
+        plugin.sendMessage(sender, Messages.CONFIG_RELOADED, sep[0]);
 
     }
 
