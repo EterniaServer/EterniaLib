@@ -1,8 +1,8 @@
-package br.com.eterniaserver.eternialib.sql.queries;
+package br.com.eterniaserver.eternialib.core.queries;
 
-import br.com.eterniaserver.eternialib.interfaces.Query;
-import br.com.eterniaserver.eternialib.sql.objects.Columns;
-import br.com.eterniaserver.eternialib.sql.objects.Values;
+import br.com.eterniaserver.eternialib.core.interfaces.Query;
+import br.com.eterniaserver.eternialib.core.baseobjects.Columns;
+import br.com.eterniaserver.eternialib.core.baseobjects.Values;
 
 public class Insert implements Query {
 

@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.sql.objects;
+package br.com.eterniaserver.eternialib.core.baseobjects;
 
 public class Values {
 

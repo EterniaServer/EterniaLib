@@ -1,7 +1,7 @@
-package br.com.eterniaserver.eternialib.sql.queries;
+package br.com.eterniaserver.eternialib.core.queries;
 
-import br.com.eterniaserver.eternialib.interfaces.Query;
-import br.com.eterniaserver.eternialib.sql.objects.Columns;
+import br.com.eterniaserver.eternialib.core.interfaces.Query;
+import br.com.eterniaserver.eternialib.core.baseobjects.Columns;
 
 public class CreateTable implements Query {
 

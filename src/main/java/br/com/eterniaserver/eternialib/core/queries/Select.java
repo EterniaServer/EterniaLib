@@ -1,6 +1,6 @@
-package br.com.eterniaserver.eternialib.sql.queries;
+package br.com.eterniaserver.eternialib.core.queries;
 
-import br.com.eterniaserver.eternialib.interfaces.Query;
+import br.com.eterniaserver.eternialib.core.interfaces.Query;
 
 public class Select implements Query {
 
