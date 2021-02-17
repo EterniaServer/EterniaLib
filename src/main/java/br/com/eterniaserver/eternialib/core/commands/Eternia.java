@@ -54,7 +54,7 @@ public class Eternia extends BaseCommand {
             return;
         }
 
-        if ((reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && sep[1] == null)
+        if ((reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && sep.length == 1)
                 || reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && !sep[1].equals("t")) {
             plugin.sendMessage(sender, Messages.CONFIG_WARNING);
             return;
