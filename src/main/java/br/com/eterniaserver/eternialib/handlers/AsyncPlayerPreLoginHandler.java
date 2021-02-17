@@ -1,5 +1,6 @@
 package br.com.eterniaserver.eternialib.handlers;
 
+import br.com.eterniaserver.eternialib.Constants;
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.SQL;
 import br.com.eterniaserver.eternialib.UUIDFetcher;
@@ -21,10 +22,6 @@ import java.util.UUID;
 public class AsyncPlayerPreLoginHandler implements Listener {
 
     private final EterniaLib plugin;
-
-    private static final String TABLE_CACHE = "el_cache";
-    protected static final String UUID_STR = "uuid";
-    protected static final String PLAYER_NAME_STR = "player_name";
 
     public AsyncPlayerPreLoginHandler(final EterniaLib plugin) {
         this.plugin = plugin;
@@ -62,12 +59,12 @@ public class AsyncPlayerPreLoginHandler implements Listener {
             return;
         }
 
-        final Insert insert = new Insert(TABLE_CACHE);
+        final Insert insert = new Insert(Constants.TABLE_CACHE);
         final String playerName = event.getName();
         final UUID uuid = event.getUniqueId();
 
         plugin.registerNewUUID(playerName, uuid);
-        insert.columns.set(UUID_STR, PLAYER_NAME_STR);
+        insert.columns.set(Constants.UUID_STR, Constants.PLAYER_NAME_STR);
         insert.values.set(uuid.toString(), playerName);
         SQL.execute(insert);
 

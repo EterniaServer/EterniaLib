@@ -36,12 +36,12 @@ public final class SQL {
     @Nullable
     public static Connection getConnection() throws SQLException {
 
-        if (EterniaLib.getMySQL()) {
+        if (EterniaLib.MySQL) {
             return EterniaLib.hikari.getConnection();
         }
 
         if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + EterniaLib.dataFolder);
+            connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.DATABASE_FILE_PATH);
         }
 
         return connection;
@@ -55,7 +55,7 @@ public final class SQL {
      */
     public static void executeAsync(@Nonnull final Query query) {
 
-        if (!EterniaLib.getMySQL()) {
+        if (!EterniaLib.MySQL) {
             execute(query);
             return;
         }
@@ -75,7 +75,7 @@ public final class SQL {
      */
     public static void execute(@Nonnull final Query query) {
 
-        if (!EterniaLib.getMySQL()) {
+        if (!EterniaLib.MySQL) {
             try (final PreparedStatement preparedStatement = getConnection().prepareStatement(query.queryString())) {
                 preparedStatement.execute();
             } catch (SQLException exception) {

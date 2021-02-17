@@ -11,7 +11,6 @@ import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.handlers.AsyncPlayerPreLoginHandler;
 import br.com.eterniaserver.eternialib.handlers.LobbyHandler;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
-
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.baseobjects.CustomizableMessage;
 
@@ -26,6 +25,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
 
@@ -42,20 +42,19 @@ import java.util.UUID;
 
 public class EterniaLib extends JavaPlugin {
 
-    private ItemStack[] itemStacks;
+    private final List<ItemStack> itemStacks = new ArrayList<>();
+    private final int[] integers = new int[Integers.values().length];
+    private final boolean[] booleans = new boolean[Booleans.values().length];
+    private final String[] strings = new String[Strings.values().length];
+    private final CustomizableMessage[] messages = new CustomizableMessage[Messages.values().length];
+    private final List<String> protocolVersions = new ArrayList<>();
 
-    private static final int[] integers = new int[Integers.values().length];
-    private static final boolean[] booleans = new boolean[Booleans.values().length];
-    private static final String[] strings = new String[Strings.values().length];
-    private static final CustomizableMessage[] messages = new CustomizableMessage[Messages.values().length];
     private static final Map<Integer, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> reloadableConfig = new ArrayList<>();
-    private static final List<String> protocolVersions = new ArrayList<>();
-
-    protected static PaperCommandManager manager;
 
     protected static final HikariDataSource hikari = new HikariDataSource();
-    protected static final File dataFolder = new File(Constants.DATABASE_FILE_PATH);
+    protected static PaperCommandManager manager;
+    protected static boolean MySQL;
 
     @Override
     public void onEnable() {
@@ -75,7 +74,7 @@ public class EterniaLib extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginHandler(this), this);
 
         if (getBool(Booleans.LOBBY_SYSTEM)) {
-            this.getServer().getPluginManager().registerEvents(new LobbyHandler(this), this);
+            this.getServer().getPluginManager().registerEvents(new LobbyHandler(this, itemStacks), this);
         }
 
         if (getBool(Booleans.PROTOCOL_SUPPORT)) {
@@ -107,7 +106,7 @@ public class EterniaLib extends JavaPlugin {
 
     private void setUpConnection() {
 
-        if (EterniaLib.getMySQL()) {
+        if (setAndGetMySQL(getBool(Booleans.MYSQL))) {
             hikari.setPoolName("EterniaServer MySQL Pool");
             hikari.setJdbcUrl("jdbc:mysql://" + getString(Strings.SQL_HOST) +
                     ":" + getString(Strings.SQL_PORT) +
@@ -122,13 +121,13 @@ public class EterniaLib extends JavaPlugin {
             hikari.setConnectionTimeout(300000);
             hikari.setIdleTimeout(120000);
             hikari.setLeakDetectionThreshold(300000);
-
             report(getMessage(Messages.USING_MYSQL));
             return;
         }
 
         try {
             Class.forName("org.sqlite.JDBC");
+            final File dataFolder = new File(Constants.DATABASE_FILE_PATH);
             if (!dataFolder.exists() && dataFolder.createNewFile()) {
                 report(getMessage(Messages.FILE_CREATED));
             }
@@ -159,7 +158,7 @@ public class EterniaLib extends JavaPlugin {
     public void loadAllConfigs() {
         final ConfigsCfg configsCfg = new ConfigsCfg(strings, integers, booleans, protocolVersions);
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
-        final LobbyCfg lobbyCfg = new LobbyCfg(this, strings, booleans, integers);
+        final LobbyCfg lobbyCfg = new LobbyCfg(this, strings, booleans, integers, itemStacks);
 
         addReloadableConfiguration("eternialib", "config", configsCfg);
         addReloadableConfiguration("eternialib", "messages", messagesCfg);
@@ -182,14 +181,6 @@ public class EterniaLib extends JavaPlugin {
         return strings[entry.ordinal()];
     }
 
-    public ItemStack[] getItemStacks() {
-        return itemStacks;
-    }
-
-    public void setItemStacks(ItemStack[] itemStacks) {
-        this.itemStacks = itemStacks;
-    }
-
     public void sendMessage(final CommandSender sender, final Messages entry, final String... args) {
         sender.sendMessage(getMessage(entry, args));
     }
@@ -208,6 +199,19 @@ public class EterniaLib extends JavaPlugin {
         return configurations.get(hashCode);
     }
 
+    private static boolean setAndGetMySQL(final boolean state) {
+        return MySQL = state;
+    }
+
+    /**
+     * Returns a {@link Boolean} primitive that checks if the plugin is using MySQL (MariaDB).
+     *
+     * @return true or false
+     */
+    public static boolean getMySQL() {
+        return MySQL;
+    }
+
     /**
      * Add a {@link ReloadableConfiguration} to be possible of reload.
      *
@@ -222,15 +226,6 @@ public class EterniaLib extends JavaPlugin {
 
         reloadableConfig.add(cfgName);
         configurations.put(cfgName.hashCode(), reloadableConfiguration);
-    }
-
-    /**
-     * Returns a {@link Boolean} primitive that checks if the plugin is using MySQL (MariaDB).
-     *
-     * @return true or false
-     */
-    public static boolean getMySQL() {
-        return booleans[Booleans.MYSQL.ordinal()];
     }
 
     /**

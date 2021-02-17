@@ -10,6 +10,10 @@ public class Constants {
     public static final String LOBBY_FILE_PATH = DATA_LAYER_FOLDER_PATH + File.separator + "lobby.yml";
     public static final String DATABASE_FILE_PATH = DATA_LAYER_FOLDER_PATH + File.separator + "eternia.db";
 
+    public static final String TABLE_CACHE = "el_cache";
+    public static final String UUID_STR = "uuid";
+    public static final String PLAYER_NAME_STR = "player_name";
+
     /**
      * Static class should not be initialized.
      */

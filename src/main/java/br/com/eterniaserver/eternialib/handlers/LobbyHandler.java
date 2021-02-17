@@ -29,14 +29,16 @@ import org.bukkit.persistence.PersistentDataType;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class LobbyHandler implements Listener {
 
     private final EterniaLib plugin;
     private final ItemStack selectServer;
     private final NamespacedKey serverKey;
+    private final List<ItemStack> itemStacks;
 
-    public LobbyHandler(final EterniaLib plugin) {
+    public LobbyHandler(final EterniaLib plugin, final List<ItemStack> itemStacks) {
         this.plugin = plugin;
         this.serverKey = new NamespacedKey(plugin, "eternialib-lobby");
 
@@ -47,7 +49,7 @@ public class LobbyHandler implements Listener {
         itemStack.setItemMeta(itemMeta);
 
         this.selectServer = itemStack;
-
+        this.itemStacks = itemStacks;
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
@@ -101,8 +103,8 @@ public class LobbyHandler implements Listener {
                 plugin.getString(Strings.SELECT_TITLE_NAME));
 
         for (int i = 0; i < plugin.getInt(Integers.GUI_SIZE); i++) {
-            if (plugin.getItemStacks()[i] != null) {
-                serverSelector.setItem(i, plugin.getItemStacks()[i]);
+            if (itemStacks.get(i) != null) {
+                serverSelector.setItem(i, itemStacks.get(i));
             }
         }
 
