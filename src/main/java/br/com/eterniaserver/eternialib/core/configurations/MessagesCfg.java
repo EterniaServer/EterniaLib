@@ -50,7 +50,7 @@ public class MessagesCfg implements ReloadableConfiguration {
                 "Configuração $3{0} $7reiniciada com sucesso$8.",
                 "0: config");
         addDefault(Messages.CONFIG_WARNING,
-                "Reiniciar esse arquivo pode causar problemas ou pode causar lag$8.",
+                "Reiniciar esse arquivo pode causar problemas ou pode causar lag$8, $7para confirmar colocar $3:t$7 no final do nome da configuração$8.",
                 null);
         addDefault(Messages.COMMAND_INVALID,
                 "Você não possui nenhum comando para confirmar$8.",
