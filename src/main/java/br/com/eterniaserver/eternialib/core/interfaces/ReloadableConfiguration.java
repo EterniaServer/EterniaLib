@@ -11,4 +11,6 @@ public interface ReloadableConfiguration {
 
     void executeConfig();
 
+    void executeCritical();
+
 }

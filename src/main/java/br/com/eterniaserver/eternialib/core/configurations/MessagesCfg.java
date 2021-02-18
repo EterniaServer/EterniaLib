@@ -89,6 +89,9 @@ public class MessagesCfg implements ReloadableConfiguration {
 
     }
 
+    @Override
+    public void executeCritical() { }
+
     private void addDefault(final Messages entry, final String text, final String notes) {
         messages[entry.ordinal()] = new CustomizableMessage(text, notes);
     }

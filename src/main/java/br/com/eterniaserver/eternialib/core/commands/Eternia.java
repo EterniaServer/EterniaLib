@@ -61,6 +61,9 @@ public class Eternia extends BaseCommand {
         }
 
         reloadableConfiguration.executeConfig();
+        if (reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE) {
+            reloadableConfiguration.executeCritical();
+        }
         plugin.sendMessage(sender, Messages.CONFIG_RELOADED, sep[0]);
 
     }

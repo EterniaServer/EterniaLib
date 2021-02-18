@@ -16,16 +16,18 @@ import java.util.List;
 
 public class ConfigsCfg implements ReloadableConfiguration {
 
+    private final Runnable criticalRunnable;
     private final String[] strings;
     private final int[] integers;
     private final boolean[] booleans;
     private final List<String> protocolVersions;
 
-    public ConfigsCfg(final String[] strings, final int[] integers, final boolean[] booleans, final List<String> protocolVersions) {
+    public ConfigsCfg(final String[] strings, final int[] integers, final boolean[] booleans, final List<String> protocolVersions, final Runnable criticalRunnable) {
         this.strings = strings;
         this.integers = integers;
         this.booleans = booleans;
         this.protocolVersions = protocolVersions;
+        this.criticalRunnable = criticalRunnable;
     }
 
     @Override
@@ -47,6 +49,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
         strings[Strings.SQL_DATABASE.ordinal()] = config.getString("sql.database", "admin");
         strings[Strings.SQL_USER.ordinal()] = config.getString("sql.user", "admin");
         strings[Strings.SQL_PASSWORD.ordinal()] = config.getString("sql.password", "admin");
+        strings[Strings.SQL_TABLE.ordinal()] = config.getString("sql.table-cache", "el_cache");
 
         booleans[Booleans.MYSQL.ordinal()] = config.getBoolean("sql.mysql", false);
         booleans[Booleans.LOBBY_SYSTEM.ordinal()] = config.getBoolean("lobby.enabled", false);
@@ -88,6 +91,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
         outConfig.set("sql.database", strings[Strings.SQL_DATABASE.ordinal()]);
         outConfig.set("sql.user", strings[Strings.SQL_USER.ordinal()]);
         outConfig.set("sql.password", strings[Strings.SQL_PASSWORD.ordinal()]);
+        outConfig.set("sql.table-cache", strings[Strings.SQL_TABLE.ordinal()]);
 
         outConfig.set("sql.mysql", booleans[Booleans.MYSQL.ordinal()]);
         outConfig.set("lobby.enabled", booleans[Booleans.LOBBY_SYSTEM.ordinal()]);
@@ -103,6 +107,11 @@ public class ConfigsCfg implements ReloadableConfiguration {
             exception.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void executeCritical() {
+        criticalRunnable.run();
     }
 
 }

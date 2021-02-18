@@ -140,4 +140,7 @@ public class LobbyCfg implements ReloadableConfiguration {
 
     }
 
+    @Override
+    public void executeCritical() { }
+
 }

@@ -11,6 +11,7 @@ public enum Strings {
     SQL_PORT,
     SQL_DATABASE,
     SQL_USER,
-    SQL_PASSWORD
+    SQL_PASSWORD,
+    SQL_TABLE
 
 }
