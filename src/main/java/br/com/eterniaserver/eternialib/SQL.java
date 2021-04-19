@@ -64,7 +64,7 @@ public final class SQL {
             plugin = (EterniaLib) Bukkit.getPluginManager().getPlugin("EterniaLib");
         }
 
-        Bukkit.getScheduler().runTask(plugin, () -> execute(query));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> execute(query));
 
     }
 
