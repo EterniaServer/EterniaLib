@@ -114,9 +114,23 @@ public class LobbyCfg implements ReloadableConfiguration {
                 continue;
             }
 
-            outConfig.set("servers." + i + ".name", itemStacks.get(i).getItemMeta().getPersistentDataContainer().get(serverKey, PersistentDataType.STRING));
-            outConfig.set("servers." + i + ".display-name", itemStacks.get(i).getItemMeta().getDisplayName());
-            outConfig.set("servers." + i + ".lore", itemStacks.get(i).getItemMeta().getLore());
+            final ItemMeta itemMeta = itemStacks.get(i).getItemMeta();
+
+            if (itemMeta == null) {
+                outConfig.set("servers." + i + ".name", "error");
+                outConfig.set("servers." + i + ".display-name", "error");
+                outConfig.set("servers." + i + ".lore", "error");
+                outConfig.set("servers." + i + ".material", "error");
+                return;
+            }
+
+            final String nameItem = itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) != null ?
+                    itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) : "error";
+            final List<String> stringList = EterniaLib.isTesting() ? List.of("testing") : itemMeta.getLore();
+
+            outConfig.set("servers." + i + ".name", nameItem);
+            outConfig.set("servers." + i + ".display-name", itemMeta.getDisplayName());
+            outConfig.set("servers." + i + ".lore", stringList);
             outConfig.set("servers." + i + ".material", itemStacks.get(i).getType().name());
 
         }

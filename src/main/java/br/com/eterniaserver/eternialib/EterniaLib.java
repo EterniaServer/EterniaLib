@@ -25,8 +25,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.bukkit.plugin.java.JavaPluginLoader;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
 
@@ -63,10 +65,28 @@ public class EterniaLib extends JavaPlugin {
     private final List<String> protocolVersions = new ArrayList<>();
     private final String[] strings = new String[Strings.values().length];
 
+    private static boolean isTesting;
+
+    public EterniaLib() {
+        super();
+        isTesting = false;
+    }
+
+    public EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+        isTesting = true;
+    }
+
+    public static boolean isTesting() {
+        return isTesting;
+    }
+
     @Override
     public void onEnable() {
 
-        new Metrics(this, 8442);
+        if (!isTesting) {
+            new Metrics(this, 8442);
+        }
 
         loadAllConfigs();
         loadManager();
