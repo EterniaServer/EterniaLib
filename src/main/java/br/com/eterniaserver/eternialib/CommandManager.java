@@ -9,8 +9,6 @@ import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.CommandConditions;
 import co.aikar.commands.CommandReplacements;
 
-import javax.annotation.Nonnull;
-
 /**
  * Handlers the ACF.
  */
@@ -28,7 +26,7 @@ public class CommandManager {
      *
      * @param baseCommand is the class of command
      */
-    public static void registerCommand(@Nonnull final BaseCommand baseCommand) {
+    public static void registerCommand(final BaseCommand baseCommand) {
         EterniaLib.manager.registerCommand(baseCommand);
     }
 
@@ -37,7 +35,6 @@ public class CommandManager {
      *
      * @return the {@link CommandReplacements} handler
      */
-    @Nonnull
     public static CommandReplacements getCommandReplacements() {
         return EterniaLib.manager.getCommandReplacements();
     }
@@ -47,7 +44,6 @@ public class CommandManager {
      *
      * @return the {@link CommandConditions} handler
      */
-    @Nonnull
     public static CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> getCommandConditions() {
         return EterniaLib.manager.getCommandConditions();
     }
@@ -57,7 +53,6 @@ public class CommandManager {
      *
      * @return the {@link CommandCompletions} handler
      */
-    @Nonnull
     public static CommandCompletions<BukkitCommandCompletionContext> getCommandCompletions() {
         return EterniaLib.manager.getCommandCompletions();
     }

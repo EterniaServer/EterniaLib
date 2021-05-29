@@ -4,9 +4,6 @@ import br.com.eterniaserver.eternialib.core.interfaces.Query;
 
 import org.bukkit.Bukkit;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,7 +30,6 @@ public final class SQL {
      *
      * @return the {@link Connection}
      */
-    @Nullable
     public static Connection getConnection() throws SQLException {
 
         if (EterniaLib.MySQL) {
@@ -53,7 +49,7 @@ public final class SQL {
      *
      * @param query is the {@link Query} object
      */
-    public static void executeAsync(@Nonnull final Query query) {
+    public static void executeAsync(final Query query) {
 
         if (!EterniaLib.MySQL) {
             execute(query);
@@ -73,7 +69,7 @@ public final class SQL {
      *
      * @param query is the {@link Query} object
      */
-    public static void execute(@Nonnull final Query query) {
+    public static void execute(final Query query) {
 
         if (!EterniaLib.MySQL) {
             try (final PreparedStatement preparedStatement = getConnection().prepareStatement(query.queryString())) {

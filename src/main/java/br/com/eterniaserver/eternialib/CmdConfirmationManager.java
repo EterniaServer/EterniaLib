@@ -3,9 +3,6 @@ package br.com.eterniaserver.eternialib;
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,8 +27,7 @@ public class CmdConfirmationManager {
      * @param uuid is the {@link UUID} of player
      * @return is the {@link CommandConfirmable} object
      */
-    @Nullable
-    public static CommandConfirmable getAndRemoveCommand(@Nonnull final UUID uuid) {
+    public static CommandConfirmable getAndRemoveCommand(final UUID uuid) {
         final CommandConfirmable commandConfirmable = commandConfirmMap.get(uuid);
         commandConfirmMap.remove(uuid);
         return commandConfirmable;
@@ -43,8 +39,8 @@ public class CmdConfirmationManager {
      * @param player is the object of player
      * @param confirmable is the {@link CommandConfirmable} object
      */
-    public static void scheduleCommand(@Nonnull final Player player,
-                                       @Nonnull final CommandConfirmable confirmable) {
+    public static void scheduleCommand(final Player player,
+                                       final CommandConfirmable confirmable) {
         commandConfirmMap.put(player.getUniqueId(), confirmable);
     }
 

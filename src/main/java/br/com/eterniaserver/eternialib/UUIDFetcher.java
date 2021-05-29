@@ -1,8 +1,5 @@
 package br.com.eterniaserver.eternialib;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,8 +24,7 @@ public final class UUIDFetcher {
      * @param playerName is the player's name
      * @return player {@link UUID} or null
      */
-    @Nullable
-    public static UUID getUUIDOf(@Nonnull final String playerName) {
+    public static UUID getUUIDOf(final String playerName) {
         return lookupCache.get(playerName);
     }
 

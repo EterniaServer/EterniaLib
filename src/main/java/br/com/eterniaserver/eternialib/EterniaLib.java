@@ -32,8 +32,6 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
 
-import javax.annotation.Nonnull;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -95,7 +93,9 @@ public class EterniaLib extends JavaPlugin {
 
         loadDatabase();
 
-        this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginHandler(this), this);
+        if (!isTesting) {
+            this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginHandler(this), this);
+        }
 
         if (getBool(Booleans.LOBBY_SYSTEM)) {
             this.getServer().getPluginManager().registerEvents(new LobbyHandler(this, itemStacks), this);
@@ -272,9 +272,9 @@ public class EterniaLib extends JavaPlugin {
      * @param configName is the name of the configuration that will be reloadable
      * @param reloadableConfiguration is the object of configuration
      */
-    public static void addReloadableConfiguration(@Nonnull final String pluginName,
-                                                  @Nonnull final String configName,
-                                                  @Nonnull final ReloadableConfiguration reloadableConfiguration) {
+    public static void addReloadableConfiguration(final String pluginName,
+                                                  final String configName,
+                                                  final ReloadableConfiguration reloadableConfiguration) {
         final String cfgName = pluginName + "_" + configName;
 
         reloadableConfig.add(cfgName);
@@ -286,7 +286,7 @@ public class EterniaLib extends JavaPlugin {
      *
      * @param message is the {@link String} of message
      */
-    public static void report(@Nonnull final String message) {
+    public static void report(final String message) {
         Bukkit.getConsoleSender().sendMessage(message);
     }
 
