@@ -8,8 +8,8 @@ public class Insert implements Query {
 
     private final String table;
 
-    public Columns columns = new Columns();
-    public Values values = new Values();
+    public final Columns columns = new Columns();
+    public final Values values = new Values();
 
     public Insert(String table) {
         this.table = table;

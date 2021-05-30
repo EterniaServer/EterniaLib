@@ -7,8 +7,8 @@ public class Update implements Query {
 
     private final String table;
 
-    public Cells set = new Cells();
-    public Cells where = new Cells();
+    public final Cells set = new Cells();
+    public final Cells where = new Cells();
 
     public Update(String table) {
         this.table = table;

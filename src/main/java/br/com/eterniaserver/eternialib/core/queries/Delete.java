@@ -7,7 +7,7 @@ public class Delete implements Query {
 
     private final String table;
 
-    public Cells where = new Cells();
+    public final Cells where = new Cells();
 
     public Delete(String table) {
         this.table = table;

@@ -7,7 +7,7 @@ public class CreateTable implements Query {
 
     private final String table;
 
-    public Columns columns = new Columns();
+    public final Columns columns = new Columns();
 
     public CreateTable(String table) {
         this.table = table;
