@@ -1,22 +1,21 @@
 package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
+
 import org.junit.jupiter.api.*;
 
 class TestPluginClass {
 
-    private static ServerMock server;
     private static EterniaLib plugin;
 
     @BeforeAll
     public static void setUp() {
-        server = MockBukkit.mock();
+        MockBukkit.mock();
         plugin = MockBukkit.load(EterniaLib.class);
     }
 
@@ -32,6 +31,8 @@ class TestPluginClass {
         Assertions.assertEquals(10, plugin.getInt(Integers.SQL_POOL_SIZE));
         Assertions.assertFalse(plugin.getBool(Booleans.MYSQL));
         Assertions.assertNotNull(plugin.getMessage(Messages.ERROR));
+
+        Assertions.assertFalse(EterniaLib.getMySQL());
     }
 
 }

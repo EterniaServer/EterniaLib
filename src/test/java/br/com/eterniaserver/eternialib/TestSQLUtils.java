@@ -3,6 +3,7 @@ package br.com.eterniaserver.eternialib;
 import be.seeseemelk.mockbukkit.MockBukkit;
 
 import br.com.eterniaserver.eternialib.core.queries.*;
+
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TestSQLUtils {
+class TestSQLUtils {
 
     private final static String TABLE_TEST = "table_test";
 
