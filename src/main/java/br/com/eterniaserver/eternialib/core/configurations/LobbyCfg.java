@@ -126,7 +126,16 @@ public class LobbyCfg implements ReloadableConfiguration {
 
             final String nameItem = itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) != null ?
                     itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) : "error";
-            final List<String> stringList = EterniaLib.isTesting() ? List.of("testing") : itemMeta.getLore();
+            boolean error = true;
+            final List<String> stringList;
+            try {
+                if (itemMeta.getLore() != null) {
+                    error = false;
+                }
+            } catch (NullPointerException ignored) {
+            } finally {
+                stringList = error ? List.of("error") : itemMeta.getLore();
+            }
 
             outConfig.set("servers." + i + ".name", nameItem);
             outConfig.set("servers." + i + ".display-name", itemMeta.getDisplayName());

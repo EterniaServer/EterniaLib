@@ -4,6 +4,7 @@ import br.com.eterniaserver.eternialib.core.Managers;
 import br.com.eterniaserver.eternialib.core.configurations.ConfigsCfg;
 import br.com.eterniaserver.eternialib.core.configurations.LobbyCfg;
 import br.com.eterniaserver.eternialib.core.configurations.MessagesCfg;
+import br.com.eterniaserver.eternialib.core.configurations.MetricsLite;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
@@ -18,8 +19,6 @@ import br.com.eterniaserver.eternialib.core.baseobjects.CustomizableMessage;
 import co.aikar.commands.PaperCommandManager;
 
 import com.zaxxer.hikari.HikariDataSource;
-
-import org.bstats.bukkit.Metrics;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -63,28 +62,18 @@ public class EterniaLib extends JavaPlugin {
     private final List<String> protocolVersions = new ArrayList<>();
     private final String[] strings = new String[Strings.values().length];
 
-    private static boolean isTesting;
-
     public EterniaLib() {
         super();
-        isTesting = false;
     }
 
     public EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
-        isTesting = true;
-    }
-
-    public static boolean isTesting() {
-        return isTesting;
     }
 
     @Override
     public void onEnable() {
 
-        if (!isTesting) {
-            new Metrics(this, 8442);
-        }
+        new MetricsLite(this, 8442);
 
         loadAllConfigs();
         loadManager();
@@ -93,9 +82,7 @@ public class EterniaLib extends JavaPlugin {
 
         loadDatabase();
 
-        if (!isTesting) {
-            this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginHandler(this), this);
-        }
+        this.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginHandler(this), this);
 
         if (getBool(Booleans.LOBBY_SYSTEM)) {
             this.getServer().getPluginManager().registerEvents(new LobbyHandler(this, itemStacks), this);

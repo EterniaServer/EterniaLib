@@ -55,7 +55,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
         booleans[Booleans.LOBBY_SYSTEM.ordinal()] = config.getBoolean("lobby.enabled", false);
         booleans[Booleans.PROTOCOL_SUPPORT.ordinal()] = config.getBoolean("server.protocol-support.enabled", false);
 
-        integers[Integers.SQL_POOL_SIZE.ordinal()] = config.getInt("sql.pool-size");
+        integers[Integers.SQL_POOL_SIZE.ordinal()] = config.getInt("sql.pool-size", 10);
 
         final List<String> versionsList = config.getStringList("server.protocol-support.versions-enabled");
         if (versionsList.size() == 0) {
