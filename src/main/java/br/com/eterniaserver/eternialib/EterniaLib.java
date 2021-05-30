@@ -194,7 +194,7 @@ public class EterniaLib extends JavaPlugin {
     }
 
     private void hookIntoProtocolSupport() {
-        for (final ProtocolVersion version : ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_4_7, ProtocolVersion.MINECRAFT_1_16_3)) {
+        for (final ProtocolVersion version : ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_4_7, ProtocolVersion.MINECRAFT_1_16_4)) {
             if (!protocolVersions.contains(version.name())) {
                 ProtocolSupportAPI.disableProtocolVersion(version);
             }

@@ -149,7 +149,7 @@
         <dependency>
             <groupId>com.github.ProtocolSupport</groupId>
             <artifactId>ProtocolSupport</artifactId>
-            <version>master</version>
+            <version>69bd7632bd</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
