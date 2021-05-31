@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib;
 
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
+
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
