@@ -49,7 +49,7 @@ public class EterniaLib extends JavaPlugin {
     private static final Map<Integer, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> reloadableConfig = new ArrayList<>();
 
-    protected static boolean MySQL;
+    protected static boolean mySQL;
 
     protected static PaperCommandManager manager;
     protected static HikariDataSource hikari;
@@ -138,9 +138,9 @@ public class EterniaLib extends JavaPlugin {
 
         UUIDFetcher.lookupCache.clear();
 
-        try (final Connection connection = SQL.getConnection()) {
-            final PreparedStatement statement = connection.prepareStatement(new Select(getString(Strings.SQL_TABLE)).queryString());
-            final ResultSet resultSet = statement.executeQuery();
+        try (final Connection connection = SQL.getConnection();
+             final PreparedStatement statement = connection.prepareStatement(new Select(getString(Strings.SQL_TABLE)).queryString());
+             final ResultSet resultSet = statement.executeQuery()) {
             int size = 0;
 
             while (resultSet.next()) {
@@ -150,8 +150,6 @@ public class EterniaLib extends JavaPlugin {
                 size++;
             }
 
-            resultSet.close();
-            statement.close();
             report(getMessage(Messages.LOAD_CACHE, String.valueOf(size)));
         } catch (SQLException e) {
             report(getMessage(Messages.ERROR));
@@ -240,7 +238,7 @@ public class EterniaLib extends JavaPlugin {
     }
 
     private static boolean setAndGetMySQL(final boolean state) {
-        return MySQL = state;
+        return mySQL = state;
     }
 
     /**
@@ -249,7 +247,7 @@ public class EterniaLib extends JavaPlugin {
      * @return true or false
      */
     public static boolean getMySQL() {
-        return MySQL;
+        return mySQL;
     }
 
     /**

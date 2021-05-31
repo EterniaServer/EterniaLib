@@ -186,7 +186,7 @@ public class MetricsLite {
         long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
         long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
         scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000L * 60L * 30L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -333,6 +333,10 @@ public class MetricsLite {
 
         // Compress the data to save bandwidth
         byte[] compressedData = compress(data.toString());
+
+        if (compressedData == null) {
+            return;
+        }
 
         // Add headers
         connection.setRequestMethod("POST");

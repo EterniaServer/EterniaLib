@@ -32,7 +32,7 @@ public final class SQL {
      */
     public static Connection getConnection() throws SQLException {
 
-        if (EterniaLib.MySQL) {
+        if (EterniaLib.mySQL) {
             return EterniaLib.hikari.getConnection();
         }
 
@@ -51,7 +51,7 @@ public final class SQL {
      */
     public static void executeAsync(final Query query) {
 
-        if (!EterniaLib.MySQL) {
+        if (!EterniaLib.mySQL) {
             execute(query);
             return;
         }
@@ -71,7 +71,7 @@ public final class SQL {
      */
     public static void execute(final Query query) {
 
-        if (!EterniaLib.MySQL) {
+        if (!EterniaLib.mySQL) {
             try (final PreparedStatement preparedStatement = getConnection().prepareStatement(query.queryString())) {
                 preparedStatement.execute();
             } catch (SQLException exception) {
@@ -80,10 +80,9 @@ public final class SQL {
             return;
         }
 
-        try (final Connection connection = getConnection()) {
-            final PreparedStatement preparedStatement = connection.prepareStatement(query.queryString());
+        try (final Connection connection = getConnection();
+             final PreparedStatement preparedStatement = connection.prepareStatement(query.queryString())) {
             preparedStatement.execute();
-            preparedStatement.close();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

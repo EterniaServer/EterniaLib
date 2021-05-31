@@ -55,27 +55,25 @@ public class CommandsLocaleCfg {
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.COMMANDS_FILE_PATH));
 
         for (final Commands entry : Commands.values()) {
-            final CommandLocale commandLocale = defaults[entry.ordinal()];
+            final String cmdName = config.getString(entry.name() + ".name", defaults[entry.ordinal()].getName());
+            final String cmdSyntax = config.getString(entry.name() + ".syntax", defaults[entry.ordinal()].getSyntax());
+            final String cmdDescription = config.getString(entry.name() + ".description", defaults[entry.ordinal()].getDescription());
+            final String cmdPerm = config.getString(entry.name() + ".perm", defaults[entry.ordinal()].getPerm());
+            final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].getAliases());
 
-            this.defaults[entry.ordinal()].name = config.getString(entry.name() + ".name", commandLocale.name);
-            config.set(entry.name() + ".name", this.defaults[entry.ordinal()].name);
+            this.defaults[entry.ordinal()] = new CommandLocale(cmdName, cmdSyntax, cmdDescription, cmdPerm, cmdAliases);
 
-            if (commandLocale.syntax != null) {
-                this.defaults[entry.ordinal()].syntax = config.getString(entry.name() + ".syntax", commandLocale.syntax);
-                config.set(entry.name() + ".syntax", this.defaults[entry.ordinal()].syntax);
+            config.set(entry.name() + ".name", cmdName);
+            config.set(entry.name() + ".description", cmdDescription);
+            config.set(entry.name() + ".perm", cmdPerm);
+
+            if (cmdSyntax != null) {
+                config.set(entry.name() + ".syntax", cmdSyntax);
             }
 
-            this.defaults[entry.ordinal()].description = config.getString(entry.name() + ".description", commandLocale.description);
-            config.set(entry.name() + ".description", this.defaults[entry.ordinal()].description);
-
-            this.defaults[entry.ordinal()].perm = config.getString(entry.name() + ".perm", commandLocale.perm);
-            config.set(entry.name() + ".perm", this.defaults[entry.ordinal()].perm);
-
-            if (commandLocale.aliases != null) {
-                this.defaults[entry.ordinal()].aliases = config.getString(entry.name() + ".aliases", commandLocale.aliases);
-                config.set(entry.name() + ".aliases", this.defaults[entry.ordinal()].aliases);
+            if (cmdAliases != null) {
+                config.set(entry.name() + ".aliases", cmdAliases);
             }
-
         }
 
         try {
@@ -91,23 +89,23 @@ public class CommandsLocaleCfg {
     }
 
     public String getName(Commands id) {
-        return defaults[id.ordinal()].name;
+        return defaults[id.ordinal()].getName();
     }
 
     public String getSyntax(Commands id) {
-        return defaults[id.ordinal()].syntax != null ? defaults[id.ordinal()].syntax : "";
+        return defaults[id.ordinal()].getSyntax() != null ? defaults[id.ordinal()].getSyntax() : "";
     }
 
     public String getDescription(Commands id) {
-        return defaults[id.ordinal()].description;
+        return defaults[id.ordinal()].getDescription();
     }
 
     public String getPerm(Commands id) {
-        return defaults[id.ordinal()].perm;
+        return defaults[id.ordinal()].getPerm();
     }
 
     public String getAliases(Commands id) {
-        return defaults[id.ordinal()].aliases != null ? defaults[id.ordinal()].aliases : "";
+        return defaults[id.ordinal()].getAliases() != null ? defaults[id.ordinal()].getAliases() : "";
     }
 
 
