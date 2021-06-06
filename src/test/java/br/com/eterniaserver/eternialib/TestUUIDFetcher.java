@@ -2,14 +2,18 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import br.com.eterniaserver.eternialib.handlers.AsyncPlayerPreLoginHandler;
 
 import net.bytebuddy.utility.RandomString;
+
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
 
 import java.net.InetAddress;
 
@@ -32,9 +36,9 @@ class TestUUIDFetcher {
     @Test
     @DisplayName("Test if the UUIDFetch feature is working")
     void testUUIDFetch() {
-        final PlayerMock player = server.addPlayer(new RandomString(16).nextString());
-        final InetAddress ip = InetAddress.getLoopbackAddress();
-        final AsyncPlayerPreLoginEvent event = new AsyncPlayerPreLoginEvent(player.getName(), ip, player.getUniqueId());
+        final var player = server.addPlayer(new RandomString(16).nextString());
+        final var ip = InetAddress.getLoopbackAddress();
+        final var event = new AsyncPlayerPreLoginEvent(player.getName(), ip, player.getUniqueId());
 
         listener.onAsyncPlayerPreLoginEvent(event);
         Assertions.assertEquals(player.getUniqueId(), UUIDFetcher.getUUIDOf(player.getName()));

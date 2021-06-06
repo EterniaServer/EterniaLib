@@ -4,11 +4,12 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 
 import br.com.eterniaserver.eternialib.core.queries.*;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class TestSQLUtils {
@@ -35,25 +36,25 @@ class TestSQLUtils {
     @Test
     @DisplayName("Test the SQL queries")
     void testQueries() {
-        final CreateTable createTable = new CreateTable(TABLE_TEST);
+        final var createTable = new CreateTable(TABLE_TEST);
         createTable.columns.set("test varchar(16)");
         SQL.execute(createTable);
 
-        final Insert insert = new Insert(TABLE_TEST);
+        final var insert = new Insert(TABLE_TEST);
         insert.columns.set("test");
         insert.values.set("result_test");
         SQL.execute(insert);
 
         Assertions.assertDoesNotThrow(() -> selectQuery("result_test"));
 
-        final Update update = new Update(TABLE_TEST);
+        final var update = new Update(TABLE_TEST);
         update.where.set("test", "result_test");
         update.set.set("test", "test_result");
         SQL.execute(update);
 
         Assertions.assertDoesNotThrow(() -> selectQuery("test_result"));
 
-        final Delete delete = new Delete(TABLE_TEST);
+        final var delete = new Delete(TABLE_TEST);
         delete.where.set("test", "test_result");
         SQL.executeAsync(delete);
 
@@ -61,11 +62,11 @@ class TestSQLUtils {
     }
 
     private void selectQuery(String value) throws SQLException {
-        final Select select = new Select(TABLE_TEST);
+        final var select = new Select(TABLE_TEST);
 
-        try (final Connection con = SQL.getConnection();
-             final PreparedStatement preStat = con.prepareStatement(select.queryString());
-             final ResultSet resSet = preStat.executeQuery()) {
+        try (final var con = SQL.getConnection();
+             final var preStat = con.prepareStatement(select.queryString());
+             final var resSet = preStat.executeQuery()) {
             Assertions.assertEquals(value, resSet.getString("test"));
         }
     }

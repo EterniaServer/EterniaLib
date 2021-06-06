@@ -1,16 +1,19 @@
 package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-
 import be.seeseemelk.mockbukkit.ServerMock;
 
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
 
 import net.bytebuddy.utility.RandomString;
 
 import org.bukkit.Bukkit;
-import org.junit.jupiter.api.*;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.UUID;
 
@@ -32,8 +35,8 @@ public class TestCmdCSchedule {
     @Test
     @DisplayName("Test with a valid user")
     void testWithValidUser() {
-        final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
-        final ExampleCommand exampleCommand = new ExampleCommand();
+        final var playerMock = server.addPlayer(new RandomString(16).nextString());
+        final var exampleCommand = new ExampleCommand();
 
         CmdConfirmationManager.scheduleCommand(playerMock, exampleCommand);
 
@@ -46,7 +49,7 @@ public class TestCmdCSchedule {
         Assertions.assertNull(CmdConfirmationManager.getAndRemoveCommand(UUID.randomUUID()));
     }
 
-    private static class ExampleCommand implements CommandConfirmable {
+    private final static class ExampleCommand implements CommandConfirmable {
 
         @Override
         public void execute() {
