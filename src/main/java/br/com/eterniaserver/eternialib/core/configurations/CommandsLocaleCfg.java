@@ -78,9 +78,7 @@ public class CommandsLocaleCfg {
 
         try {
             config.save(Constants.COMMANDS_FILE_PATH);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+        } catch (IOException ignored) { }
 
     }
 

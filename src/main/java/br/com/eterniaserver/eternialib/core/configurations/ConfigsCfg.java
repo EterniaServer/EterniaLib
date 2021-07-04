@@ -58,7 +58,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
         integers[Integers.SQL_POOL_SIZE.ordinal()] = config.getInt("sql.pool-size", 10);
 
         final List<String> versionsList = config.getStringList("server.protocol-support.versions-enabled");
-        if (versionsList.size() == 0) {
+        if (versionsList.isEmpty()) {
             versionsList.add("MINECRAFT_1_13_1");
             versionsList.add("MINECRAFT_1_13_2");
             versionsList.add("MINECRAFT_1_14_1");
@@ -103,9 +103,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
 
         try {
             outConfig.save(Constants.CONFIG_FILE_PATH);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+        } catch (IOException ignored) { }
 
     }
 
