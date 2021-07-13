@@ -261,7 +261,7 @@ public class EterniaLib extends JavaPlugin {
     public static void addReloadableConfiguration(final String pluginName,
                                                   final String configName,
                                                   final ReloadableConfiguration reloadableConfiguration) {
-        final String cfgName = pluginName + "_" + configName;
+        final var cfgName = pluginName + "_" + configName;
 
         reloadableConfig.add(cfgName);
         configurations.put(cfgName.hashCode(), reloadableConfiguration);
