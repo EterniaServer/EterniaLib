@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
 
-public class TestCommands {
+class TestCommands {
 
     private static ServerMock server;
     private static EterniaLib plugin;

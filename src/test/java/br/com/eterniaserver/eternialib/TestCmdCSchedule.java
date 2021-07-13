@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.UUID;
 
-public class TestCmdCSchedule {
+class TestCmdCSchedule {
 
     private static ServerMock server;
 
