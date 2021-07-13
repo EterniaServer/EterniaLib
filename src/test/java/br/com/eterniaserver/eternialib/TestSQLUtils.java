@@ -2,7 +2,11 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 
-import br.com.eterniaserver.eternialib.core.queries.*;
+import br.com.eterniaserver.eternialib.core.queries.CreateTable;
+import br.com.eterniaserver.eternialib.core.queries.Delete;
+import br.com.eterniaserver.eternialib.core.queries.Insert;
+import br.com.eterniaserver.eternialib.core.queries.Select;
+import br.com.eterniaserver.eternialib.core.queries.Update;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
