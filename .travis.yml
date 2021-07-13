@@ -1,9 +1,9 @@
 language: java
+os: [linux]
+dist: focal
 addons:
   sonarcloud:
     organization: eterniaserver
-    token:
-      secure: $SONAR_CLOUD_TOKEN
 jobs:
   include:
     - stage: "Unit Tests & SonarCloud Analysis"
