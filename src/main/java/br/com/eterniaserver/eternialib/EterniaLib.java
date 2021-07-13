@@ -123,8 +123,8 @@ public class EterniaLib extends JavaPlugin {
 
             manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
             manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        } catch (IOException | InvalidConfigurationException exception) {
+            Bukkit.getLogger().warning("Invalid folder permissions, exception class: " + exception.getClass().getName());
         }
 
     }
@@ -151,9 +151,9 @@ public class EterniaLib extends JavaPlugin {
             }
 
             report(getMessage(Messages.LOAD_CACHE, String.valueOf(size)));
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             report(getMessage(Messages.ERROR));
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Cant connect to SQLite database, exception class: " + exception.getClass().getName());
         }
     }
 

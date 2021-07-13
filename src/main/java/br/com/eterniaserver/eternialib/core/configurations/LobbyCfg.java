@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.enums.*;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -158,7 +159,7 @@ public class LobbyCfg implements ReloadableConfiguration {
         try {
             outConfig.save(Constants.LOBBY_FILE_PATH);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
         }
 
     }

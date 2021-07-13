@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.EterniaLib;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -189,7 +190,7 @@ public class LobbyHandler implements Listener {
             dos.writeUTF(server);
             player.sendPluginMessage(plugin, "BungeeCord", outputStream.toByteArray());
         } catch (IOException exception) {
-            exception.printStackTrace();
+            Bukkit.getLogger().warning("Can't send message to BungeeCord, exception class: " + exception.getClass().getName());
         }
     }
 }

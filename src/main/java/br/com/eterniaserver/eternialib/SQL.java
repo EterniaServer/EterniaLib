@@ -75,7 +75,7 @@ public final class SQL {
             try (final PreparedStatement preparedStatement = getConnection().prepareStatement(query.queryString())) {
                 preparedStatement.execute();
             } catch (SQLException exception) {
-                exception.printStackTrace();
+                Bukkit.getLogger().warning("Can't connect to SQLite: " + exception.getClass().getName());
             }
             return;
         }
@@ -84,7 +84,7 @@ public final class SQL {
              final PreparedStatement preparedStatement = connection.prepareStatement(query.queryString())) {
             preparedStatement.execute();
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            Bukkit.getLogger().warning("Can't connect to MySQL: " + exception.getClass().getName());
         }
 
     }
