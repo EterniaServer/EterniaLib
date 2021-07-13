@@ -14,6 +14,8 @@ public class Constants {
     public static final String UUID_STR = "uuid";
     public static final String PLAYER_NAME_STR = "player_name";
 
+    public static final String PLUGIN_NAME = "eternialib";
+
     /**
      * Static class should not be initialized.
      */

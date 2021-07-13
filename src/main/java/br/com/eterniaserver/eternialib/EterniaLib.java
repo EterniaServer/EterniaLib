@@ -99,9 +99,9 @@ public class EterniaLib extends JavaPlugin {
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
         final LobbyCfg lobbyCfg = new LobbyCfg(this, strings, booleans, integers, itemStacks);
 
-        addReloadableConfiguration("eternialib", "config", configsCfg);
-        addReloadableConfiguration("eternialib", "messages", messagesCfg);
-        addReloadableConfiguration("eternialib", "lobby", lobbyCfg);
+        addReloadableConfiguration(Constants.PLUGIN_NAME, "config", configsCfg);
+        addReloadableConfiguration(Constants.PLUGIN_NAME, "messages", messagesCfg);
+        addReloadableConfiguration(Constants.PLUGIN_NAME, "lobby", lobbyCfg);
 
         configsCfg.executeConfig();
         messagesCfg.executeConfig();
@@ -238,7 +238,8 @@ public class EterniaLib extends JavaPlugin {
     }
 
     private static boolean setAndGetMySQL(final boolean state) {
-        return mySQL = state;
+        mySQL = state;
+        return mySQL;
     }
 
     /**
