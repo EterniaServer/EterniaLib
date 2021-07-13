@@ -7,6 +7,7 @@ import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -78,12 +79,14 @@ public class ConfigsCfg implements ReloadableConfiguration {
 
         // Save the configurations
         final FileConfiguration outConfig = new YamlConfiguration();
-        outConfig.options().header("List of versions to ProtocolSupport: MINECRAFT_1_4_7 MINECRAFT_1_5_1 MINECRAFT_1_5_2\n" +
-                "MINECRAFT_1_6_1 MINECRAFT_1_6_2 MINECRAFT_1_6_4 MINECRAFT_1_7_5 MINECRAFT_1_7_10 MINECRAFT_1_8\n" +
-                "MINECRAFT_1_9 MINECRAFT_1_9_1 MINECRAFT_1_9_2 MINECRAFT_1_9_4 MINECRAFT_1_10 MINECRAFT_1_11\n" +
-                "MINECRAFT_1_11_1 MINECRAFT_1_12 MINECRAFT_1_12_1 MINECRAFT_1_12_2 MINECRAFT_1_13_1 MINECRAFT_1_13_2\n" +
-                "MINECRAFT_1_14_1 MINECRAFT_1_14_2 MINECRAFT_1_14_3 MINECRAFT_1_14_4 MINECRAFT_1_15 MINECRAFT_1_15_1\n" +
-                "MINECRAFT_1_15_2 MINECRAFT_1_16 MINECRAFT_1_16_1 MINECRAFT_1_16_1 MINECRAFT_1_16_2 MINECRAFT_1_16_3");
+        outConfig.options().header("""
+                List of versions to ProtocolSupport: MINECRAFT_1_4_7 MINECRAFT_1_5_1 MINECRAFT_1_5_2
+                MINECRAFT_1_6_1 MINECRAFT_1_6_2 MINECRAFT_1_6_4 MINECRAFT_1_7_5 MINECRAFT_1_7_10 MINECRAFT_1_8
+                MINECRAFT_1_9 MINECRAFT_1_9_1 MINECRAFT_1_9_2 MINECRAFT_1_9_4 MINECRAFT_1_10 MINECRAFT_1_11
+                MINECRAFT_1_11_1 MINECRAFT_1_12 MINECRAFT_1_12_1 MINECRAFT_1_12_2 MINECRAFT_1_13_1 MINECRAFT_1_13_2
+                MINECRAFT_1_14_1 MINECRAFT_1_14_2 MINECRAFT_1_14_3 MINECRAFT_1_14_4 MINECRAFT_1_15 MINECRAFT_1_15_1
+                MINECRAFT_1_15_2 MINECRAFT_1_16 MINECRAFT_1_16_1 MINECRAFT_1_16_1 MINECRAFT_1_16_2 MINECRAFT_1_16_3
+                MINECRAFT_1_16_4 MINECRAFT_1_16_5 MINECRAFT_1_17""");
 
         outConfig.set("server.prefix", strings[Strings.SERVER_PREFIX.ordinal()]);
         outConfig.set("sql.host", strings[Strings.SQL_HOST.ordinal()]);
@@ -103,7 +106,9 @@ public class ConfigsCfg implements ReloadableConfiguration {
 
         try {
             outConfig.save(Constants.CONFIG_FILE_PATH);
-        } catch (IOException ignored) { }
+        } catch (IOException exception) {
+            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
+        }
 
     }
 

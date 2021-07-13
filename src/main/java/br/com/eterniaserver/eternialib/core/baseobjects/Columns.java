@@ -2,14 +2,14 @@ package br.com.eterniaserver.eternialib.core.baseobjects;
 
 public class Columns {
 
-    private String columns;
+    private String columnString;
 
     public void set(String... args) {
-        this.columns = "(" + String.join(", ", args) + ")";
+        this.columnString = "(" + String.join(", ", args) + ")";
     }
 
     public String get() {
-        return columns;
+        return columnString;
     }
 
 }

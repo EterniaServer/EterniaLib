@@ -4,6 +4,7 @@ import br.com.eterniaserver.eternialib.Constants;
 import br.com.eterniaserver.eternialib.core.enums.Commands;
 import br.com.eterniaserver.eternialib.core.baseobjects.CommandLocale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -78,7 +79,9 @@ public class CommandsLocaleCfg {
 
         try {
             config.save(Constants.COMMANDS_FILE_PATH);
-        } catch (IOException ignored) { }
+        } catch (IOException exception) {
+            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
+        }
 
     }
 

@@ -271,8 +271,8 @@ public class MetricsLite {
                 for (RegisteredServiceProvider<?> provider : Bukkit.getServicesManager().getRegistrations(service)) {
                     try {
                         Object plugin = provider.getService().getMethod("getPluginData").invoke(provider.getProvider());
-                        if (plugin instanceof JsonObject) {
-                            pluginData.add((JsonObject) plugin);
+                        if (plugin instanceof JsonObject jsonPlugin) {
+                            pluginData.add(jsonPlugin);
                         } else { // old bstats version compatibility
                             try {
                                 Class<?> jsonObjectJsonSimple = Class.forName("org.json.simple.JSONObject");

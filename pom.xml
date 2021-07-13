@@ -188,7 +188,7 @@
         <dependency>
             <groupId>com.github.ProtocolSupport</groupId>
             <artifactId>ProtocolSupport</artifactId>
-            <version>69bd7632bd</version>
+            <version>-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -209,8 +209,6 @@
             <version>1.0.6</version>
             <scope>compile</scope>
         </dependency>
-
-        <!-- Test dependencies -->
 
         <dependency>
             <groupId>it.unimi.dsi</groupId>

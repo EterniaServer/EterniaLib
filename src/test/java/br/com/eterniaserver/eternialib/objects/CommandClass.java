@@ -28,7 +28,7 @@ public class CommandClass extends BaseCommand {
 
     @CommandAlias("user")
     public void user(User user) {
-        user.setGamemode();
+        user.setGameMode();
     }
 
 }

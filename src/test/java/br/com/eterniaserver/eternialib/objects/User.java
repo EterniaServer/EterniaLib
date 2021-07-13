@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public record User(Player player) {
 
-    public void setGamemode() {
+    public void setGameMode() {
         player.setGameMode(GameMode.ADVENTURE);
     }
 
