@@ -38,6 +38,8 @@ public class ConfigsCfg implements ReloadableConfiguration {
 
     @Override
     public void executeConfig() {
+        // Temporary constants
+        final String admin = "admin";
 
         protocolVersions.clear();
 
@@ -47,9 +49,9 @@ public class ConfigsCfg implements ReloadableConfiguration {
         strings[Strings.SERVER_PREFIX.ordinal()] = config.getString("server.prefix", "$8[$aE$9L$8]$7 ").replace('$', (char) 0x00A7);
         strings[Strings.SQL_HOST.ordinal()] = config.getString("sql.host", "127.0.0.1");
         strings[Strings.SQL_PORT.ordinal()] = config.getString("sql.port", "3306");
-        strings[Strings.SQL_DATABASE.ordinal()] = config.getString("sql.database", "admin");
-        strings[Strings.SQL_USER.ordinal()] = config.getString("sql.user", "admin");
-        strings[Strings.SQL_PASSWORD.ordinal()] = config.getString("sql.password", "admin");
+        strings[Strings.SQL_DATABASE.ordinal()] = config.getString("sql.database", admin);
+        strings[Strings.SQL_USER.ordinal()] = config.getString("sql.user", admin);
+        strings[Strings.SQL_PASSWORD.ordinal()] = config.getString("sql.password", admin);
         strings[Strings.SQL_TABLE.ordinal()] = config.getString("sql.table-cache", "el_cache");
 
         booleans[Booleans.MYSQL.ordinal()] = config.getBoolean("sql.mysql", false);

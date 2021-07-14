@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -71,7 +72,7 @@ public final class SQL {
     public static void execute(final Query query) {
 
         if (!EterniaLib.mySQL) {
-            try (final var preparedStatement = getConnection().prepareStatement(query.queryString())) {
+            try (final PreparedStatement preparedStatement = getConnection().prepareStatement(query.queryString())) {
                 preparedStatement.execute();
             } catch (SQLException exception) {
                 Bukkit.getLogger().warning("Can't connect to SQLite: " + exception.getClass().getName());
@@ -79,8 +80,8 @@ public final class SQL {
             return;
         }
 
-        try (final var connection = getConnection();
-             final var preparedStatement = connection.prepareStatement(query.queryString())) {
+        try (final Connection connection = getConnection();
+             final PreparedStatement preparedStatement = connection.prepareStatement(query.queryString())) {
             preparedStatement.execute();
         } catch (SQLException exception) {
             Bukkit.getLogger().warning("Can't connect to MySQL: " + exception.getClass().getName());

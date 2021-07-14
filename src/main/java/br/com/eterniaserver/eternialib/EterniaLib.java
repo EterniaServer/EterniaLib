@@ -99,9 +99,11 @@ public class EterniaLib extends JavaPlugin {
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
         final LobbyCfg lobbyCfg = new LobbyCfg(this, strings, booleans, integers, itemStacks);
 
-        addReloadableConfiguration(Constants.PLUGIN_NAME, "config", configsCfg);
-        addReloadableConfiguration(Constants.PLUGIN_NAME, "messages", messagesCfg);
-        addReloadableConfiguration(Constants.PLUGIN_NAME, "lobby", lobbyCfg);
+        final String pluginName = "eternialib";
+
+        addReloadableConfiguration(pluginName, "config", configsCfg);
+        addReloadableConfiguration(pluginName, "messages", messagesCfg);
+        addReloadableConfiguration(pluginName, "lobby", lobbyCfg);
 
         configsCfg.executeConfig();
         messagesCfg.executeConfig();
@@ -267,7 +269,7 @@ public class EterniaLib extends JavaPlugin {
     public static void addReloadableConfiguration(final String pluginName,
                                                   final String configName,
                                                   final ReloadableConfiguration reloadableConfiguration) {
-        final var cfgName = pluginName + "_" + configName;
+        final String cfgName = pluginName + "_" + configName;
 
         reloadableConfig.add(cfgName);
         configurations.put(cfgName.hashCode(), reloadableConfiguration);
