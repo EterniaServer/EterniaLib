@@ -87,13 +87,19 @@ public class LobbyHandler implements Listener {
         final Player player = event.getPlayer();
         final ItemStack itemStack = player.getInventory().getItemInMainHand();
 
-        if (itemStack == null || itemStack.getType() == Material.AIR) {
+        if (itemStack.getType() == Material.AIR) {
+            return;
+        }
+
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta == null) {
             return;
         }
 
         final PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
 
-        if (container == null || !container.has(this.serverKey, PersistentDataType.STRING)) {
+        if (!container.has(this.serverKey, PersistentDataType.STRING)) {
             return;
         }
 
