@@ -16,24 +16,25 @@ public class CommandsLocaleCfg {
     private final CommandLocale[] defaults = new CommandLocale[Commands.values().length];
 
     public CommandsLocaleCfg() {
+        final String commandPerm = "eternia.command";
 
         addDefault(Commands.COMMAND,
                 "command",
-                "eternia.command",
+                commandPerm,
                 " <página>",
                 " Receba ajuda para o sistema de commandos confirmaveis",
                 null);
 
         addDefault(Commands.COMMAND_ACCEPT,
                 "accept",
-                "eternia.command",
+                commandPerm,
                 null,
                 " Confirme o uso de um comando",
                 null);
 
         addDefault(Commands.COMMAND_DENY,
                 "deny",
-                "eternia.command",
+                commandPerm,
                 null,
                 " Negue o uso de um comando",
                 null);

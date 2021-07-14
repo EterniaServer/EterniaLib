@@ -109,8 +109,7 @@ public class EterniaLib extends JavaPlugin {
     }
 
     private void loadManager() {
-
-        manager = new PaperCommandManager(this);
+        setManager(new PaperCommandManager(this));
         manager.enableUnstableAPI("help");
 
         try {
@@ -126,7 +125,6 @@ public class EterniaLib extends JavaPlugin {
         } catch (IOException | InvalidConfigurationException exception) {
             Bukkit.getLogger().warning("Invalid folder permissions, exception class: " + exception.getClass().getName());
         }
-
     }
 
     private void loadDatabase() {
@@ -159,7 +157,7 @@ public class EterniaLib extends JavaPlugin {
 
     private void setUpConnection() {
         if (setAndGetMySQL(getBool(Booleans.MYSQL))) {
-            hikari = new HikariDataSource();
+            setHikari(new HikariDataSource());
             hikari.setPoolName("EterniaLib MySQL Pool");
             hikari.setJdbcUrl("jdbc:mysql://" + getString(Strings.SQL_HOST) +
                     ":" + getString(Strings.SQL_PORT) +
@@ -235,6 +233,14 @@ public class EterniaLib extends JavaPlugin {
 
     public ReloadableConfiguration getReloadableConfiguration(int hashCode) {
         return configurations.get(hashCode);
+    }
+
+    private static void setHikari(final HikariDataSource hikariDataSource) {
+        hikari = hikariDataSource;
+    }
+
+    private static void setManager(final PaperCommandManager paperCommandManager) {
+        manager = paperCommandManager;
     }
 
     private static boolean setAndGetMySQL(final boolean state) {
