@@ -21,6 +21,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
@@ -54,6 +55,8 @@ public class EterniaLib extends JavaPlugin {
     protected static PaperCommandManager manager;
     protected static HikariDataSource hikari;
 
+    private static NamespacedKey serverKey;
+
     private final boolean[] booleans = new boolean[Booleans.values().length];
     private final int[] integers = new int[Integers.values().length];
 
@@ -72,8 +75,9 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         new MetricsLite(this, 8442);
+
+        setServerKey(this);
 
         loadAllConfigs();
         loadManager();
@@ -91,7 +95,6 @@ public class EterniaLib extends JavaPlugin {
         if (getBool(Booleans.PROTOCOL_SUPPORT)) {
             hookIntoProtocolSupport();
         }
-
     }
 
     private void loadAllConfigs() {
@@ -248,6 +251,14 @@ public class EterniaLib extends JavaPlugin {
     private static boolean setAndGetMySQL(final boolean state) {
         mySQL = state;
         return mySQL;
+    }
+
+    private static void setServerKey(final EterniaLib plugin) {
+        serverKey = new NamespacedKey(plugin, "eternialib-lobby");
+    }
+
+    public static NamespacedKey getServerKey() {
+        return serverKey;
     }
 
     /**

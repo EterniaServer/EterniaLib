@@ -2,6 +2,7 @@ package br.com.eterniaserver.eternialib.core.configurations;
 
 import br.com.eterniaserver.eternialib.Constants;
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.core.baseobjects.ItemSaveAndUseMeta;
 import br.com.eterniaserver.eternialib.core.enums.*;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
@@ -17,6 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LobbyCfg implements ReloadableConfiguration {
@@ -44,7 +46,6 @@ public class LobbyCfg implements ReloadableConfiguration {
 
     @Override
     public void executeConfig() {
-
         // Load the configuration
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.LOBBY_FILE_PATH));
 
@@ -59,45 +60,9 @@ public class LobbyCfg implements ReloadableConfiguration {
         booleans[Booleans.CLEAR_INV.ordinal()] = config.getBoolean("clear-inv", true);
         booleans[Booleans.BLOCK_SWAP_ITEMS.ordinal()] = config.getBoolean("block-swap-items", true);
 
-        itemStacks.clear();
+        populateArray(config);
 
-        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
-
-            itemStacks.add(null);
-            final String server = config.getString("servers." + i + ".name");
-
-            if (server == null) {
-                continue;
-            }
-
-            final String itemName = config.getString("servers." + i + ".display-name");
-            final List<String> itemLore = config.getStringList("servers." + i + ".lore");
-
-            for (int j = 0; j < itemLore.size(); j++) {
-                itemLore.set(0, ChatColor.translateAlternateColorCodes('&', itemLore.get(0)));
-            }
-
-            final String materialName = config.getString("servers." + i + ".material");
-            final ItemStack slotItem = new ItemStack(Material.getMaterial(materialName));
-            final ItemMeta itemMeta = slotItem.getItemMeta();
-            itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, server);
-            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', itemName));
-            itemMeta.setLore(itemLore);
-            slotItem.setItemMeta(itemMeta);
-            itemStacks.set(i, slotItem);
-
-        }
-
-        boolean allEmpty = true;
-
-        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
-            if (itemStacks.get(i) != null && itemStacks.get(i).getType() != Material.AIR) {
-                allEmpty = false;
-                break;
-            }
-        }
-
-        if (allEmpty) {
+        if (arrayIsEmpty()) {
             final ItemStack slotItem = new ItemStack(Material.GRASS_BLOCK);
             final ItemMeta itemMeta = slotItem.getItemMeta();
             itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, "survival");
@@ -109,40 +74,15 @@ public class LobbyCfg implements ReloadableConfiguration {
         // Save the configuration
         FileConfiguration outConfig = new YamlConfiguration();
 
-        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
-
-            if (itemStacks.get(i) == null) {
+        for (final ItemSaveAndUseMeta itemSave : getItemListToSave()) {
+            if (itemSave.getItemName().equals("error")) {
                 continue;
             }
 
-            final ItemMeta itemMeta = itemStacks.get(i).getItemMeta();
-
-            if (itemMeta == null) {
-                outConfig.set("servers." + i + ".name", "error");
-                outConfig.set("servers." + i + ".display-name", "error");
-                outConfig.set("servers." + i + ".lore", "error");
-                outConfig.set("servers." + i + ".material", "error");
-                return;
-            }
-
-            final String nameItem = itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) != null ?
-                    itemMeta.getPersistentDataContainer().get(serverKey, PersistentDataType.STRING) : "error";
-            boolean error = true;
-            final List<String> stringList;
-            try {
-                if (itemMeta.getLore() != null) {
-                    error = false;
-                }
-            } catch (NullPointerException ignored) {
-            } finally {
-                stringList = error ? List.of("error") : itemMeta.getLore();
-            }
-
-            outConfig.set("servers." + i + ".name", nameItem);
-            outConfig.set("servers." + i + ".display-name", itemMeta.getDisplayName());
-            outConfig.set("servers." + i + ".lore", stringList);
-            outConfig.set("servers." + i + ".material", itemStacks.get(i).getType().name());
-
+            outConfig.set("servers." + itemSave.getPosition() + ".name", itemSave.getItemName());
+            outConfig.set("servers." + itemSave.getPosition() + ".display-name", itemSave.getItemDisplayName());
+            outConfig.set("servers." + itemSave.getPosition() + ".lore", itemSave.getItemLore());
+            outConfig.set("servers." + itemSave.getPosition() + ".material", itemSave.getItemMaterial());
         }
 
         outConfig.set("select-title", strings[Strings.SELECT_TITLE_NAME.ordinal()]);
@@ -166,5 +106,52 @@ public class LobbyCfg implements ReloadableConfiguration {
 
     @Override
     public void executeCritical() { }
+
+    private void populateArray(final FileConfiguration config) {
+        itemStacks.clear();
+        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
+            itemStacks.add(null);
+            final String server = config.getString("servers." + i + ".name");
+
+            if (server == null) {
+                continue;
+            }
+
+            final String itemName = config.getString("servers." + i + ".display-name");
+            final List<String> itemLore = config.getStringList("servers." + i + ".lore");
+
+            for (int j = 0; j < itemLore.size(); j++) {
+                itemLore.set(0, ChatColor.translateAlternateColorCodes('&', itemLore.get(0)));
+            }
+
+            final String materialName = config.getString("servers." + i + ".material");
+            final ItemStack slotItem = new ItemStack(Material.getMaterial(materialName));
+            final ItemMeta itemMeta = slotItem.getItemMeta();
+            itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, server);
+            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', itemName));
+            itemMeta.setLore(itemLore);
+            slotItem.setItemMeta(itemMeta);
+            itemStacks.set(i, slotItem);
+        }
+    }
+
+    private List<ItemSaveAndUseMeta> getItemListToSave() {
+        final List<ItemSaveAndUseMeta> list = new ArrayList<>();
+
+        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
+            list.add(new ItemSaveAndUseMeta(itemStacks.get(i), i));
+        }
+
+        return list;
+    }
+
+    private boolean arrayIsEmpty() {
+        for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
+            if (itemStacks.get(i) != null && itemStacks.get(i).getType() != Material.AIR) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
