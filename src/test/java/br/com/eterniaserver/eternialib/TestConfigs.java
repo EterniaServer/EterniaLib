@@ -58,13 +58,6 @@ class TestConfigs {
     void testItemSaveAndUseInvalid() {
         final String errorStr = "error";
         final ItemStack itemStack = new ItemStack(Material.ACACIA_SIGN);
-        final ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (itemMeta != null) {
-            itemMeta.setLore(new ArrayList<>());
-        }
-
-        itemStack.setItemMeta(itemMeta);
 
         final ItemSaveAndUseMeta itemSUMInvalid = new ItemSaveAndUseMeta(itemStack, 0);
 

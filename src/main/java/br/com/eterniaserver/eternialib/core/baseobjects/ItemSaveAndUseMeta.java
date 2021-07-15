@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ItemSaveAndUseMeta {
@@ -19,21 +20,21 @@ public class ItemSaveAndUseMeta {
 
     public ItemSaveAndUseMeta(final ItemStack itemStack, final int position) {
         final String error = "error";
+        ItemMeta itemMeta;
 
         this.position = position;
 
-        if (itemStack == null
-                || itemStack.getItemMeta() == null
-                || itemStack.getItemMeta().getLore() == null
-                || itemStack.getItemMeta().getLore().isEmpty()) {
+        try {
+            itemMeta = itemStack.getItemMeta();
+            itemMeta.getLore();
+        }
+        catch (NullPointerException exception) {
             this.itemName = error;
             this.itemDisplayName = error;
             this.itemLore = List.of(error);
             this.itemMaterial = error;
             return;
         }
-
-        final ItemMeta itemMeta = itemStack.getItemMeta();
 
         this.itemName = itemMeta.getPersistentDataContainer().get(EterniaLib.getServerKey(), PersistentDataType.STRING);
         this.itemDisplayName = itemMeta.getDisplayName();
