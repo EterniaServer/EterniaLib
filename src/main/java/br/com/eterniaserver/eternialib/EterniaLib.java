@@ -67,24 +67,16 @@ public class EterniaLib extends JavaPlugin {
     private final List<String> protocolVersions = new ArrayList<>();
     private final String[] strings = new String[Strings.values().length];
 
-    private final boolean isTesting;
-
     public EterniaLib() {
         super();
-        this.isTesting = false;
     }
 
     protected EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
-        this.isTesting = true;
     }
 
     @Override
     public void onEnable() {
-        if (!isTesting) {
-            new Metrics(this, 8442);
-        }
-
         setServerKey(this);
 
         loadAllConfigs();

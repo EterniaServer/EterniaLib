@@ -39,18 +39,16 @@ class TestExceptions {
         final FileConfiguration outConfig = Mockito.mock(YamlConfiguration.class);
 
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.LOBBY_FILE_PATH);
-        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.CONFIG_FILE_PATH);
-        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.MESSAGES_FILE_PATH);
-
-
         ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
 
+        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.CONFIG_FILE_PATH);
         config = plugin.getReloadableConfiguration("eternialib_config".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
 
+        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.MESSAGES_FILE_PATH);
         config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
