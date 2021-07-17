@@ -3,6 +3,7 @@ package br.com.eterniaserver.eternialib;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import br.com.eterniaserver.eternialib.handlers.AsyncPlayerPreLoginHandler;
 
 import net.bytebuddy.utility.RandomString;
@@ -36,12 +37,16 @@ class TestUUIDFetcher {
     @Test
     @DisplayName("Test if the UUIDFetch feature is working")
     void testUUIDFetch() {
-        final var player = server.addPlayer(new RandomString(16).nextString());
-        final var ip = InetAddress.getLoopbackAddress();
-        final var event = new AsyncPlayerPreLoginEvent(player.getName(), ip, player.getUniqueId());
+        final PlayerMock player = server.addPlayer(new RandomString(16).nextString());
+        final InetAddress ip = InetAddress.getLoopbackAddress();
+        final AsyncPlayerPreLoginEvent event = new AsyncPlayerPreLoginEvent(player.getName(), ip, player.getUniqueId());
 
         listener.onAsyncPlayerPreLoginEvent(event);
         Assertions.assertEquals(player.getUniqueId(), UUIDFetcher.getUUIDOf(player.getName()));
+
+        final AsyncPlayerPreLoginEvent secondEvent = new AsyncPlayerPreLoginEvent(player.getName(), ip, player.getUniqueId());
+        listener.onAsyncPlayerPreLoginEvent(secondEvent);
+        Assertions.assertNotNull(UUIDFetcher.getUUIDOf(player.getName()));
     }
 
 }

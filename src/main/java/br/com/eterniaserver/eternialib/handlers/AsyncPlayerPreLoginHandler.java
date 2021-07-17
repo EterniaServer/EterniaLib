@@ -14,13 +14,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.util.UUID;
 
-public class AsyncPlayerPreLoginHandler implements Listener {
-
-    private final EterniaLib plugin;
-
-    public AsyncPlayerPreLoginHandler(final EterniaLib plugin) {
-        this.plugin = plugin;
-    }
+public record AsyncPlayerPreLoginHandler(EterniaLib plugin) implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
