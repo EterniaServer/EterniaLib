@@ -31,12 +31,15 @@ public class LobbyCfg implements ReloadableConfiguration {
 
     private final List<ItemStack> itemStacks;
 
+    private final String srvStr;
+
     public LobbyCfg(final EterniaLib plugin, final String[] strings, final boolean[] booleans, final int[] integers, final List<ItemStack> itemStacks) {
         this.serverKey = new NamespacedKey(plugin, "eternialib-lobby");
         this.strings = strings;
         this.booleans = booleans;
         this.integers = integers;
         this.itemStacks = itemStacks;
+        this.srvStr = "servers.";
     }
 
     @Override
@@ -79,10 +82,10 @@ public class LobbyCfg implements ReloadableConfiguration {
                 continue;
             }
 
-            outConfig.set("servers." + itemSave.getPosition() + ".name", itemSave.getItemName());
-            outConfig.set("servers." + itemSave.getPosition() + ".display-name", itemSave.getItemDisplayName());
-            outConfig.set("servers." + itemSave.getPosition() + ".lore", itemSave.getItemLore());
-            outConfig.set("servers." + itemSave.getPosition() + ".material", itemSave.getItemMaterial());
+            outConfig.set(srvStr + itemSave.getPosition() + ".name", itemSave.getItemName());
+            outConfig.set(srvStr + itemSave.getPosition() + ".display-name", itemSave.getItemDisplayName());
+            outConfig.set(srvStr + itemSave.getPosition() + ".lore", itemSave.getItemLore());
+            outConfig.set(srvStr + itemSave.getPosition() + ".material", itemSave.getItemMaterial());
         }
 
         outConfig.set("select-title", strings[Strings.SELECT_TITLE_NAME.ordinal()]);
@@ -105,26 +108,28 @@ public class LobbyCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() { }
+    public void executeCritical() {
+        // LobbyCfg doesn't have a critical config.
+    }
 
     private void populateArray(final FileConfiguration config) {
         itemStacks.clear();
         for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
             itemStacks.add(null);
-            final String server = config.getString("servers." + i + ".name");
+            final String server = config.getString(srvStr + i + ".name");
 
             if (server == null) {
                 continue;
             }
 
-            final String itemName = config.getString("servers." + i + ".display-name");
-            final List<String> itemLore = config.getStringList("servers." + i + ".lore");
+            final String itemName = config.getString(srvStr + i + ".display-name");
+            final List<String> itemLore = config.getStringList(srvStr + i + ".lore");
 
             for (int j = 0; j < itemLore.size(); j++) {
                 itemLore.set(0, ChatColor.translateAlternateColorCodes('&', itemLore.get(0)));
             }
 
-            final String materialName = config.getString("servers." + i + ".material");
+            final String materialName = config.getString(srvStr + i + ".material");
             final ItemStack slotItem = new ItemStack(Material.getMaterial(materialName));
             final ItemMeta itemMeta = slotItem.getItemMeta();
             itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, server);

@@ -4,7 +4,6 @@ import br.com.eterniaserver.eternialib.core.Managers;
 import br.com.eterniaserver.eternialib.core.configurations.ConfigsCfg;
 import br.com.eterniaserver.eternialib.core.configurations.LobbyCfg;
 import br.com.eterniaserver.eternialib.core.configurations.MessagesCfg;
-import br.com.eterniaserver.eternialib.core.configurations.MetricsLite;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
@@ -20,6 +19,8 @@ import co.aikar.commands.PaperCommandManager;
 
 import com.zaxxer.hikari.HikariDataSource;
 
+import org.bstats.bukkit.Metrics;
+
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -29,6 +30,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import org.bukkit.plugin.java.JavaPluginLoader;
+
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
 
@@ -65,17 +67,23 @@ public class EterniaLib extends JavaPlugin {
     private final List<String> protocolVersions = new ArrayList<>();
     private final String[] strings = new String[Strings.values().length];
 
+    private final boolean isTesting;
+
     public EterniaLib() {
         super();
+        this.isTesting = false;
     }
 
-    public EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    protected EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+        this.isTesting = true;
     }
 
     @Override
     public void onEnable() {
-        new MetricsLite(this, 8442);
+        if (!isTesting) {
+            new Metrics(this, 8442);
+        }
 
         setServerKey(this);
 

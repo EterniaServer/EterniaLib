@@ -64,11 +64,7 @@ public class MessagesCfg implements ReloadableConfiguration {
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.MESSAGES_FILE_PATH));
 
         for (final Messages entry : Messages.values()) {
-            CustomizableMessage defaultMsg = messages[entry.ordinal()];
-
-            if (defaultMsg == null) {
-                defaultMsg = new CustomizableMessage("Mensagem faltando para $3" + entry.name() + "$8.", null);
-            }
+            final CustomizableMessage defaultMsg = messages[entry.ordinal()];
 
             String messageStr = config.getString(entry.name() + ".text", defaultMsg.text);
             config.set(entry.name() + ".text", messageStr);
@@ -93,7 +89,9 @@ public class MessagesCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() { }
+    public void executeCritical() {
+        // MessagesCfg doesn't have a critical config.
+    }
 
     private void addDefault(final Messages entry, final String text, final String notes) {
         messages[entry.ordinal()] = new CustomizableMessage(text, notes);

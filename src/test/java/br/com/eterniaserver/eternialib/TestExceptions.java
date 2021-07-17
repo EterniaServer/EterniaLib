@@ -1,12 +1,12 @@
 package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,11 +39,20 @@ class TestExceptions {
         final FileConfiguration outConfig = Mockito.mock(YamlConfiguration.class);
 
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.LOBBY_FILE_PATH);
+        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.CONFIG_FILE_PATH);
+        BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.MESSAGES_FILE_PATH);
 
-        final ReloadableConfiguration reloadableConfiguration = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
-        reloadableConfiguration.executeConfig();
 
+        ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
+        config.executeConfig();
+        Assertions.assertTrue(true);
+
+        config = plugin.getReloadableConfiguration("eternialib_config".hashCode());
+        config.executeConfig();
+        Assertions.assertTrue(true);
+
+        config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
+        config.executeConfig();
         Assertions.assertTrue(true);
     }
-
 }
