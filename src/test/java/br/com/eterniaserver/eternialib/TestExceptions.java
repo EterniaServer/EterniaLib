@@ -35,21 +35,34 @@ class TestExceptions {
 
     @Test
     @DisplayName("Verify that the exception wont block the plugin")
-    void testReloadableException() throws IOException {
+    void testReloadableLobbyException() throws IOException {
         final FileConfiguration outConfig = Mockito.mock(YamlConfiguration.class);
 
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.LOBBY_FILE_PATH);
-        ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
+        final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
+    }
+
+    @Test
+    @DisplayName("Verify that the exception wont block the plugin")
+    void testReloadableConfigException() throws IOException {
+        final FileConfiguration outConfig = Mockito.mock(YamlConfiguration.class);
 
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.CONFIG_FILE_PATH);
-        config = plugin.getReloadableConfiguration("eternialib_config".hashCode());
+        final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_config".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
+    }
+
+
+    @Test
+    @DisplayName("Verify that the exception wont block the plugin")
+    void testReloadableMessagesException() throws IOException {
+        final FileConfiguration outConfig = Mockito.mock(YamlConfiguration.class);
 
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.MESSAGES_FILE_PATH);
-        config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
+        final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
         config.executeConfig();
         Assertions.assertTrue(true);
     }

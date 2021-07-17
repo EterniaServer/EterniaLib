@@ -55,7 +55,6 @@ public class LobbyHandler implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-
         event.setCancelled(true);
 
         final Player player = (Player) event.getWhoClicked();
@@ -72,12 +71,10 @@ public class LobbyHandler implements Listener {
         }
 
         teleportPlayerToServer(player, itemStack.getItemMeta().getPersistentDataContainer().get(this.serverKey, PersistentDataType.STRING));
-
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-
         final Action action = event.getAction();
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK || action == Action.PHYSICAL) {
@@ -116,35 +113,29 @@ public class LobbyHandler implements Listener {
         }
 
         player.openInventory(serverSelector);
-
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-
         if (!plugin.getBool(Booleans.BLOCK_SWAP_ITEMS)) {
             return;
         }
 
         event.setCancelled(true);
-
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-
         if (!plugin.getBool(Booleans.DISABLE_ITEM_DROP)
                 || event.getPlayer().hasPermission(plugin.getString(Strings.DROP_PERM))) {
             return;
         }
 
         event.setCancelled(true);
-
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerPickupItem(EntityPickupItemEvent event) {
-
         final Entity entity = event.getEntity();
 
         if (!(entity instanceof Player)
@@ -154,12 +145,10 @@ public class LobbyHandler implements Listener {
         }
 
         event.setCancelled(true);
-
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerLogin(PlayerJoinEvent event) {
-
         if (!plugin.getBool(Booleans.CLEAR_INV)) {
             event.getPlayer().getInventory().setItem(0, new ItemStack(selectServer));
             return;
@@ -167,12 +156,10 @@ public class LobbyHandler implements Listener {
 
         event.getPlayer().getInventory().clear();
         event.getPlayer().getInventory().setItem(0, new ItemStack(selectServer));
-
     }
 
     @EventHandler (priority = EventPriority.LOW)
     public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
-
         final Player player = event.getPlayer();
 
         if (!plugin.getBool(Booleans.CLEAR_INV)) {
@@ -185,7 +172,6 @@ public class LobbyHandler implements Listener {
             player.getInventory().clear();
             player.getInventory().setItem(0, new ItemStack(selectServer));
         });
-
     }
 
     private void teleportPlayerToServer(final Player player, final String server) {

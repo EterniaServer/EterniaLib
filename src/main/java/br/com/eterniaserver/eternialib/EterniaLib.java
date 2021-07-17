@@ -19,8 +19,6 @@ import co.aikar.commands.PaperCommandManager;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-import org.bstats.bukkit.Metrics;
-
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
