@@ -41,6 +41,8 @@ class TestExceptions {
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.LOBBY_FILE_PATH);
         final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
         config.executeConfig();
+
+        Assertions.assertThrows(UnsupportedOperationException.class, config::executeCritical);
         Assertions.assertTrue(true);
     }
 
@@ -64,6 +66,8 @@ class TestExceptions {
         BDDMockito.willThrow(new IOException()).given(outConfig).save(Constants.MESSAGES_FILE_PATH);
         final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
         config.executeConfig();
+
+        Assertions.assertThrows(UnsupportedOperationException.class, config::executeCritical);
         Assertions.assertTrue(true);
     }
 }

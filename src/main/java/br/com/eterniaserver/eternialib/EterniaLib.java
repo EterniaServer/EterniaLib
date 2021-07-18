@@ -98,7 +98,7 @@ public class EterniaLib extends JavaPlugin {
     private void loadAllConfigs() {
         final ConfigsCfg configsCfg = new ConfigsCfg(strings, integers, booleans, protocolVersions, this::loadDatabase);
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
-        final LobbyCfg lobbyCfg = new LobbyCfg(this, strings, booleans, integers, itemStacks);
+        final LobbyCfg lobbyCfg = new LobbyCfg(strings, booleans, integers, itemStacks);
 
         final String pluginName = "eternialib";
 

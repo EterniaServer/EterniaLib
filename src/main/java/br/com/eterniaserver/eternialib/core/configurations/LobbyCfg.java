@@ -9,7 +9,6 @@ import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -21,26 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LobbyCfg implements ReloadableConfiguration {
-
-    private final NamespacedKey serverKey;
-
-    private final String[] strings;
-    private final boolean[] booleans;
-    private final int[] integers;
-
-    private final List<ItemStack> itemStacks;
-
-    private final String srvStr;
-
-    public LobbyCfg(final EterniaLib plugin, final String[] strings, final boolean[] booleans, final int[] integers, final List<ItemStack> itemStacks) {
-        this.serverKey = new NamespacedKey(plugin, "eternialib-lobby");
-        this.strings = strings;
-        this.booleans = booleans;
-        this.integers = integers;
-        this.itemStacks = itemStacks;
-        this.srvStr = "servers.";
-    }
+public record LobbyCfg(String[] strings,
+                       boolean[] booleans,
+                       int[] integers,
+                       List<ItemStack> itemStacks) implements ReloadableConfiguration {
 
     @Override
     public ConfigurationCategory category() {
@@ -68,7 +51,7 @@ public class LobbyCfg implements ReloadableConfiguration {
         if (arrayIsEmpty()) {
             final ItemStack slotItem = new ItemStack(Material.GRASS_BLOCK);
             final ItemMeta itemMeta = slotItem.getItemMeta();
-            itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, "survival");
+            itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, "survival");
             itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aVenha jogar no nosso survival!"));
             slotItem.setItemMeta(itemMeta);
             itemStacks.set(4, slotItem);
@@ -76,6 +59,7 @@ public class LobbyCfg implements ReloadableConfiguration {
 
         // Save the configuration
         FileConfiguration outConfig = new YamlConfiguration();
+        final String srvStr = "servers.";
 
         for (final ItemSaveAndUseMeta itemSave : getItemListToSave()) {
             if (itemSave.getItemName().equals("error")) {
@@ -108,10 +92,14 @@ public class LobbyCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() { } // LobbyCfg doesn't have a critical config.
+    public void executeCritical() {
+        throw new UnsupportedOperationException();
+    }
 
     private void populateArray(final FileConfiguration config) {
         itemStacks.clear();
+        final String srvStr = "servers.";
+
         for (int i = 0; i < integers[Integers.GUI_SIZE.ordinal()]; i++) {
             itemStacks.add(null);
             final String server = config.getString(srvStr + i + ".name");
@@ -130,7 +118,7 @@ public class LobbyCfg implements ReloadableConfiguration {
             final String materialName = config.getString(srvStr + i + ".material");
             final ItemStack slotItem = new ItemStack(Material.getMaterial(materialName));
             final ItemMeta itemMeta = slotItem.getItemMeta();
-            itemMeta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, server);
+            itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, server);
             itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', itemName));
             itemMeta.setLore(itemLore);
             slotItem.setItemMeta(itemMeta);

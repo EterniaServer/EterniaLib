@@ -13,13 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class MessagesCfg implements ReloadableConfiguration {
-
-    private final CustomizableMessage[] messages;
-
-    public MessagesCfg(final CustomizableMessage[] messages) {
-        this.messages = messages;
-    }
+public record MessagesCfg(CustomizableMessage[] messages) implements ReloadableConfiguration {
 
     @Override
     public ConfigurationCategory category() {
@@ -89,7 +83,9 @@ public class MessagesCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() { } // MessagesCfg doesn't have a critical config.
+    public void executeCritical() {
+        throw new UnsupportedOperationException();
+    }
 
     private void addDefault(final Messages entry, final String text, final String notes) {
         messages[entry.ordinal()] = new CustomizableMessage(text, notes);

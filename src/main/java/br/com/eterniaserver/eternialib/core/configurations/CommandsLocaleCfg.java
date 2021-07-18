@@ -52,11 +52,11 @@ public class CommandsLocaleCfg {
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.COMMANDS_FILE_PATH));
 
         for (final Commands entry : Commands.values()) {
-            final String cmdName = config.getString(entry.name() + ".name", defaults[entry.ordinal()].name());
-            final String cmdSyntax = config.getString(entry.name() + ".syntax", defaults[entry.ordinal()].syntax());
-            final String cmdDescription = config.getString(entry.name() + ".description", defaults[entry.ordinal()].description());
-            final String cmdPerm = config.getString(entry.name() + ".perm", defaults[entry.ordinal()].perm());
-            final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].aliases());
+            final String cmdName = config.getString(entry.name() + ".name", defaults[entry.ordinal()].getName());
+            final String cmdSyntax = config.getString(entry.name() + ".syntax", defaults[entry.ordinal()].getSyntax());
+            final String cmdDescription = config.getString(entry.name() + ".description", defaults[entry.ordinal()].getDescription());
+            final String cmdPerm = config.getString(entry.name() + ".perm", defaults[entry.ordinal()].getPerm());
+            final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].getAliases());
 
             this.defaults[entry.ordinal()] = new CommandLocale(cmdName, cmdSyntax, cmdDescription, cmdPerm, cmdAliases);
             config.set(entry.name() + ".name", cmdName);
@@ -81,19 +81,19 @@ public class CommandsLocaleCfg {
     }
 
     public String getName(Commands id) {
-        return defaults[id.ordinal()].name();
+        return defaults[id.ordinal()].getName();
     }
 
     public String getSyntax(Commands id) {
-        return defaults[id.ordinal()].syntax() != null ? defaults[id.ordinal()].syntax() : "";
+        return defaults[id.ordinal()].getSyntax() != null ? defaults[id.ordinal()].getSyntax() : "";
     }
 
     public String getDescription(Commands id) {
-        return defaults[id.ordinal()].description();
+        return defaults[id.ordinal()].getDescription();
     }
 
     public String getPerm(Commands id) {
-        return defaults[id.ordinal()].perm();
+        return defaults[id.ordinal()].getPerm();
     }
 
 }
