@@ -15,21 +15,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class ConfigsCfg implements ReloadableConfiguration {
-
-    private final Runnable criticalRunnable;
-    private final String[] strings;
-    private final int[] integers;
-    private final boolean[] booleans;
-    private final List<String> protocolVersions;
-
-    public ConfigsCfg(final String[] strings, final int[] integers, final boolean[] booleans, final List<String> protocolVersions, final Runnable criticalRunnable) {
-        this.strings = strings;
-        this.integers = integers;
-        this.booleans = booleans;
-        this.protocolVersions = protocolVersions;
-        this.criticalRunnable = criticalRunnable;
-    }
+public record ConfigsCfg(String[] strings,
+                         int[] integers,
+                         boolean[] booleans,
+                         List<String> protocolVersions,
+                         Runnable criticalRunnable) implements ReloadableConfiguration {
 
     @Override
     public ConfigurationCategory category() {

@@ -1,37 +1,32 @@
 package br.com.eterniaserver.eternialib.core.baseobjects;
 
-public class CommandLocale {
+public record CommandLocale(String name,
+                            String syntax,
+                            String description,
+                            String perm,
+                            String aliases) {
 
-    private final String name;
-    private final String syntax;
-    private final String description;
-    private final String perm;
-    private final String aliases;
-
-    public CommandLocale(final String name, final String syntax, final String description, final String perm, final String aliases) {
-        this.name = name;
-        this.syntax = syntax;
-        this.description = description;
-        this.perm = perm;
-        this.aliases = aliases;
-    }
-
+    @Deprecated
     public String getName() {
         return name;
     }
 
+    @Deprecated
     public String getSyntax() {
         return syntax;
     }
 
+    @Deprecated
     public String getDescription() {
         return description;
     }
 
+    @Deprecated
     public String getPerm() {
         return perm;
     }
 
+    @Deprecated
     public String getAliases() {
         return aliases;
     }

@@ -108,9 +108,7 @@ public class LobbyCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() {
-        // LobbyCfg doesn't have a critical config.
-    }
+    public void executeCritical() { } // LobbyCfg doesn't have a critical config.
 
     private void populateArray(final FileConfiguration config) {
         itemStacks.clear();

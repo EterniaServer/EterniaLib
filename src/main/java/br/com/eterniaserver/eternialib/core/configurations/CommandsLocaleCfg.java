@@ -22,59 +22,49 @@ public class CommandsLocaleCfg {
                 "command",
                 commandPerm,
                 " <página>",
-                " Receba ajuda para o sistema de commandos confirmaveis",
-                null);
+                " Receba ajuda para o sistema de commandos confirmaveis");
 
         addDefault(Commands.COMMAND_ACCEPT,
                 "accept",
                 commandPerm,
                 null,
-                " Confirme o uso de um comando",
-                null);
+                " Confirme o uso de um comando");
 
         addDefault(Commands.COMMAND_DENY,
                 "deny",
                 commandPerm,
                 null,
-                " Negue o uso de um comando",
-                null);
+                " Negue o uso de um comando");
 
         addDefault(Commands.ETERNIA,
                 "eternia",
                 "eternia.settings",
                 " <página>",
-                " Receba ajuda para as configurações internas dos plugins 'Eternia'",
-                null);
+                " Receba ajuda para as configurações internas dos plugins 'Eternia'");
 
         addDefault(Commands.ETERNIA_RELOAD,
                 "reload",
                 "eternia.settings.reload",
                 " <módulo>",
-                " Reinicie algum módulo de algum plugin",
-                null);
+                " Reinicie algum módulo de algum plugin");
 
         // Load and save the configurations
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.COMMANDS_FILE_PATH));
 
         for (final Commands entry : Commands.values()) {
-            final String cmdName = config.getString(entry.name() + ".name", defaults[entry.ordinal()].getName());
-            final String cmdSyntax = config.getString(entry.name() + ".syntax", defaults[entry.ordinal()].getSyntax());
-            final String cmdDescription = config.getString(entry.name() + ".description", defaults[entry.ordinal()].getDescription());
-            final String cmdPerm = config.getString(entry.name() + ".perm", defaults[entry.ordinal()].getPerm());
-            final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].getAliases());
+            final String cmdName = config.getString(entry.name() + ".name", defaults[entry.ordinal()].name());
+            final String cmdSyntax = config.getString(entry.name() + ".syntax", defaults[entry.ordinal()].syntax());
+            final String cmdDescription = config.getString(entry.name() + ".description", defaults[entry.ordinal()].description());
+            final String cmdPerm = config.getString(entry.name() + ".perm", defaults[entry.ordinal()].perm());
+            final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].aliases());
 
             this.defaults[entry.ordinal()] = new CommandLocale(cmdName, cmdSyntax, cmdDescription, cmdPerm, cmdAliases);
-
             config.set(entry.name() + ".name", cmdName);
             config.set(entry.name() + ".description", cmdDescription);
             config.set(entry.name() + ".perm", cmdPerm);
 
             if (cmdSyntax != null) {
                 config.set(entry.name() + ".syntax", cmdSyntax);
-            }
-
-            if (cmdAliases != null) {
-                config.set(entry.name() + ".aliases", cmdAliases);
             }
         }
 
@@ -86,29 +76,24 @@ public class CommandsLocaleCfg {
 
     }
 
-    private void addDefault(Commands id, String name, String perm, String syntax, String description, String aliases) {
-        defaults[id.ordinal()] = new CommandLocale(name, syntax, description, perm, aliases);
+    private void addDefault(Commands id, String name, String perm, String syntax, String description) {
+        defaults[id.ordinal()] = new CommandLocale(name, syntax, description, perm, null);
     }
 
     public String getName(Commands id) {
-        return defaults[id.ordinal()].getName();
+        return defaults[id.ordinal()].name();
     }
 
     public String getSyntax(Commands id) {
-        return defaults[id.ordinal()].getSyntax() != null ? defaults[id.ordinal()].getSyntax() : "";
+        return defaults[id.ordinal()].syntax() != null ? defaults[id.ordinal()].syntax() : "";
     }
 
     public String getDescription(Commands id) {
-        return defaults[id.ordinal()].getDescription();
+        return defaults[id.ordinal()].description();
     }
 
     public String getPerm(Commands id) {
-        return defaults[id.ordinal()].getPerm();
+        return defaults[id.ordinal()].perm();
     }
-
-    public String getAliases(Commands id) {
-        return defaults[id.ordinal()].getAliases() != null ? defaults[id.ordinal()].getAliases() : "";
-    }
-
 
 }

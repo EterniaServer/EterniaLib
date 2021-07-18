@@ -89,9 +89,7 @@ public class MessagesCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeCritical() {
-        // MessagesCfg doesn't have a critical config.
-    }
+    public void executeCritical() { } // MessagesCfg doesn't have a critical config.
 
     private void addDefault(final Messages entry, final String text, final String notes) {
         messages[entry.ordinal()] = new CustomizableMessage(text, notes);

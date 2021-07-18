@@ -27,8 +27,7 @@ public class Managers {
                     command.name().toLowerCase(), cmdsLocale.getName(command),
                     command.name().toLowerCase() + "_description", cmdsLocale.getDescription(command),
                     command.name().toLowerCase() + "_perm", cmdsLocale.getPerm(command),
-                    command.name().toLowerCase() + "_syntax", cmdsLocale.getSyntax(command),
-                    command.name().toLowerCase() + "_aliases", cmdsLocale.getAliases(command)
+                    command.name().toLowerCase() + "_syntax", cmdsLocale.getSyntax(command)
             );
         }
     }
