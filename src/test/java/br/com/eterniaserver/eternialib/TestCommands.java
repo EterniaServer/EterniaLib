@@ -3,8 +3,8 @@ package br.com.eterniaserver.eternialib;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import br.com.eterniaserver.eternialib.core.commands.CommandConfirm;
-import br.com.eterniaserver.eternialib.core.commands.Eternia;
 import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
@@ -36,24 +36,26 @@ class TestCommands {
 
     @Test
     @DisplayName("test the 'eternia' commands")
-    void eterniaCommands() {
-        final var eterniaCmdManager = new Eternia(plugin);
+    void verifyEterniaCommands() {
+        final PlayerMock mockPlayer = server.addPlayer(new RandomString(16).nextString());
 
-        for (final var test : plugin.getReloadableConfigList()) {
-            final var commandSender = server.getConsoleSender();
-            eterniaCmdManager.onReload(commandSender, test + ":t");
-        }
-
+        mockPlayer.performCommand("eternia");
+        mockPlayer.performCommand("eternia reload oi");
+        mockPlayer.performCommand("eternia reload oi");
+        mockPlayer.performCommand("eternia reload config");
+        mockPlayer.performCommand("eternia reload config:t");
+        mockPlayer.performCommand("eternia reload messages");
+        mockPlayer.performCommand("eternia reload lobby");
         Assertions.assertTrue(true);
     }
 
     @Test
     @DisplayName("test the 'confirm' commands")
     void commandConirm() {
-        final var commandConfirm = new CommandConfirm(plugin);
-        final var mockPlayer = server.addPlayer(new RandomString(16).nextString());
+        final CommandConfirm commandConfirm = new CommandConfirm(plugin);
+        final PlayerMock mockPlayer = server.addPlayer(new RandomString(16).nextString());
 
-        final var command = new TestCommand();
+        final TestCommand command = new TestCommand();
         Assertions.assertEquals(ConfigurationCategory.GENERIC, command.category());
 
         CmdConfirmationManager.scheduleCommand(mockPlayer, command);
