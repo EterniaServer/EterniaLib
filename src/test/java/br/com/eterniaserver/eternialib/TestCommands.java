@@ -5,12 +5,14 @@ import be.seeseemelk.mockbukkit.ServerMock;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import br.com.eterniaserver.eternialib.core.commands.CommandConfirm;
+import br.com.eterniaserver.eternialib.core.commands.Eternia;
 import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
 import net.bytebuddy.utility.RandomString;
 
+import org.bukkit.command.ConsoleCommandSender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -36,17 +38,30 @@ class TestCommands {
 
     @Test
     @DisplayName("test the 'eternia' commands")
+    void eterniaCommands() {
+        final Eternia eterniaCmdManager = new Eternia(plugin);
+
+        for (final String test : plugin.getReloadableConfigList()) {
+            final ConsoleCommandSender commandSender = server.getConsoleSender();
+            eterniaCmdManager.onReload(commandSender, test);
+            eterniaCmdManager.onReload(commandSender, test + ":t");
+        }
+
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    @DisplayName("test the 'eternia' commands")
     void verifyEterniaCommands() {
         final PlayerMock mockPlayer = server.addPlayer(new RandomString(16).nextString());
 
-        mockPlayer.performCommand("eternia");
-        mockPlayer.performCommand("eternia reload oi");
-        mockPlayer.performCommand("eternia reload oi");
-        mockPlayer.performCommand("eternia reload config");
-        mockPlayer.performCommand("eternia reload config:t");
-        mockPlayer.performCommand("eternia reload messages");
-        mockPlayer.performCommand("eternia reload lobby");
-        Assertions.assertTrue(true);
+        Assertions.assertTrue(mockPlayer.performCommand("eternia"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload oi"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload oi"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload config"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload config:t"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload messages"));
+        Assertions.assertTrue(mockPlayer.performCommand("eternia reload lobby"));
     }
 
     @Test
