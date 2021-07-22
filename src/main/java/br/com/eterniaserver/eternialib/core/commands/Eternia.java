@@ -20,6 +20,8 @@ import co.aikar.commands.annotation.Syntax;
 
 import org.bukkit.command.CommandSender;
 
+import java.io.IOException;
+
 @CommandAlias("%eternia")
 public class Eternia extends BaseCommand {
 
@@ -60,7 +62,12 @@ public class Eternia extends BaseCommand {
             return;
         }
 
-        reloadableConfiguration.executeConfig();
+        try {
+            reloadableConfiguration.executeConfig();
+        }
+        catch (IOException exception) {
+            plugin.sendMessage(sender, Messages.CONFIG_INVALID);
+        }
         if (reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE) {
             reloadableConfiguration.executeCritical();
         }

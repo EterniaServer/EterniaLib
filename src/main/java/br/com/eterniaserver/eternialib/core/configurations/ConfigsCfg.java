@@ -45,7 +45,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeConfig() {
+    public void executeConfig() throws IOException {
         // Temporary constants
         final String admin = "admin";
 
@@ -111,12 +111,7 @@ public class ConfigsCfg implements ReloadableConfiguration {
 
         outConfig.set("sql.pool-size", integers[Integers.SQL_POOL_SIZE.ordinal()]);
 
-        try {
-            outConfig.save(Constants.CONFIG_FILE_PATH);
-        } catch (IOException exception) {
-            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
-        }
-
+        outConfig.save(Constants.CONFIG_FILE_PATH);
     }
 
     @Override

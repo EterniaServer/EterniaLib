@@ -2,6 +2,8 @@ package br.com.eterniaserver.eternialib.core.interfaces;
 
 import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
 
+import java.io.IOException;
+
 /**
  * A base class to create new {@link ReloadableConfiguration}s.
  */
@@ -9,7 +11,7 @@ public interface ReloadableConfiguration {
 
     ConfigurationCategory category();
 
-    void executeConfig();
+    void executeConfig() throws IOException;
 
     void executeCritical();
 

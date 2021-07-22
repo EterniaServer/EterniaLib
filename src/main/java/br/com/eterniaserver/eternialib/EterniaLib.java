@@ -106,9 +106,13 @@ public class EterniaLib extends JavaPlugin {
         addReloadableConfiguration(pluginName, "messages", messagesCfg);
         addReloadableConfiguration(pluginName, "lobby", lobbyCfg);
 
-        configsCfg.executeConfig();
-        messagesCfg.executeConfig();
-        lobbyCfg.executeConfig();
+        try {
+            configsCfg.executeConfig();
+            messagesCfg.executeConfig();
+            lobbyCfg.executeConfig();
+        } catch (IOException exception) {
+            getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
+        }
     }
 
     private void loadManager() {

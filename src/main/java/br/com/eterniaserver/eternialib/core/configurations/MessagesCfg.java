@@ -6,7 +6,6 @@ import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.baseobjects.CustomizableMessage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,7 +28,7 @@ public class MessagesCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeConfig() {
+    public void executeConfig() throws IOException {
 
         addDefault(Messages.LOAD_CACHE,
                 "Carregados $3{0}$7 arquivos de jogadores$8.",
@@ -79,12 +78,7 @@ public class MessagesCfg implements ReloadableConfiguration {
 
         }
 
-        try {
-            config.save(Constants.MESSAGES_FILE_PATH);
-        } catch (IOException exception) {
-            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
-        }
-
+        config.save(Constants.MESSAGES_FILE_PATH);
     }
 
     @Override

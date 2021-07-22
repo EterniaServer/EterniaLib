@@ -47,7 +47,7 @@ public class LobbyCfg implements ReloadableConfiguration {
     }
 
     @Override
-    public void executeConfig() {
+    public void executeConfig() throws IOException {
         integers[Integers.GUI_SIZE.ordinal()] = config.getInt("gui-size", 9);
 
         strings[Strings.SELECT_TITLE_NAME.ordinal()] = config.getString("select-title", "$6$lServidores".replace('$', (char) 0x00A7));
@@ -96,12 +96,7 @@ public class LobbyCfg implements ReloadableConfiguration {
 
         outConfig.set("gui-size", integers[Integers.GUI_SIZE.ordinal()]);
 
-        try {
-            outConfig.save(Constants.LOBBY_FILE_PATH);
-        } catch (IOException exception) {
-            Bukkit.getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
-        }
-
+        outConfig.save(Constants.LOBBY_FILE_PATH);
     }
 
     @Override
