@@ -13,7 +13,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public record MessagesCfg(CustomizableMessage[] messages) implements ReloadableConfiguration {
+public class MessagesCfg implements ReloadableConfiguration {
+
+    private final CustomizableMessage[] messages;
+    private final FileConfiguration config;
+
+    public MessagesCfg(final CustomizableMessage[] messages) {
+        this.messages = messages;
+        this.config = YamlConfiguration.loadConfiguration(new File(Constants.MESSAGES_FILE_PATH));
+    }
 
     @Override
     public ConfigurationCategory category() {
@@ -53,9 +61,6 @@ public record MessagesCfg(CustomizableMessage[] messages) implements ReloadableC
         addDefault(Messages.COMMAND_DENIED,
                 "Você cancelou a execução desse comando$8.",
                 null);
-
-        // Load and save the configuration
-        final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.MESSAGES_FILE_PATH));
 
         for (final Messages entry : Messages.values()) {
             final CustomizableMessage defaultMsg = messages[entry.ordinal()];

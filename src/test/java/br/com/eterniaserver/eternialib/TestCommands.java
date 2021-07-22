@@ -2,8 +2,8 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import br.com.eterniaserver.eternialib.core.commands.CommandConfirm;
 import br.com.eterniaserver.eternialib.core.commands.Eternia;
 import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
@@ -40,12 +40,15 @@ class TestCommands {
     @DisplayName("test the 'eternia' commands")
     void eterniaCommands() {
         final Eternia eterniaCmdManager = new Eternia(plugin);
+        final ConsoleCommandSender commandSender = server.getConsoleSender();
 
         for (final String test : plugin.getReloadableConfigList()) {
-            final ConsoleCommandSender commandSender = server.getConsoleSender();
             eterniaCmdManager.onReload(commandSender, test);
             eterniaCmdManager.onReload(commandSender, test + ":t");
+            eterniaCmdManager.onReload(commandSender, test + ":n");
         }
+
+        eterniaCmdManager.onReload(commandSender, "grupinix");
 
         Assertions.assertTrue(true);
     }
@@ -66,7 +69,7 @@ class TestCommands {
 
     @Test
     @DisplayName("test the 'confirm' commands")
-    void commandConirm() {
+    void commandConfirm() {
         final CommandConfirm commandConfirm = new CommandConfirm(plugin);
         final PlayerMock mockPlayer = server.addPlayer(new RandomString(16).nextString());
 
