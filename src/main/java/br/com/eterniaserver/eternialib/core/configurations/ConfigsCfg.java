@@ -15,11 +15,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public record ConfigsCfg(String[] strings,
-                         int[] integers,
-                         boolean[] booleans,
-                         List<String> protocolVersions,
-                         Runnable criticalRunnable) implements ReloadableConfiguration {
+public class ConfigsCfg implements ReloadableConfiguration {
+
+    private final FileConfiguration config;
+
+    private final String[] strings;
+    private final int[] integers;
+    private final boolean[] booleans;
+    private final List<String> protocolVersions;
+    private final Runnable criticalRunnable;
+
+    public ConfigsCfg(final String[] strings,
+                      final int[] integers,
+                      final boolean[] booleans,
+                      final List<String> protocolVersions,
+                      final Runnable criticalRunnable) {
+        this.strings = strings;
+        this.integers = integers;
+        this.booleans = booleans;
+        this.protocolVersions = protocolVersions;
+        this.criticalRunnable = criticalRunnable;
+
+        this.config = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
+    }
 
     @Override
     public ConfigurationCategory category() {
@@ -32,9 +50,6 @@ public record ConfigsCfg(String[] strings,
         final String admin = "admin";
 
         protocolVersions.clear();
-
-        // Load the configurations
-        final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
 
         strings[Strings.SERVER_PREFIX.ordinal()] = config.getString("server.prefix", "$8[$aE$9L$8]$7 ").replace('$', (char) 0x00A7);
         strings[Strings.SQL_HOST.ordinal()] = config.getString("sql.host", "127.0.0.1");

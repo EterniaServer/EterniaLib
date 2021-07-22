@@ -48,13 +48,39 @@ class TestExceptions {
     }
 
     @Test
-    @DisplayName("test the 'exceptions of configs'")
-    void verifyExceptions() throws NoSuchFieldException, IllegalAccessException, IOException {
+    @DisplayName("test the exception of messages'")
+    void verifyMessagesException() throws NoSuchFieldException, IllegalAccessException, IOException {
         final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_messages".hashCode());
         final Field field = config.getClass().getDeclaredField("config");
         field.setAccessible(true);
 
         BDDMockito.willThrow(IOException.class).given(Mockito.spy((FileConfiguration) field.get(config))).save(Constants.MESSAGES_FILE_PATH);
+
+        config.executeConfig();
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    @DisplayName("test the exception of configs'")
+    void verifyConfigException() throws NoSuchFieldException, IllegalAccessException, IOException {
+        final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_config".hashCode());
+        final Field field = config.getClass().getDeclaredField("config");
+        field.setAccessible(true);
+
+        BDDMockito.willThrow(IOException.class).given(Mockito.spy((FileConfiguration) field.get(config))).save(Constants.CONFIG_FILE_PATH);
+
+        config.executeConfig();
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    @DisplayName("test the exception of lobbyCfg'")
+    void verifyLobbyException() throws NoSuchFieldException, IllegalAccessException, IOException {
+        final ReloadableConfiguration config = plugin.getReloadableConfiguration("eternialib_lobby".hashCode());
+        final Field field = config.getClass().getDeclaredField("config");
+        field.setAccessible(true);
+
+        BDDMockito.willThrow(IOException.class).given(Mockito.spy((FileConfiguration) field.get(config))).save(Constants.LOBBY_FILE_PATH);
 
         config.executeConfig();
         Assertions.assertTrue(true);

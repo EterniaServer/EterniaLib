@@ -20,10 +20,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public record LobbyCfg(String[] strings,
-                       boolean[] booleans,
-                       int[] integers,
-                       List<ItemStack> itemStacks) implements ReloadableConfiguration {
+public class LobbyCfg implements ReloadableConfiguration {
+
+    private final FileConfiguration config;
+
+    private final String[] strings;
+    private final boolean[] booleans;
+    private final int[] integers;
+    private final List<ItemStack> itemStacks;
+
+    public LobbyCfg(final String[] strings,
+                    boolean[] booleans,
+                    int[] integers,
+                    List<ItemStack> itemStacks) {
+        this.strings = strings;
+        this.booleans = booleans;
+        this.integers = integers;
+        this.itemStacks = itemStacks;
+
+        this.config = YamlConfiguration.loadConfiguration(new File(Constants.LOBBY_FILE_PATH));
+    }
 
     @Override
     public ConfigurationCategory category() {
@@ -32,9 +48,6 @@ public record LobbyCfg(String[] strings,
 
     @Override
     public void executeConfig() {
-        // Load the configuration
-        FileConfiguration config = YamlConfiguration.loadConfiguration(new File(Constants.LOBBY_FILE_PATH));
-
         integers[Integers.GUI_SIZE.ordinal()] = config.getInt("gui-size", 9);
 
         strings[Strings.SELECT_TITLE_NAME.ordinal()] = config.getString("select-title", "$6$lServidores".replace('$', (char) 0x00A7));
