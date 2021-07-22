@@ -59,13 +59,12 @@ public class CommandsLocaleCfg {
             final String cmdAliases = config.getString(entry.name() + ".aliases", defaults[entry.ordinal()].getAliases());
 
             this.defaults[entry.ordinal()] = new CommandLocale(cmdName, cmdSyntax, cmdDescription, cmdPerm, cmdAliases);
+
+            config.set(entry.name() + ".hashcode", entry.hashCode());
             config.set(entry.name() + ".name", cmdName);
             config.set(entry.name() + ".description", cmdDescription);
             config.set(entry.name() + ".perm", cmdPerm);
-
-            if (cmdSyntax != null) {
-                config.set(entry.name() + ".syntax", cmdSyntax);
-            }
+            config.set(entry.name() + ".syntax", cmdSyntax);
         }
 
         try {

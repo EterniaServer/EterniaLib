@@ -2,6 +2,8 @@ package br.com.eterniaserver.eternialib.core.baseobjects;
 
 public class CommandLocale {
 
+    private final int id;
+
     private final String name;
     private final String syntax;
     private final String description;
@@ -9,11 +11,17 @@ public class CommandLocale {
     private final String aliases;
 
     public CommandLocale(final String name, final String syntax, final String description, final String perm, final String aliases) {
+        this.id = name.hashCode();
+
         this.name = name;
         this.syntax = syntax;
         this.description = description;
         this.perm = perm;
         this.aliases = aliases;
+    }
+
+    public int hashCode() {
+        return id;
     }
 
     public String getName() {

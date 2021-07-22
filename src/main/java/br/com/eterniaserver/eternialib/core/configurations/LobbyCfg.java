@@ -3,10 +3,12 @@ package br.com.eterniaserver.eternialib.core.configurations;
 import br.com.eterniaserver.eternialib.Constants;
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.baseobjects.ItemSaveAndUseMeta;
-import br.com.eterniaserver.eternialib.core.enums.*;
+import br.com.eterniaserver.eternialib.core.enums.Booleans;
+import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
+import br.com.eterniaserver.eternialib.core.enums.Integers;
+import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
