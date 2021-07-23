@@ -20,8 +20,7 @@ public class CommandLocale {
         this.aliases = aliases;
     }
 
-    @Override
-    public int hashCode() {
+    public int hash() {
         return id;
     }
 
