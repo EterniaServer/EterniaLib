@@ -64,18 +64,18 @@ public class MessagesCfg implements ReloadableConfiguration {
         for (final Messages entry : Messages.values()) {
             final CustomizableMessage defaultMsg = messages[entry.ordinal()];
 
-            String messageStr = config.getString(entry.name() + ".text", defaultMsg.text);
-            config.set(entry.name() + ".text", messageStr);
-            messageStr = messageStr.replace('$', (char) 0x00A7);
-
-            String noteStr = null;
-            if (defaultMsg.getNotes() != null) {
-                noteStr = config.getString(entry.name() + ".notes", defaultMsg.getNotes());
-                config.set(entry.name() + ".notes", noteStr);
+            if (defaultMsg.getNotes() == null) {
+                defaultMsg.setNotes("Basic message");
             }
 
-            messages[entry.ordinal()] = new CustomizableMessage(messageStr, noteStr);
+            final String messageStr = config.getString(entry.name() + ".text", defaultMsg.text);
+            final String formattedStr = messageStr.replace('$', (char) 0x00A7);
+            final String noteStr = config.getString(entry.name() + ".notes", defaultMsg.getNotes());
 
+            config.set(entry.name() + ".notes", noteStr);
+            config.set(entry.name() + ".text", messageStr);
+
+            messages[entry.ordinal()] = new CustomizableMessage(formattedStr, noteStr);
         }
 
         config.save(Constants.MESSAGES_FILE_PATH);

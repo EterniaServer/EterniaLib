@@ -90,6 +90,18 @@ class TestCommands {
         Assertions.assertEquals(ConfigurationCategory.WARNING_ADVICE, command.category());
     }
 
+    @Test
+    @DisplayName("test the 'confirm' commands")
+    void commandConfirmInvalid() {
+        final CommandConfirm commandConfirm = new CommandConfirm(plugin);
+        final PlayerMock mockPlayer = server.addPlayer(new RandomString(16).nextString());
+
+        commandConfirm.onAccept(mockPlayer);
+        commandConfirm.onDeny(mockPlayer);
+
+        Assertions.assertTrue(true);
+    }
+
     private final static class TestCommand implements ReloadableConfiguration, CommandConfirmable {
 
         private ConfigurationCategory category = ConfigurationCategory.GENERIC;
