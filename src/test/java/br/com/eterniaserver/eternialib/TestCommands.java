@@ -10,14 +10,19 @@ import br.com.eterniaserver.eternialib.core.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.interfaces.CommandConfirmable;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 
+import co.aikar.commands.CommandHelp;
+
 import net.bytebuddy.utility.RandomString;
 
 import org.bukkit.command.ConsoleCommandSender;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
+
+import org.mockito.Mockito;
 
 
 class TestCommands {
@@ -49,6 +54,7 @@ class TestCommands {
         }
 
         eterniaCmdManager.onReload(commandSender, "grupinix");
+        eterniaCmdManager.onHelp(Mockito.mock(CommandHelp.class));
 
         Assertions.assertTrue(true);
     }
@@ -88,6 +94,9 @@ class TestCommands {
 
         command.executeConfig();
         Assertions.assertEquals(ConfigurationCategory.WARNING_ADVICE, command.category());
+
+        commandConfirm.onCommandHelp(Mockito.mock(CommandHelp.class));
+        Assertions.assertTrue(true);
     }
 
     @Test
