@@ -59,7 +59,7 @@ public class CommandsLocaleCfg {
 
             this.defaults[entry.ordinal()] = new CommandLocale(cmdName, cmdSyntax, cmdDescription, cmdPerm, cmdAliases);
 
-            config.set(entry.name() + ".hashcode", entry.hash());
+            config.set(entry.name() + ".hashcode", this.defaults[entry.ordinal()].hash());
             config.set(entry.name() + ".name", cmdName);
             config.set(entry.name() + ".description", cmdDescription);
             config.set(entry.name() + ".perm", cmdPerm);
