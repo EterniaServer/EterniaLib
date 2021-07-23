@@ -77,10 +77,15 @@ public class EterniaLib extends JavaPlugin {
     public void onEnable() {
         setServerKey(this);
 
-        loadAllConfigs();
-        loadManager();
+        try {
+            loadAllConfigs();
+            loadManager();
 
-        new Managers(this);
+            new Managers(this);
+        }
+        catch (IOException | InvalidConfigurationException exception) {
+            getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
+        }
 
         loadDatabase();
 
@@ -95,7 +100,7 @@ public class EterniaLib extends JavaPlugin {
         }
     }
 
-    private void loadAllConfigs() {
+    private void loadAllConfigs() throws IOException {
         final ConfigsCfg configsCfg = new ConfigsCfg(strings, integers, booleans, protocolVersions, this::loadDatabase);
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
         final LobbyCfg lobbyCfg = new LobbyCfg(strings, booleans, integers, itemStacks);
@@ -106,32 +111,24 @@ public class EterniaLib extends JavaPlugin {
         addReloadableConfiguration(pluginName, "messages", messagesCfg);
         addReloadableConfiguration(pluginName, "lobby", lobbyCfg);
 
-        try {
-            configsCfg.executeConfig();
-            messagesCfg.executeConfig();
-            lobbyCfg.executeConfig();
-        } catch (IOException exception) {
-            getLogger().warning("Can't save file, invalid permissions: " + exception.getClass().getName());
-        }
+        configsCfg.executeConfig();
+        messagesCfg.executeConfig();
+        lobbyCfg.executeConfig();
     }
 
-    private void loadManager() {
+    private void loadManager() throws IOException, InvalidConfigurationException {
         setManager(new PaperCommandManager(this));
         manager.enableUnstableAPI("help");
 
-        try {
-            final String acf = "acf_messages.yml";
-            final File files = new File(getDataFolder(), acf);
+        final String acf = "acf_messages.yml";
+        final File files = new File(getDataFolder(), acf);
 
-            if (!files.exists()) {
-                saveResource(acf, false);
-            }
-
-            manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
-            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
-        } catch (IOException | InvalidConfigurationException exception) {
-            Bukkit.getLogger().warning("Invalid folder permissions, exception class: " + exception.getClass().getName());
+        if (!files.exists()) {
+            saveResource(acf, false);
         }
+
+        manager.getLocales().loadYamlLanguageFile(acf, Locale.ENGLISH);
+        manager.getLocales().setDefaultLocale(Locale.ENGLISH);
     }
 
     private void loadDatabase() {

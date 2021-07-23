@@ -7,11 +7,13 @@ import br.com.eterniaserver.eternialib.core.commands.Eternia;
 import br.com.eterniaserver.eternialib.core.configurations.CommandsLocaleCfg;
 import br.com.eterniaserver.eternialib.core.enums.Commands;
 
+import java.io.IOException;
+
 public class Managers {
 
     private final EterniaLib plugin;
 
-    public Managers(EterniaLib plugin) {
+    public Managers(EterniaLib plugin) throws IOException {
         this.plugin = plugin;
 
         loadCommandsLocale();
@@ -19,7 +21,7 @@ public class Managers {
         registerCommands();
     }
 
-    private void loadCommandsLocale() {
+    private void loadCommandsLocale() throws IOException {
         CommandsLocaleCfg cmdsLocale = new CommandsLocaleCfg();
 
         for (Commands command : Commands.values()) {
