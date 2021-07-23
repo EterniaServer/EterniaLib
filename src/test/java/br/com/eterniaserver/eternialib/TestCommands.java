@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 
 import org.mockito.Mockito;
 
+import java.io.IOException;
+
 
 class TestCommands {
 
@@ -43,7 +45,7 @@ class TestCommands {
 
     @Test
     @DisplayName("test the 'eternia' commands")
-    void eterniaCommands() {
+    void eterniaCommands() throws IOException {
         final Eternia eterniaCmdManager = new Eternia(plugin);
         final ConsoleCommandSender commandSender = server.getConsoleSender();
 

@@ -46,7 +46,7 @@ public class Eternia extends BaseCommand {
     @CommandPermission("%eternia_reload_perm")
     @CommandCompletion("@eternia_cmds")
     @Description("%eternia_reload_description")
-    public void onReload(final CommandSender sender, final String config) {
+    public void onReload(final CommandSender sender, final String config) throws IOException {
 
         final String[] sep = config.split(":");
         final ReloadableConfiguration reloadableConfiguration = plugin.getReloadableConfiguration(sep[0].hashCode());
@@ -62,12 +62,7 @@ public class Eternia extends BaseCommand {
             return;
         }
 
-        try {
-            reloadableConfiguration.executeConfig();
-        }
-        catch (IOException exception) {
-            plugin.sendMessage(sender, Messages.CONFIG_INVALID);
-        }
+        reloadableConfiguration.executeConfig();
         if (reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE) {
             reloadableConfiguration.executeCritical();
         }
