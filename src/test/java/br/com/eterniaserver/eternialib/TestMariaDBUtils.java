@@ -95,12 +95,6 @@ class TestMariaDBUtils {
         SQL.execute(update);
 
         Assertions.assertDoesNotThrow(() -> selectQuery("test_result"));
-
-        final Delete delete = new Delete(TABLE_TEST);
-        delete.where.set("test", "test_result");
-        SQL.executeAsync(delete);
-
-        Assertions.assertThrows(SQLException.class, () -> selectQuery("test_result"));
     }
 
     private void selectQuery(String value) throws SQLException {
@@ -109,8 +103,9 @@ class TestMariaDBUtils {
         try (final Connection con = SQL.getConnection();
              final PreparedStatement preStat = con.prepareStatement(select.queryString());
              final ResultSet resSet = preStat.executeQuery()) {
-            resSet.first();
-            Assertions.assertEquals(value, resSet.getString("test"));
+            while (resSet.next()) {
+                Assertions.assertEquals(value, resSet.getString("test"));
+            }
         }
     }
 
