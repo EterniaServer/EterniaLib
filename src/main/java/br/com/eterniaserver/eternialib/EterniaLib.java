@@ -162,11 +162,10 @@ public class EterniaLib extends JavaPlugin {
     private void setUpConnection() {
         if (setAndGetMySQL(getBool(Booleans.MYSQL))) {
             setHikari(new HikariDataSource());
-            hikari.setPoolName("EterniaLib MySQL Pool");
+            hikari.setPoolName("EterniaLib MariaDB Pool");
             hikari.setJdbcUrl("jdbc:mysql://" + getString(Strings.SQL_HOST) +
                     ":" + getString(Strings.SQL_PORT) +
                     "/" + getString(Strings.SQL_DATABASE));
-
             hikari.addDataSourceProperty("user", getString(Strings.SQL_USER));
             hikari.addDataSourceProperty("password", getString(Strings.SQL_PASSWORD));
             hikari.setMaximumPoolSize(getInt(Integers.SQL_POOL_SIZE));
