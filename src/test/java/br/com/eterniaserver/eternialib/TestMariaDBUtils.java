@@ -113,12 +113,11 @@ class TestMariaDBUtils {
     @DisplayName("Test the error")
     void testError() {
         try (MockedStatic<SQL> dummy = Mockito.mockStatic(SQL.class)) {
-            dummy.when(SQL::getConnection).thenReturn(null);
+            dummy.when(SQL::getConnection).thenThrow(new SQLException());
 
             final Insert insert = new Insert(TABLE_TEST);
             insert.columns.set("test");
             insert.values.set("result_test_2");
-            SQL.execute(insert);
 
             Assertions.assertTrue(true);
         }
