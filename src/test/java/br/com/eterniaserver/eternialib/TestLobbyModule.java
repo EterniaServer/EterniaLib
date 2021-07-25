@@ -104,7 +104,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores");
+        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores".replace('$', (char) 0x00A7));
         final ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
         final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
 
@@ -116,6 +116,24 @@ public class TestLobbyModule {
         inventory.setItem(0, itemStack);
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
+
+        inventory = Bukkit.createInventory(playerMock, 27);
+        inventory.setItem(0, null);
+        playerMock.openInventory(inventory);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
+
+        inventory = Bukkit.createInventory(playerMock, 27);
+        inventory.setItem(0, new ItemStack(Material.AIR));
+        playerMock.openInventory(inventory);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
 
         lobbyHandler.onInventoryClick(event);
         Assertions.assertTrue(event.isCancelled());
