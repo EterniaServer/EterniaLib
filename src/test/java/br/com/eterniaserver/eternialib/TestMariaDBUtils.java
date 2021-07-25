@@ -2,8 +2,8 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 
+import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
-import br.com.eterniaserver.eternialib.core.queries.Delete;
 import br.com.eterniaserver.eternialib.core.queries.Insert;
 import br.com.eterniaserver.eternialib.core.queries.Select;
 import br.com.eterniaserver.eternialib.core.queries.Update;
@@ -34,6 +34,8 @@ class TestMariaDBUtils {
     private final static String TABLE_TEST = "table_test";
     private static DB db;
 
+    private static EterniaLib plugin;
+
     @BeforeAll
     public static void setUp() throws IOException, ManagedProcessException, SQLException {
         final DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
@@ -55,16 +57,11 @@ class TestMariaDBUtils {
         file.set("sql.password", "");
         file.save(Constants.CONFIG_FILE_PATH);
 
-        MockBukkit.load(EterniaLib.class);
+        plugin = MockBukkit.load(EterniaLib.class);
     }
 
     @AfterAll
-    public static void tearDown() throws IOException, ManagedProcessException {
-        final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
-        file.set("sql.mysql", false);
-        file.set("sql.port", 3306);
-        file.save(Constants.CONFIG_FILE_PATH);
-
+    public static void tearDown() throws ManagedProcessException {
         MockBukkit.unmock();
         db.stop();
     }
@@ -95,6 +92,13 @@ class TestMariaDBUtils {
         SQL.execute(update);
 
         Assertions.assertDoesNotThrow(() -> selectQuery("test_result"));
+    }
+
+    @Test
+    @DisplayName("Test method")
+    void testMariaDBMethod() {
+        Assertions.assertTrue(plugin.getBool(Booleans.MYSQL));
+        Assertions.assertTrue(EterniaLib.getMySQL());
     }
 
     private void selectQuery(String value) throws SQLException {

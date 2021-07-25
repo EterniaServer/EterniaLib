@@ -2,18 +2,23 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 
+import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
 import br.com.eterniaserver.eternialib.core.queries.Delete;
 import br.com.eterniaserver.eternialib.core.queries.Insert;
 import br.com.eterniaserver.eternialib.core.queries.Select;
 import br.com.eterniaserver.eternialib.core.queries.Update;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,10 +28,16 @@ class TestSQLiteUtils {
 
     private final static String TABLE_TEST = "table_test";
 
+    private static EterniaLib plugin;
+
     @BeforeAll
-    public static void setUp() {
-         MockBukkit.mock();
-         MockBukkit.load(EterniaLib.class);
+    public static void setUp() throws IOException {
+        MockBukkit.mock();
+        final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
+        file.set("sql.mysql", false);
+        file.save(Constants.CONFIG_FILE_PATH);
+
+        plugin = MockBukkit.load(EterniaLib.class);
     }
 
     @AfterAll
@@ -66,6 +77,13 @@ class TestSQLiteUtils {
         SQL.executeAsync(delete);
 
         Assertions.assertThrows(SQLException.class, () -> selectQuery("test_result"));
+    }
+
+    @Test
+    @DisplayName("Test method")
+    void testSQLite() {
+        Assertions.assertFalse(plugin.getBool(Booleans.MYSQL));
+        Assertions.assertFalse(EterniaLib.getMySQL());
     }
 
     private void selectQuery(String value) throws SQLException {

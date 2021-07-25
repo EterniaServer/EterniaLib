@@ -2,7 +2,6 @@ package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 
-import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
@@ -33,10 +32,7 @@ class TestPluginClass {
     void testResources() {
         Assertions.assertEquals("127.0.0.1", plugin.getString(Strings.SQL_HOST));
         Assertions.assertEquals(10, plugin.getInt(Integers.SQL_POOL_SIZE));
-        Assertions.assertFalse(plugin.getBool(Booleans.MYSQL));
         Assertions.assertNotNull(plugin.getMessage(Messages.ERROR));
-
-        Assertions.assertFalse(EterniaLib.getMySQL());
     }
 
 }
