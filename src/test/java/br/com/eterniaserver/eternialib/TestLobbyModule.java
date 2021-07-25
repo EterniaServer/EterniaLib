@@ -10,12 +10,20 @@ import br.com.eterniaserver.eternialib.handlers.LobbyHandler;
 
 import net.bytebuddy.utility.RandomString;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,7 +63,7 @@ public class TestLobbyModule {
     }
 
     @Test
-    @DisplayName("Test with event will be blocked")
+    @DisplayName("Test if event will be blocked")
     void testItemSwapEvent() throws NoSuchFieldException, IllegalAccessException {
         final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
         final ItemStack firstItem = new ItemStack(Material.OAK_SIGN);
@@ -73,6 +81,45 @@ public class TestLobbyModule {
         event = new PlayerSwapHandItemsEvent(playerMock, firstItem, anotherItem);
         lobbyHandler.onPlayerSwapHandItems(event);
         Assertions.assertFalse(event.isCancelled());
+    }
+
+    @Test
+    @DisplayName("Test if event is working")
+    void testInventoryClickEvent() {
+        final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
+
+        playerMock.openInventory(playerMock.getInventory());
+        InventoryClickEvent event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.ARMOR, 0, ClickType.LEFT, InventoryAction.NOTHING);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
+
+        Inventory inventory = Bukkit.createInventory(playerMock, 27, "false_false");
+        inventory.setItem(0, new ItemStack(Material.ACACIA_SIGN));
+        playerMock.openInventory(inventory);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
+
+        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores");
+        final ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
+        final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
+
+        Assertions.assertNotNull(itemMeta);
+        Assertions.assertNotNull(itemMeta.getPersistentDataContainer());
+
+        itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, "survival");
+        itemStack.setItemMeta(itemMeta);
+        inventory.setItem(0, itemStack);
+        playerMock.openInventory(inventory);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
     }
 
 }
