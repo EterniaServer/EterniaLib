@@ -17,9 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -38,6 +35,7 @@ class TestSQLiteUtils {
         MockBukkit.mock();
         final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
         file.set("sql.mysql", false);
+        file.set("lobby.enabled", false);
         file.save(Constants.CONFIG_FILE_PATH);
 
         plugin = MockBukkit.load(EterniaLib.class);
@@ -80,21 +78,6 @@ class TestSQLiteUtils {
         SQL.executeAsync(delete);
 
         Assertions.assertThrows(SQLException.class, () -> selectQuery("test_result"));
-    }
-
-    @Test
-    @DisplayName("Test the error")
-    void testError() {
-        try (MockedStatic<SQL> dummy = Mockito.mockStatic(SQL.class)) {
-            dummy.when(SQL::getConnection).thenThrow(new SQLException());
-
-            final Insert insert = new Insert(TABLE_TEST);
-            insert.columns.set("test");
-            insert.values.set("result_test_2");
-            SQL.execute(insert);
-
-            Assertions.assertTrue(true);
-        }
     }
 
     @Test

@@ -30,6 +30,7 @@ class TestCmdCSchedule {
         server = MockBukkit.mock();
         final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
         file.set("sql.mysql", false);
+        file.set("lobby.enabled", false);
         file.save(Constants.CONFIG_FILE_PATH);
 
         MockBukkit.load(EterniaLib.class);

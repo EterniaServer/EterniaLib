@@ -22,9 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -59,6 +56,7 @@ class TestMariaDBUtils {
         file.set("sql.database", "root");
         file.set("sql.user", "root");
         file.set("sql.password", "");
+        file.set("lobby.enabled", false);
         file.save(Constants.CONFIG_FILE_PATH);
 
         plugin = MockBukkit.load(EterniaLib.class);
@@ -107,20 +105,6 @@ class TestMariaDBUtils {
         SQL.executeAsync(insert);
 
         Assertions.assertTrue(true);
-    }
-
-    @Test
-    @DisplayName("Test the error")
-    void testError() {
-        try (MockedStatic<SQL> dummy = Mockito.mockStatic(SQL.class)) {
-            dummy.when(SQL::getConnection).thenThrow(new SQLException());
-
-            final Insert insert = new Insert(TABLE_TEST);
-            insert.columns.set("test");
-            insert.values.set("result_test_2");
-
-            Assertions.assertTrue(true);
-        }
     }
 
     @Test
