@@ -9,12 +9,16 @@ import net.bytebuddy.utility.RandomString;
 
 import org.bukkit.Bukkit;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 class TestCmdCSchedule {
@@ -22,8 +26,12 @@ class TestCmdCSchedule {
     private static ServerMock server;
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         server = MockBukkit.mock();
+        final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
+        file.set("sql.mysql", false);
+        file.save(Constants.CONFIG_FILE_PATH);
+
         MockBukkit.load(EterniaLib.class);
     }
 

@@ -5,6 +5,8 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import br.com.eterniaserver.eternialib.core.baseobjects.ItemSaveAndUseMeta;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,14 +16,20 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 class TestConfigs {
 
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         MockBukkit.mock();
+        final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
+        file.set("sql.mysql", false);
+        file.save(Constants.CONFIG_FILE_PATH);
+
         MockBukkit.load(EterniaLib.class);
     }
 

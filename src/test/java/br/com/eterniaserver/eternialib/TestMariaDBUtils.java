@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
+import br.com.eterniaserver.eternialib.core.queries.Delete;
 import br.com.eterniaserver.eternialib.core.queries.Insert;
 import br.com.eterniaserver.eternialib.core.queries.Select;
 import br.com.eterniaserver.eternialib.core.queries.Update;
@@ -92,6 +93,12 @@ class TestMariaDBUtils {
         SQL.execute(update);
 
         Assertions.assertDoesNotThrow(() -> selectQuery("test_result"));
+
+        final Delete delete = new Delete(TABLE_TEST);
+        delete.where.set("test", "test_result");
+        SQL.executeAsync(delete);
+
+        Assertions.assertTrue(true);
     }
 
     @Test

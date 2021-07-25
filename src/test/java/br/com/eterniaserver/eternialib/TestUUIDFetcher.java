@@ -8,6 +8,8 @@ import br.com.eterniaserver.eternialib.handlers.AsyncPlayerPreLoginHandler;
 
 import net.bytebuddy.utility.RandomString;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 
 class TestUUIDFetcher {
@@ -24,8 +28,12 @@ class TestUUIDFetcher {
     private static AsyncPlayerPreLoginHandler listener;
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         server = MockBukkit.mock();
+        final FileConfiguration file = YamlConfiguration.loadConfiguration(new File(Constants.CONFIG_FILE_PATH));
+        file.set("sql.mysql", false);
+        file.save(Constants.CONFIG_FILE_PATH);
+
         listener = new AsyncPlayerPreLoginHandler(MockBukkit.load(EterniaLib.class));
     }
 
