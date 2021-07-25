@@ -5,6 +5,7 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
+import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.handlers.LobbyHandler;
 
@@ -104,15 +105,9 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores".replace('$', (char) 0x00A7));
-        final ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
-        final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
+        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores");
+        ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
 
-        Assertions.assertNotNull(itemMeta);
-        Assertions.assertNotNull(itemMeta.getPersistentDataContainer());
-
-        itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, "survival");
-        itemStack.setItemMeta(itemMeta);
         inventory.setItem(0, itemStack);
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
@@ -138,6 +133,24 @@ public class TestLobbyModule {
         lobbyHandler.onInventoryClick(event);
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
+
+        inventory = Bukkit.createInventory(playerMock, 9, plugin.getString(Strings.SELECT_TITLE_NAME));
+        itemStack = new ItemStack(Material.OAK_BOAT);
+        final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
+
+        Assertions.assertNotNull(itemMeta);
+        Assertions.assertNotNull(itemMeta.getPersistentDataContainer());
+
+        itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, "survival");
+        itemStack.setItemMeta(itemMeta);
+        inventory.setItem(0, itemStack);
+        playerMock.openInventory(inventory);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
+
+        lobbyHandler.onInventoryClick(event);
+        Assertions.assertTrue(event.isCancelled());
+        playerMock.closeInventory();
+
     }
 
 }
