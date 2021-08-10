@@ -6,12 +6,10 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
-import br.com.eterniaserver.eternialib.core.interfaces.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.handlers.LobbyHandler;
 
 import net.bytebuddy.utility.RandomString;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -96,7 +94,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        Inventory inventory = Bukkit.createInventory(playerMock, 27, "false_false");
+        Inventory inventory = server.createInventory(playerMock, 27, "false_false");
         inventory.setItem(0, new ItemStack(Material.ACACIA_SIGN));
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY);
@@ -105,7 +103,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 9, "§6§lServidores");
+        inventory = server.createInventory(playerMock, 9, "LALALAL");
         ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
 
         inventory.setItem(0, itemStack);
@@ -116,7 +114,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 27);
+        inventory = server.createInventory(playerMock, 27);
         inventory.setItem(0, null);
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
@@ -125,7 +123,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 27);
+        inventory = server.createInventory(playerMock, 27);
         inventory.setItem(0, new ItemStack(Material.AIR));
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
@@ -134,7 +132,7 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = Bukkit.createInventory(playerMock, 9, plugin.getString(Strings.SELECT_TITLE_NAME));
+        inventory = server.createInventory(playerMock, 9, plugin.getString(Strings.SELECT_TITLE_NAME));
         itemStack = new ItemStack(Material.OAK_BOAT);
         final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
 
@@ -150,7 +148,6 @@ public class TestLobbyModule {
         lobbyHandler.onInventoryClick(event);
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
-
     }
 
 }
