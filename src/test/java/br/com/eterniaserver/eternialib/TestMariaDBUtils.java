@@ -3,6 +3,7 @@ package br.com.eterniaserver.eternialib;
 import be.seeseemelk.mockbukkit.MockBukkit;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
+import br.com.eterniaserver.eternialib.core.interfaces.Query;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
 import br.com.eterniaserver.eternialib.core.queries.Delete;
 import br.com.eterniaserver.eternialib.core.queries.Insert;
@@ -104,6 +105,14 @@ class TestMariaDBUtils {
         insertTwo.values.set("result_test");
         SQL.executeAsync(insert);
 
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    @DisplayName("Test the fail")
+    void testMariaDBFail() {
+        final Query query = () -> "SELECT * FROM tabela_falsa;";
+        SQL.execute(query);
         Assertions.assertTrue(true);
     }
 

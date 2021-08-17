@@ -3,6 +3,7 @@ package br.com.eterniaserver.eternialib;
 import be.seeseemelk.mockbukkit.MockBukkit;
 
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
+import br.com.eterniaserver.eternialib.core.interfaces.Query;
 import br.com.eterniaserver.eternialib.core.queries.CreateTable;
 import br.com.eterniaserver.eternialib.core.queries.Delete;
 import br.com.eterniaserver.eternialib.core.queries.Insert;
@@ -78,6 +79,14 @@ class TestSQLiteUtils {
         SQL.executeAsync(delete);
 
         Assertions.assertThrows(SQLException.class, () -> selectQuery("test_result"));
+    }
+
+    @Test
+    @DisplayName("Test the fail")
+    void testSQLiteFail() {
+        final Query query = () -> "SELECT * FROM tabela_falsa;";
+        SQL.execute(query);
+        Assertions.assertTrue(true);
     }
 
     @Test
