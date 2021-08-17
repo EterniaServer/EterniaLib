@@ -17,6 +17,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -83,6 +85,17 @@ public class TestLobbyModule {
     }
 
     @Test
+    @DisplayName("Test player login")
+    void testPlayerLogin() throws NoSuchFieldException, IllegalAccessException {
+        final Field field = EterniaLib.class.getDeclaredField("booleans");
+        field.setAccessible(true);
+        final boolean[] booleans = (boolean[]) field.get(plugin);
+        booleans[Booleans.CLEAR_INV.ordinal()] = false;
+        server.addPlayer(new RandomString(16).nextString());
+        Assertions.assertTrue(true);
+    }
+
+    @Test
     @DisplayName("Test if event is working")
     void testInventoryClickEvent() {
         final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
@@ -103,21 +116,10 @@ public class TestLobbyModule {
         Assertions.assertTrue(event.isCancelled());
         playerMock.closeInventory();
 
-        inventory = server.createInventory(playerMock, 9, "LALALAL");
-        ItemStack itemStack = new ItemStack(Material.OAK_BOAT);
-
-        inventory.setItem(0, itemStack);
-        playerMock.openInventory(inventory);
-        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
-
-        lobbyHandler.onInventoryClick(event);
-        Assertions.assertTrue(event.isCancelled());
-        playerMock.closeInventory();
-
         inventory = server.createInventory(playerMock, 27);
         inventory.setItem(0, null);
         playerMock.openInventory(inventory);
-        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
+        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
 
         lobbyHandler.onInventoryClick(event);
         Assertions.assertTrue(event.isCancelled());
@@ -127,23 +129,6 @@ public class TestLobbyModule {
         inventory.setItem(0, new ItemStack(Material.AIR));
         playerMock.openInventory(inventory);
         event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.NOTHING);
-
-        lobbyHandler.onInventoryClick(event);
-        Assertions.assertTrue(event.isCancelled());
-        playerMock.closeInventory();
-
-        inventory = server.createInventory(playerMock, 9, plugin.getString(Strings.SELECT_TITLE_NAME));
-        itemStack = new ItemStack(Material.OAK_BOAT);
-        final ItemMeta itemMeta = server.getItemFactory().getItemMeta(Material.OAK_BOAT);
-
-        Assertions.assertNotNull(itemMeta);
-        Assertions.assertNotNull(itemMeta.getPersistentDataContainer());
-
-        itemMeta.getPersistentDataContainer().set(EterniaLib.getServerKey(), PersistentDataType.STRING, "survival");
-        itemStack.setItemMeta(itemMeta);
-        inventory.setItem(0, itemStack);
-        playerMock.openInventory(inventory);
-        event = new InventoryClickEvent(playerMock.getOpenInventory(), InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.COLLECT_TO_CURSOR);
 
         lobbyHandler.onInventoryClick(event);
         Assertions.assertTrue(event.isCancelled());
