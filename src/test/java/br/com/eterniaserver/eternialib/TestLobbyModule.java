@@ -91,6 +91,22 @@ public class TestLobbyModule {
     }
 
     @Test
+    @DisplayName("Test playerRespawnEvent")
+    void testRespawnEvent() throws NoSuchFieldException, IllegalAccessException {
+        final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
+        final Field field = EterniaLib.class.getDeclaredField("booleans");
+        field.setAccessible(true);
+        final boolean[] booleans = (boolean[]) field.get(plugin);
+
+        playerMock.respawn();
+        Assertions.assertTrue(true);
+
+        booleans[Booleans.CLEAR_INV.ordinal()] = false;
+        playerMock.respawn();
+        Assertions.assertTrue(true);
+    }
+
+    @Test
     @DisplayName("Test if event is working")
     void testInventoryClickEvent() {
         final PlayerMock playerMock = server.addPlayer(new RandomString(16).nextString());
