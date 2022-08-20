@@ -1,20 +1,25 @@
 package br.com.eterniaserver.eternialib.core;
 
+import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
-import br.com.eterniaserver.eternialib.configuration.FileCfg;
+import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
+import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
+import br.com.eterniaserver.eternialib.database.impl.DatabaseImpl;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.List;
 
-public class CoreCfg implements FileCfg {
+public class CoreCfg implements ReloadableConfiguration {
 
     private static final String PLUGIN_PATH = "plugins" + File.separator + "EterniaLib";
     private static final String FOLDER_PATH = PLUGIN_PATH + File.separator + "config";
     private static final String FILE_PATH = FOLDER_PATH + File.separator + "core.yml";
+
+    private final EterniaLib plugin;
 
     private final FileConfiguration inConfig;
     private final FileConfiguration outConfig;
@@ -22,9 +27,10 @@ public class CoreCfg implements FileCfg {
     private final int[] integers;
     private final boolean[] booleans;
 
-    public CoreCfg(String[] strings, int[] integers, boolean[] booleans) {
+    public CoreCfg(EterniaLib plugin, String[] strings, int[] integers, boolean[] booleans) {
         this.inConfig = YamlConfiguration.loadConfiguration(new File(getFilePath()));
         this.outConfig = new YamlConfiguration();
+        this.plugin = plugin;
         this.strings = strings;
         this.integers = integers;
         this.booleans = booleans;
@@ -57,7 +63,7 @@ public class CoreCfg implements FileCfg {
 
     @Override
     public ConfigurationCategory category() {
-        return ConfigurationCategory.WARNING_ADVICE;
+        return ConfigurationCategory.BLOCKED;
     }
 
     @Override
@@ -90,6 +96,10 @@ public class CoreCfg implements FileCfg {
 
     @Override
     public void executeCritical() {
-
+        try {
+            EterniaLib.setDatabase(new DatabaseImpl(this.plugin));
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database.entity.annotations;
+package br.com.eterniaserver.eternialib.database.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

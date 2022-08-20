@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database.entity.annotations;
+package br.com.eterniaserver.eternialib.database.annotations;
 
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 
@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PrimaryKeyField {
+public @interface DataField {
 
     String columnName();
 
     FieldType type();
 
-    boolean autoIncrement();
+    boolean notNull() default false;
 
 }

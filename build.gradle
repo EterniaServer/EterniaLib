@@ -9,6 +9,10 @@ version = "4.0-ALPHA"
 repositories {
     mavenCentral()
     maven {
+        name = "jitpack"
+        url "https://jitpack.io"
+    }
+    maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
@@ -27,10 +31,13 @@ dependencies {
     implementation "com.mojang:brigadier:1.0.18"
     implementation "com.zaxxer:HikariCP:5.0.1"
     implementation "org.hibernate:hibernate-core:6.1.2.Final"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.0"
+    testImplementation "org.mockito:mockito-core:4.7.0"
+    testImplementation "com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT"
 }
 
 shadowJar {
-    relocate "com.mojang.brigadier", "br.com.eterniaserver.brigadier"
+    relocate "com.mojang.brigadier", "br.com.eterniaserver.eternialib.brigadier"
     relocate "com.zaxxer.hikari", "br.com.eterniaserver.hikari"
     relocate "org.hibernate.Hibernate", "br.com.eterniaserver.Hibernate"
 }
@@ -42,6 +49,16 @@ java {
     targetCompatibility = javaVersion
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+test {
+    useJUnitPlatform()
+
+    dependsOn "cleanTest"
+
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }
 

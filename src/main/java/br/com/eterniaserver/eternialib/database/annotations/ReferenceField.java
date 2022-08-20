@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database.entity.annotations;
+package br.com.eterniaserver.eternialib.database.annotations;
 
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
 

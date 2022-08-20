@@ -8,7 +8,7 @@ import br.com.eterniaserver.eternialib.database.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
-import br.com.eterniaserver.eternialib.database.entity.Entity;
+import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.enums.DatabaseType;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;

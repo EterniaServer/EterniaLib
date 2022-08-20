@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.database;
 
-import br.com.eterniaserver.eternialib.database.entity.Entity;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 
 import java.sql.Connection;

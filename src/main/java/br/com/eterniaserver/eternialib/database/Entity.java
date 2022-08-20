@@ -1,12 +1,12 @@
-package br.com.eterniaserver.eternialib.database.entity;
+package br.com.eterniaserver.eternialib.database;
 
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
-import br.com.eterniaserver.eternialib.database.entity.annotations.DataField;
-import br.com.eterniaserver.eternialib.database.entity.annotations.PrimaryKeyField;
-import br.com.eterniaserver.eternialib.database.entity.annotations.Table;
-import br.com.eterniaserver.eternialib.database.entity.annotations.ReferenceField;
+import br.com.eterniaserver.eternialib.database.annotations.DataField;
+import br.com.eterniaserver.eternialib.database.annotations.PrimaryKeyField;
+import br.com.eterniaserver.eternialib.database.annotations.Table;
+import br.com.eterniaserver.eternialib.database.annotations.ReferenceField;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
@@ -29,7 +29,7 @@ public class Entity<T> {
         List<Field> primaryKeyFields = getFieldsByAnnotation(entityClass.getFields(), PrimaryKeyField.class);
 
         if (primaryKeyFields.size() > 1) {
-            throw new EntityException("EterniaLib only supports simple primary keys");
+            throw new EntityException("EterniaLib only supports single primary keys");
         }
 
         this.primaryKeyField = primaryKeyFields.get(0);
