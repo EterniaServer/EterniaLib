@@ -1,0 +1,8 @@
+name: EterniaLib
+version: '${version}'
+main: br.com.eterniaserver.eternialib.EterniaLib
+api-version: 1.19
+load: STARTUP
+author: Yuri Nogueira
+description: A base library to Eternia plugins and any other plugin.
+website: eterniaserver.com.br
