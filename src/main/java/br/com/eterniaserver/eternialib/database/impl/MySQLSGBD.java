@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SGDBMariaDB implements SGBDInterface {
+public class MySQLSGBD implements SGBDInterface {
 
     private final Map<FieldType, String> typeMap;
     private final Map<ReferenceMode, String> referenceMap;
 
-    public SGDBMariaDB() {
+    public MySQLSGBD() {
         this.typeMap = new HashMap<>();
         this.referenceMap = new HashMap<>();
 
@@ -35,7 +35,7 @@ public class SGDBMariaDB implements SGBDInterface {
 
     @Override
     public String jdbcStr() {
-        return "mariadb";
+        return "mysql";
     }
 
     @Override

@@ -289,10 +289,14 @@ public class DatabaseImpl implements DatabaseInterface {
     }
 
     private SGBDInterface SGBDFactory(DatabaseType type) throws DatabaseException {
-        if (type == DatabaseType.MARIADB) {
-            return new SGDBMariaDB();
+        switch (type) {
+            case MYSQL -> {
+                return new MySQLSGBD();
+            }
+            case MARIADB -> {
+                return new MariaDBSGBD();
+            }
+            default -> throw new DatabaseException("SGBD not implemented");
         }
-
-        throw new DatabaseException("SGBD not implemented");
     }
 }

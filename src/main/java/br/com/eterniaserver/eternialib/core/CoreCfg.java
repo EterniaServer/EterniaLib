@@ -79,8 +79,8 @@ public class CoreCfg implements ReloadableConfiguration {
         integers[Integers.DATABASE_POOL_SIZE.ordinal()] = inConfig.getInt("sql.pool-size", 10);
 
         outConfig.options().setHeader(List.of(
-                "Tipos disponíveis de database: MARIADB, POSTGRESQL",
-                "Available type of database: MARIADB, POSTGRESQL"
+                "Tipos de database disponíveis: MYSQL, MARIADB, POSTGRESQL",
+                "Available type of database: MYSQL, MARIADB, POSTGRESQL"
         ));
 
         outConfig.set("server.plugin-prefix", strings[Strings.PLUGIN_PREFIX.ordinal()]);
