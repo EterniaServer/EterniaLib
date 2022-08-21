@@ -16,6 +16,10 @@ public interface DatabaseInterface {
 
     <T> T get(Class<T> objectClass, Object primaryKey);
 
-    void register(Entity<?> entity) throws DatabaseException;
+    <T> void insert(Class<T> objectClass, Object instance);
+
+    <T> void update(Class<T> objectClass, Object instance);
+
+    void register(Class<?> entityClass, Entity<?> entity) throws DatabaseException;
 
 }

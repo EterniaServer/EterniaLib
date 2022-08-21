@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "com.adarshr.test-logger" version "3.2.0"
 }
 
 group = "br.com.eterniaserver"
@@ -26,15 +27,24 @@ repositories {
     }
 }
 
-dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT"
-    implementation "com.mojang:brigadier:1.0.18"
-    implementation "com.zaxxer:HikariCP:5.0.1"
-    implementation "org.hibernate:hibernate-core:6.1.2.Final"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.0"
-    testImplementation "org.mockito:mockito-core:4.7.0"
-    testImplementation "com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT"
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+    implementation("com.mojang:brigadier:1.0.18")
+    implementation("com.zaxxer:HikariCP:5.0.1") {
+        exclude group: "org.slf4j", module: "slf4j-api"
+    }
+    testImplementation("org.mariadb.jdbc:mariadb-java-client:3.0.7")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testImplementation("org.mockito:mockito-core:4.7.0")
+    testImplementation("com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT")
+}
+
 
 shadowJar {
     relocate "com.mojang.brigadier", "br.com.eterniaserver.eternialib.brigadier"
@@ -42,14 +52,24 @@ shadowJar {
     relocate "org.hibernate.Hibernate", "br.com.eterniaserver.Hibernate"
 }
 
-def targetJavaVersion = 17
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
+testlogger {
+    theme "standard"
+    showExceptions true
+    showStackTraces true
+    showFullStackTraces false
+    showCauses true
+    slowThreshold 2000
+    showSummary true
+    showSimpleNames false
+    showPassed true
+    showSkipped true
+    showFailed true
+    showOnlySlow false
+    showStandardStreams false
+    showPassedStandardStreams true
+    showSkippedStandardStreams true
+    showFailedStandardStreams true
+    logLevel "lifecycle"
 }
 
 test {
@@ -59,12 +79,6 @@ test {
 
     testLogging {
         events "passed", "skipped", "failed"
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
     }
 }
 

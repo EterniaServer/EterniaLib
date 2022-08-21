@@ -8,14 +8,15 @@ import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class SGDBMySQL implements SGBDInterface {
+public class SGDBMariaDB implements SGBDInterface {
 
     private final Map<FieldType, String> typeMap;
     private final Map<ReferenceMode, String> referenceMap;
 
-    public SGDBMySQL() {
+    public SGDBMariaDB() {
         this.typeMap = new HashMap<>();
         this.referenceMap = new HashMap<>();
 
@@ -34,14 +35,44 @@ public class SGDBMySQL implements SGBDInterface {
 
     @Override
     public String jdbcStr() {
-        return "mysql";
+        return "mariadb";
     }
 
     @Override
     public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
         return "SELECT * FROM " + tableName +
                 " WHERE " + tableName + "." + primaryKeyDTO.columnName() +
-                " = " + primaryKey;
+                " = " + primaryKey + ";";
+    }
+
+    @Override
+    public String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("INSERT INTO ").append(tableName).append(" (");
+        for (int i = 0; i < entityDataDTOS.size(); i++) {
+            EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
+            builder.append(entityDataDTO.columnName());
+
+            if (i + 1 != entityDataDTOS.size()) {
+                builder.append(", ");
+            }
+        }
+        builder.append(") VALUES (");
+        for (int i = 0; i < entityDataDTOS.size(); i++) {
+            builder.append("?");
+            if (i + 1 != entityDataDTOS.size()) {
+                builder.append(",");
+            }
+        }
+        builder.append(");");
+
+        return builder.toString();
+    }
+
+    @Override
+    public String getLastInsertId(String tableName) {
+        return "SELECT LAST_INSERT_ID();";
     }
 
     @Override

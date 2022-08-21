@@ -25,7 +25,7 @@ public class TestEterniaLib {
     }
 
     @Test
-    @DisplayName("Test static Getters")
+    @DisplayName("Static Getters")
     void testGetters() {
         Assertions.assertNotNull(EterniaLib.getDatabase());
         Assertions.assertNotNull(EterniaLib.getVersion());

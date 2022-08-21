@@ -17,7 +17,9 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,7 +81,6 @@ public class DatabaseImpl implements DatabaseInterface {
 
         String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO, primaryKey);
         T instance = null;
-
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -107,7 +108,78 @@ public class DatabaseImpl implements DatabaseInterface {
     }
 
     @Override
-    public void register(Entity<?> entity) throws DatabaseException {
+    public <T> void insert(Class<T> objectClass, Object instance) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        Field primaryField = primaryKeyDTO.field();
+
+        Object primaryValue;
+        try {
+            primaryValue = primaryField.get(instance);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (primaryValue == null) {
+            insertAndGetKey(entity, instance);
+        }
+        else {
+            onlyInsert(objectClass, instance);
+        }
+    }
+
+    private <T> void insertAndGetKey(Entity<?> entity, Object instance) {
+        String tableName = entity.tableName();
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
+
+        String insertQuery = sgbdInterface.insertWithoutKey(tableName, entityDataDTOS);
+        String getIdQuery = sgbdInterface.getLastInsertId(tableName);
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                PreparedStatement getIdStatement = connection.prepareStatement(getIdQuery)
+        ) {
+            connection.setAutoCommit(false);
+            for (int i = 1; i <= entityDataDTOS.size(); i++) {
+                EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
+                FieldType type = entityDataDTO.type();
+                Field dataField = entityDataDTO.field();
+                setValueInStatement(type, i, dataField.get(instance), insertStatement);
+            }
+
+            insertStatement.execute();
+            ResultSet resultSet = getIdStatement.executeQuery();
+            if (resultSet.next()) {
+                FieldType type = primaryKeyDTO.type();
+                Field field = primaryKeyDTO.field();
+                String columnName = resultSet.getMetaData().getColumnName(1);
+                setValueInField(type, field, instance, resultSet, columnName);
+            }
+
+            connection.commit();
+            connection.setAutoCommit(true);
+        }
+        catch (SQLException exception) {
+            // TODO alert SQL Exception
+        }
+        catch (IllegalAccessException exception) {
+            // TODO alert Class Exception
+        }
+    }
+
+    private <T> void onlyInsert(Class<T> objectClass, Object instance) {
+
+    }
+
+    @Override
+    public <T> void update(Class<T> objectClass, Object instance) {
+
+    }
+
+    @Override
+    public void register(Class<?> entityClass, Entity<?> entity) throws DatabaseException {
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         List<EntityDataDTO> dataDTOS = entity.getDataColumns();
         List<EntityReferenceDTO> referenceDTOS = entity.getReferenceColumns();
@@ -135,23 +207,56 @@ public class DatabaseImpl implements DatabaseInterface {
             throw new DatabaseException("Error when creating " + entity.tableName() + " table.");
         }
 
-        entityMap.put(entity.getClass(), entity);
+        entityMap.put(entityClass, entity);
     }
 
     private <T> void populateObject(Entity<?> entity, T instance, ResultSet resultSet) throws SQLException, IllegalAccessException {
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        Field primaryField = primaryKeyDTO.field();
+        FieldType primaryType = primaryKeyDTO.type();
+        String primaryName = primaryKeyDTO.columnName();
+
+        setValueInField(primaryType, primaryField, instance, resultSet, primaryName);
+
         for (EntityDataDTO dataDTO : entity.getDataColumns()) {
             String columnName = dataDTO.columnName();
             Field field = dataDTO.field();
             FieldType type = dataDTO.type();
 
-            switch (type) {
-                case STRING, TEXT -> field.set(instance, resultSet.getString(columnName));
-                case INTEGER -> field.set(instance, resultSet.getInt(columnName));
-                case DOUBLE -> field.set(instance, resultSet.getDouble(columnName));
-                case DATE, DATETIME -> field.set(instance, resultSet.getDate(columnName));
-                case DECIMAL -> field.set(instance, resultSet.getBigDecimal(columnName));
-                default -> field.set(instance, resultSet.getObject(columnName));
-            }
+            setValueInField(type, field, instance, resultSet, columnName);
+        }
+    }
+
+    private <T> void setValueInField(
+            FieldType type,
+            Field field,
+            T instance,
+            ResultSet resultSet,
+            String columnName
+    ) throws SQLException, IllegalAccessException {
+        switch (type) {
+            case STRING, TEXT -> field.set(instance, resultSet.getString(columnName));
+            case INTEGER -> field.set(instance, resultSet.getInt(columnName));
+            case DOUBLE -> field.set(instance, resultSet.getDouble(columnName));
+            case DATE, DATETIME -> field.set(instance, resultSet.getDate(columnName));
+            case DECIMAL -> field.set(instance, resultSet.getBigDecimal(columnName));
+            default -> field.set(instance, resultSet.getObject(columnName));
+        }
+    }
+
+    private void setValueInStatement(
+            FieldType type,
+            int position,
+            Object value,
+            PreparedStatement statement
+    ) throws SQLException {
+        switch (type) {
+            case STRING, TEXT -> statement.setString(position, (String) value);
+            case INTEGER -> statement.setInt(position, (Integer) value);
+            case DOUBLE -> statement.setDouble(position, (Double) value);
+            case DATE, DATETIME -> statement.setDate(position, (Date) value);
+            case DECIMAL -> statement.setBigDecimal(position, (BigDecimal) value);
+            default -> statement.setObject(position, value);
         }
     }
 
@@ -184,8 +289,8 @@ public class DatabaseImpl implements DatabaseInterface {
     }
 
     private SGBDInterface SGBDFactory(DatabaseType type) throws DatabaseException {
-        if (type == DatabaseType.MYSQL) {
-            return new SGDBMySQL();
+        if (type == DatabaseType.MARIADB) {
+            return new SGDBMariaDB();
         }
 
         throw new DatabaseException("SGBD not implemented");

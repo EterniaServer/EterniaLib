@@ -69,18 +69,18 @@ public class CoreCfg implements ReloadableConfiguration {
     @Override
     public void executeConfig() {
         strings[Strings.PLUGIN_PREFIX.ordinal()] = inConfig.getString("server.plugin-prefix", "<color:#aaaaaa>[EL] ");
-        strings[Strings.DATABASE_TYPE.ordinal()] = inConfig.getString("database.type", "MYSQL");
-        strings[Strings.DATABASE_HOST.ordinal()] = inConfig.getString("database.host", "127.0.0.1");
+        strings[Strings.DATABASE_TYPE.ordinal()] = inConfig.getString("database.type", "MARIADB");
+        strings[Strings.DATABASE_HOST.ordinal()] = inConfig.getString("database.host", "el-mariadb");
         strings[Strings.DATABASE_PORT.ordinal()] = inConfig.getString("database.port", "3306");
-        strings[Strings.DATABASE_DATABASE.ordinal()] = inConfig.getString("database.database", "admin");
-        strings[Strings.DATABASE_USER.ordinal()] = inConfig.getString("database.user", "admin");
-        strings[Strings.DATABASE_PASSWORD.ordinal()] = inConfig.getString("database.password", "admin");
+        strings[Strings.DATABASE_DATABASE.ordinal()] = inConfig.getString("database.database", "el_database");
+        strings[Strings.DATABASE_USER.ordinal()] = inConfig.getString("database.user", "user");
+        strings[Strings.DATABASE_PASSWORD.ordinal()] = inConfig.getString("database.password", "password");
         strings[Strings.DATABASE_TABLE.ordinal()] = inConfig.getString("database.table-cache", "el_cache");
         integers[Integers.DATABASE_POOL_SIZE.ordinal()] = inConfig.getInt("sql.pool-size", 10);
 
         outConfig.options().setHeader(List.of(
-                "Tipos disponíveis de database: MYSQL, POSTGRESQL",
-                "Available type of database: MYSQL, POSTGRESQL"
+                "Tipos disponíveis de database: MARIADB, POSTGRESQL",
+                "Available type of database: MARIADB, POSTGRESQL"
         ));
 
         outConfig.set("server.plugin-prefix", strings[Strings.PLUGIN_PREFIX.ordinal()]);
