@@ -23,8 +23,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DatabaseImpl implements DatabaseInterface {
@@ -71,7 +73,34 @@ public class DatabaseImpl implements DatabaseInterface {
 
     @Override
     public <T> List<T> listAll(Class<T> objectClass) {
-        return null;
+        List<T> entities = new ArrayList<>();
+        Entity<?> entity = entityMap.get(objectClass);
+
+        String query = sgbdInterface.selectAll(entity.tableName());
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                T instance = objectClass.getConstructor().newInstance();
+                populateObject(entity, instance, resultSet);
+                entities.add(instance);
+            }
+        }
+        catch (SQLException exception) {
+            // TODO alert SQL Exception
+        }
+        catch (
+                InvocationTargetException |
+                InstantiationException |
+                IllegalAccessException |
+                NoSuchMethodException e
+        ) {
+            // TODO alert Class Exception
+        }
+
+        return entities;
     }
 
     @Override
@@ -113,18 +142,18 @@ public class DatabaseImpl implements DatabaseInterface {
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         Field primaryField = primaryKeyDTO.field();
 
-        Object primaryValue;
+        Object primaryValue = null;
         try {
             primaryValue = primaryField.get(instance);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            // TODO alert;
         }
 
         if (primaryValue == null) {
             insertAndGetKey(entity, instance);
         }
         else {
-            onlyInsert(objectClass, instance);
+            onlyInsert(entity, instance);
         }
     }
 
@@ -169,8 +198,36 @@ public class DatabaseImpl implements DatabaseInterface {
         }
     }
 
-    private <T> void onlyInsert(Class<T> objectClass, Object instance) {
+    private <T> void onlyInsert(Entity<?> entity, Object instance) {
+        String tableName = entity.tableName();
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
 
+        String insertQuery = sgbdInterface.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(insertQuery)
+        ) {
+            FieldType primaryType = primaryKeyDTO.type();
+            Field primaryField = primaryKeyDTO.field();
+
+            setValueInStatement(primaryType, 1, primaryField.get(instance), statement);
+            for (int i = 2; i <= entityDataDTOS.size() + 1; i++) {
+                EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
+                FieldType type = entityDataDTO.type();
+                Field dataField = entityDataDTO.field();
+                setValueInStatement(type, i, dataField.get(instance), statement);
+            }
+
+            statement.execute();
+        }
+        catch (SQLException exception) {
+            // TODO alert SQL Exception
+        }
+        catch (IllegalAccessException exception) {
+            // TODO alert Class Exception
+        }
     }
 
     @Override
@@ -235,6 +292,7 @@ public class DatabaseImpl implements DatabaseInterface {
             String columnName
     ) throws SQLException, IllegalAccessException {
         switch (type) {
+            case UUID -> field.set(instance, UUID.fromString(resultSet.getString(columnName)));
             case STRING, TEXT -> field.set(instance, resultSet.getString(columnName));
             case INTEGER -> field.set(instance, resultSet.getInt(columnName));
             case DOUBLE -> field.set(instance, resultSet.getDouble(columnName));
@@ -251,6 +309,7 @@ public class DatabaseImpl implements DatabaseInterface {
             PreparedStatement statement
     ) throws SQLException {
         switch (type) {
+            case UUID -> statement.setString(position, value.toString());
             case STRING, TEXT -> statement.setString(position, (String) value);
             case INTEGER -> statement.setInt(position, (Integer) value);
             case DOUBLE -> statement.setDouble(position, (Double) value);

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class TestDatabaseEntity {
 
@@ -42,5 +43,12 @@ public class TestDatabaseEntity {
 
         Assertions.assertNotNull(profile.id);
         Assertions.assertNotNull(getProfile.id);
+    }
+
+    @Test
+    void listEntitiesInstance() {
+        List<ProfileEntity> entities = EterniaLib.getDatabase().listAll(ProfileEntity.class);
+
+        Assertions.assertNotNull(entities);
     }
 }

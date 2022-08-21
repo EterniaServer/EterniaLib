@@ -10,7 +10,11 @@ public interface SGBDInterface {
 
     String jdbcStr();
 
+    String selectAll(String tableName);
+
     String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey);
+
+    String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
 
     String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS);
 

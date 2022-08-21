@@ -20,6 +20,7 @@ public class MySQLSGBD implements SGBDInterface {
         this.typeMap = new HashMap<>();
         this.referenceMap = new HashMap<>();
 
+        typeMap.put(FieldType.UUID, "CHAR(36)");
         typeMap.put(FieldType.STRING, "VARCHAR(256)");
         typeMap.put(FieldType.TEXT, "TEXT");
         typeMap.put(FieldType.INTEGER, "BIGINT");
@@ -39,6 +40,11 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
+    public String selectAll(String tableName) {
+        return "SELECT * FROM " + tableName + ";";
+    }
+
+    @Override
     public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
         return "SELECT * FROM " + tableName +
                 " WHERE " + tableName + "." + primaryKeyDTO.columnName() +
@@ -46,10 +52,32 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
+    public String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("INSERT INTO ").append(tableName).append(" (");
+        builder.append(primaryKeyDTO.columnName());
+        if (entityDataDTOS.size() > 0) {
+            builder.append(", ");
+        }
+        buildInsert(builder, entityDataDTOS);
+        builder.append(",?);");
+
+        return builder.toString();
+    }
+
+    @Override
     public String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("INSERT INTO ").append(tableName).append(" (");
+        buildInsert(builder, entityDataDTOS);
+        builder.append(");");
+
+        return builder.toString();
+    }
+
+    private void buildInsert(StringBuilder builder, List<EntityDataDTO> entityDataDTOS) {
         for (int i = 0; i < entityDataDTOS.size(); i++) {
             EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
             builder.append(entityDataDTO.columnName());
@@ -65,9 +93,6 @@ public class MySQLSGBD implements SGBDInterface {
                 builder.append(",");
             }
         }
-        builder.append(");");
-
-        return builder.toString();
     }
 
     @Override

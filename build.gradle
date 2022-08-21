@@ -14,16 +14,16 @@ repositories {
         url "https://jitpack.io"
     }
     maven {
+        name = "aikar-repo"
+        url = "https://repo.aikar.co/content/groups/aikar/"
+    }
+    maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
-    }
-    maven {
-        name = "mojang"
-        url = "https://libraries.minecraft.net"
     }
 }
 
@@ -35,10 +35,10 @@ java {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
-    implementation("com.mojang:brigadier:1.0.18")
     implementation("com.zaxxer:HikariCP:5.0.1") {
         exclude group: "org.slf4j", module: "slf4j-api"
     }
+    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     testImplementation("org.mariadb.jdbc:mariadb-java-client:3.0.7")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation("org.mockito:mockito-core:4.7.0")
@@ -47,9 +47,9 @@ dependencies {
 
 
 shadowJar {
-    relocate "com.mojang.brigadier", "br.com.eterniaserver.eternialib.brigadier"
     relocate "com.zaxxer.hikari", "br.com.eterniaserver.hikari"
-    relocate "org.hibernate.Hibernate", "br.com.eterniaserver.Hibernate"
+    relocate "co.aikar.commands", "br.com.eterniaserver.acf"
+    relocate "co.aikar.locales", "br.com.eterniaserver.locales"
 }
 
 testlogger {
@@ -91,4 +91,5 @@ processResources {
     filesMatching("plugin.yml") {
         expand props
     }
+    exclude("*.properties")
 }
