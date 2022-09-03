@@ -17,4 +17,6 @@ test:
 	docker-compose run --rm el-java test -i --no-daemon
 
 build-jar:
-	./gradlew clean build -x test
+	./gradlew clean
+	./gradlew build -x test
+	./gradlew cleanJar

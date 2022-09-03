@@ -91,5 +91,11 @@ processResources {
     filesMatching("plugin.yml") {
         expand props
     }
-    exclude("*.properties")
 }
+
+tasks.register("cleanJar", {
+    exec {
+        workingDir "build/libs"
+        commandLine "zip", "-d", "${project.name}-${version}-all.jar", "acf*.properties"
+    }
+})

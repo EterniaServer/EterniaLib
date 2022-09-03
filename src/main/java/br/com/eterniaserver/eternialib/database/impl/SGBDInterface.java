@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database;
+package br.com.eterniaserver.eternialib.database.impl;
 
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;

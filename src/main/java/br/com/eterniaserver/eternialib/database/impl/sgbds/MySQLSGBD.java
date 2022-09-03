@@ -1,11 +1,11 @@
-package br.com.eterniaserver.eternialib.database.impl;
+package br.com.eterniaserver.eternialib.database.impl.sgbds;
 
-import br.com.eterniaserver.eternialib.database.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
+import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
 
 import java.util.HashMap;
 import java.util.List;

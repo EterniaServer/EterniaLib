@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database.impl;
+package br.com.eterniaserver.eternialib.database.impl.sgbds;
 
 public class MariaDBSGBD extends MySQLSGBD {
 

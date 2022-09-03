@@ -1,10 +1,10 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.DatabaseInterface;
-import br.com.eterniaserver.eternialib.database.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
@@ -12,6 +12,8 @@ import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.enums.DatabaseType;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
+import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
+import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -29,13 +31,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DatabaseImpl implements DatabaseInterface {
+public class SQLDatabase implements DatabaseInterface {
 
     private final HikariDataSource dataSource;
     private final SGBDInterface sgbdInterface;
     private final Map<Class<?>, Entity<?>> entityMap = new ConcurrentHashMap<>();
 
-    public DatabaseImpl(EterniaLib plugin) throws DatabaseException {
+    public SQLDatabase(EterniaLib plugin) throws DatabaseException {
         String databaseType = plugin.getString(Strings.DATABASE_TYPE);
         DatabaseType type = DatabaseType.valueOf(databaseType);
         this.sgbdInterface = SGBDFactory(type);
@@ -49,13 +51,17 @@ public class DatabaseImpl implements DatabaseInterface {
         );
         hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
         hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
+        // MySQL specific configurations
         hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
         hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
-        hikariConfig.addDataSourceProperty("minimumIdle", plugin.getInteger(Integers.DATABASE_POOL_SIZE));
-        hikariConfig.addDataSourceProperty("maximumPoolSize",  plugin.getInteger(Integers.DATABASE_POOL_SIZE));
-
+        // Pool configurations
+        hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
+        hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
+        hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
+        hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
+        hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
+        hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
         this.dataSource = new HikariDataSource(hikariConfig);
     }
 

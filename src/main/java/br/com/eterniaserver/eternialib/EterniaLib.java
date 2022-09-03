@@ -1,16 +1,20 @@
 package br.com.eterniaserver.eternialib;
 
+import br.com.eterniaserver.eternialib.commands.CommandManagerInterface;
+import br.com.eterniaserver.eternialib.commands.impl.CommandManager;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.CoreCfg;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.DatabaseInterface;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +24,7 @@ public class EterniaLib extends JavaPlugin {
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
 
     private static DatabaseInterface database;
+    private static CommandManagerInterface commandManager;
 
     private final boolean[] booleans = new boolean[Booleans.values().length];
     private final int[] integers = new int[Integers.values().length];
@@ -36,11 +41,16 @@ public class EterniaLib extends JavaPlugin {
     @Override
     public void onEnable() {
         this.loadConfigurations();
+        this.loadCommandManager();
     }
 
     @Override
     public void onDisable() {
         EterniaLib.getDatabase().closeAllConnections();
+    }
+
+    public static CommandManagerInterface getCmdManager() {
+        return commandManager;
     }
 
     public static DatabaseInterface getDatabase() {
@@ -60,8 +70,28 @@ public class EterniaLib extends JavaPlugin {
         configurations.put(entry, configuration);
     }
 
-    public static void setDatabase(DatabaseInterface databaseImpl) {
+    public int getInteger(final Integers entry) {
+        return integers[entry.ordinal()];
+    }
+
+    public boolean getBoolean(final Booleans entry) {
+        return booleans[entry.ordinal()];
+    }
+
+    public String getString(final Strings entry) {
+        return strings[entry.ordinal()];
+    }
+
+    public void setDatabase(DatabaseInterface databaseImpl) {
+        setDatabaseInterface(databaseImpl);
+    }
+
+    private static void setDatabaseInterface(DatabaseInterface databaseImpl) {
         database = databaseImpl;
+    }
+
+    private static void setCommandManagerInterface(CommandManagerInterface commandManagerImpl) {
+        commandManager = commandManagerImpl;
     }
 
     private void loadConfigurations() {
@@ -74,16 +104,14 @@ public class EterniaLib extends JavaPlugin {
         coreCfg.saveConfiguration(true);
     }
 
-    public int getInteger(final Integers entry) {
-        return integers[entry.ordinal()];
-    }
-
-    public boolean getBoolean(final Booleans entry) {
-        return booleans[entry.ordinal()];
-    }
-
-    public String getString(final Strings entry) {
-        return strings[entry.ordinal()];
+    private void loadCommandManager() {
+        try {
+            setCommandManagerInterface(new CommandManager(this));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
