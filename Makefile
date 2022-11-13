@@ -9,14 +9,19 @@ default:
 build-compose:
 	docker-compose build --force-rm --no-cache --pull
 
-stop-compose:
+start:
+	docker-compose up -d
+
+stop:
 	docker-compose stop
 
 test:
-	docker-compose down -v
-	docker-compose run --rm el-java test -i --no-daemon
+	docker-compose exec el-java gradle test -i --no-daemon
 
 build-jar:
-	./gradlew clean
-	./gradlew build -x test
-	./gradlew cleanJar
+	docker-compose exec el-java gradle clean
+	docker-compose exec el-java gradle build -x test
+	docker-compose exec el-java gradle cleanJar
+
+copy-jar:
+	docker-compose cp el-java:/usr/src/build/libs ./output

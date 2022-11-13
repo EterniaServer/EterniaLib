@@ -12,4 +12,5 @@ RUN mkdir build
 COPY ./settings.gradle /usr/src/settings.gradle
 COPY ./build.gradle /usr/src/build.gradle
 
-ENTRYPOINT ["gradle"]
+RUN apk update
+RUN apk add zip

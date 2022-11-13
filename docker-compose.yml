@@ -25,6 +25,7 @@ services:
       dockerfile: ./docker/java/Dockerfile
     image: el-java
     container_name: el-java
+    command: tail -f /dev/null
     volumes:
       - ./src:/usr/src/src
     depends_on:
