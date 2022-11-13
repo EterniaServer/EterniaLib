@@ -14,6 +14,8 @@ public interface SGBDInterface {
 
     String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey);
 
+    String update(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
+
     String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
 
     String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS);

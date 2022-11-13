@@ -110,7 +110,13 @@ public class CoreCfg implements ReloadableConfiguration {
     @Override
     public void executeCritical() {
         try {
-            this.plugin.setDatabase(new SQLDatabase(this.plugin));
+            SQLDatabase.HikariConnection hikariConnection = new SQLDatabase.HikariConnection(this.plugin);
+            SQLDatabase sqlDatabase = new SQLDatabase(
+                    hikariConnection.getDataSource(),
+                    hikariConnection.getSGBDInterface()
+            );
+
+            this.plugin.setDatabase(sqlDatabase);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }

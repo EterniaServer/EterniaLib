@@ -1,22 +1,22 @@
-package br.com.eterniaserver.eternialib.utils;
+package br.com.eterniaserver.eternialib.utils.entities;
 
 import br.com.eterniaserver.eternialib.database.annotations.DataField;
 import br.com.eterniaserver.eternialib.database.annotations.PrimaryKeyField;
 import br.com.eterniaserver.eternialib.database.annotations.Table;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 
-import java.math.BigDecimal;
+import java.util.Date;
 
-@Table(tableName = "player_profile")
-public class ProfileEntity {
+@Table(tableName = "eternia_person")
+public class Person {
 
     @PrimaryKeyField(columnName = "id", type = FieldType.INTEGER, autoIncrement = true)
     public Integer id;
 
-    @DataField(columnName = "name", type = FieldType.STRING)
-    public String name;
+    @DataField(columnName = "firstName", type = FieldType.STRING)
+    public String firstName;
 
-    @DataField(columnName = "money", type = FieldType.DECIMAL)
-    public BigDecimal money;
+    @DataField(columnName = "birthdate", type = FieldType.DATE)
+    public Date birthdate;
 
 }

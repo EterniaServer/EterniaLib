@@ -33,36 +33,67 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SQLDatabase implements DatabaseInterface {
 
+    public static class HikariConnection {
+
+        private final HikariDataSource dataSource;
+        private final SGBDInterface sgbdInterface;;
+
+        public HikariDataSource getDataSource() {
+            return dataSource;
+        }
+
+        public SGBDInterface getSGBDInterface() {
+            return sgbdInterface;
+        }
+
+        public HikariConnection(EterniaLib plugin) throws DatabaseException {
+            String databaseType = plugin.getString(Strings.DATABASE_TYPE);
+            DatabaseType type = DatabaseType.valueOf(databaseType);
+            this.sgbdInterface = SGBDFactory(type);
+
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setJdbcUrl(
+                    "jdbc:" + sgbdInterface.jdbcStr() + "://" +
+                            plugin.getString(Strings.DATABASE_HOST) +
+                            ":" + plugin.getString(Strings.DATABASE_PORT) +
+                            "/" + plugin.getString(Strings.DATABASE_DATABASE)
+            );
+            hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
+            hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
+            // MySQL specific configurations
+            hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+            hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+            hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            // Pool configurations
+            hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
+            hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
+            hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
+            hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
+            hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
+            hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
+            this.dataSource = new HikariDataSource(hikariConfig);
+        }
+
+        private SGBDInterface SGBDFactory(DatabaseType type) throws DatabaseException {
+            switch (type) {
+                case MYSQL -> {
+                    return new MySQLSGBD();
+                }
+                case MARIADB -> {
+                    return new MariaDBSGBD();
+                }
+                default -> throw new DatabaseException("SGBD not implemented");
+            }
+        }
+    }
+
     private final HikariDataSource dataSource;
     private final SGBDInterface sgbdInterface;
     private final Map<Class<?>, Entity<?>> entityMap = new ConcurrentHashMap<>();
 
-    public SQLDatabase(EterniaLib plugin) throws DatabaseException {
-        String databaseType = plugin.getString(Strings.DATABASE_TYPE);
-        DatabaseType type = DatabaseType.valueOf(databaseType);
-        this.sgbdInterface = SGBDFactory(type);
-
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(
-                "jdbc:" + sgbdInterface.jdbcStr() + "://" +
-                plugin.getString(Strings.DATABASE_HOST) +
-                ":" + plugin.getString(Strings.DATABASE_PORT) +
-                "/" + plugin.getString(Strings.DATABASE_DATABASE)
-        );
-        hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
-        hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
-        // MySQL specific configurations
-        hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-        hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        // Pool configurations
-        hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
-        hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
-        hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
-        hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
-        hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
-        hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
-        this.dataSource = new HikariDataSource(hikariConfig);
+    public SQLDatabase(HikariDataSource dataSource, SGBDInterface sgbdInterface) throws DatabaseException {
+        this.dataSource = dataSource;
+        this.sgbdInterface = sgbdInterface;
     }
 
     @Override
@@ -177,12 +208,7 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement getIdStatement = connection.prepareStatement(getIdQuery)
         ) {
             connection.setAutoCommit(false);
-            for (int i = 1; i <= entityDataDTOS.size(); i++) {
-                EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
-                FieldType type = entityDataDTO.type();
-                Field dataField = entityDataDTO.field();
-                setValueInStatement(type, i, dataField.get(instance), insertStatement);
-            }
+            fillStatement(insertStatement, entityDataDTOS, instance, 1);
 
             insertStatement.execute();
             ResultSet resultSet = getIdStatement.executeQuery();
@@ -219,12 +245,7 @@ public class SQLDatabase implements DatabaseInterface {
             Field primaryField = primaryKeyDTO.field();
 
             setValueInStatement(primaryType, 1, primaryField.get(instance), statement);
-            for (int i = 2; i <= entityDataDTOS.size() + 1; i++) {
-                EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
-                FieldType type = entityDataDTO.type();
-                Field dataField = entityDataDTO.field();
-                setValueInStatement(type, i, dataField.get(instance), statement);
-            }
+            fillStatement(statement, entityDataDTOS, instance, 2);
 
             statement.execute();
         }
@@ -237,8 +258,38 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public <T> void update(Class<T> objectClass, Object instance) {
+    public <T> void update(Class<T> objectClass, Object instance) throws DatabaseException {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        Field primaryField = primaryKeyDTO.field();
 
+        Object primaryValue;
+        try {
+            primaryValue = primaryField.get(instance);
+        } catch (IllegalAccessException e) {
+            throw new DatabaseException("");
+        }
+
+        String tableName = entity.tableName();
+        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
+        String updateQuery = sgbdInterface.update(tableName, entityDataDTOS, primaryKeyDTO);
+        try (
+                Connection connection = getConnection();
+                PreparedStatement updateStatement = connection.prepareStatement(updateQuery)
+        ) {
+            FieldType primaryType = primaryKeyDTO.type();
+
+            fillStatement(updateStatement, entityDataDTOS, instance, 1);
+            setValueInStatement(primaryType, (entityDataDTOS.size() + 1), primaryValue, updateStatement);
+
+            updateStatement.execute();
+        }
+        catch (SQLException exception) {
+            // TODO alert SQL Exception
+        }
+        catch (IllegalAccessException exception) {
+            // TODO alert Class Exception
+        }
     }
 
     @Override
@@ -308,6 +359,18 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
+    private void fillStatement(PreparedStatement preparedStatement,
+                               List<EntityDataDTO> entityDataDTOS,
+                               Object instance,
+                               int startIndex) throws IllegalAccessException, SQLException {
+        for (int i = startIndex; i <= entityDataDTOS.size() + 1; i++) {
+            EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
+            FieldType type = entityDataDTO.type();
+            Field dataField = entityDataDTO.field();
+            setValueInStatement(type, i, dataField.get(instance), preparedStatement);
+        }
+    }
+
     private void setValueInStatement(
             FieldType type,
             int position,
@@ -350,18 +413,6 @@ public class SQLDatabase implements DatabaseInterface {
             if (i + 1 != referenceDTOS.size()) {
                 builder.append(", ");
             }
-        }
-    }
-
-    private SGBDInterface SGBDFactory(DatabaseType type) throws DatabaseException {
-        switch (type) {
-            case MYSQL -> {
-                return new MySQLSGBD();
-            }
-            case MARIADB -> {
-                return new MariaDBSGBD();
-            }
-            default -> throw new DatabaseException("SGBD not implemented");
         }
     }
 }

@@ -46,9 +46,27 @@ public class MySQLSGBD implements SGBDInterface {
 
     @Override
     public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
-        return "SELECT * FROM " + tableName +
-                " WHERE " + tableName + "." + primaryKeyDTO.columnName() +
-                " = " + primaryKey + ";";
+        return "SELECT * FROM " + tableName + " WHERE " + primaryKeyDTO.columnName() + " = " + primaryKey + ";";
+    }
+
+    @Override
+    public String update(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("UPDATE ").append(tableName).append(" SET ");
+        for (int i = 0; i < entityDataDTOS.size(); i++) {
+            EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
+            builder.append(entityDataDTO.columnName()).append(" = ");
+            builder.append("?");
+
+            if (i + 1 != entityDataDTOS.size()) {
+                builder.append(", ");
+            }
+        }
+        builder.append(" WHERE ").append(primaryKeyDTO.columnName());
+        builder.append(" = ").append("?").append(";");
+
+        return builder.toString();
     }
 
     @Override
@@ -61,7 +79,7 @@ public class MySQLSGBD implements SGBDInterface {
             builder.append(", ");
         }
         buildInsert(builder, entityDataDTOS);
-        builder.append(",?);");
+        builder.append(", ?);");
 
         return builder.toString();
     }
@@ -90,7 +108,7 @@ public class MySQLSGBD implements SGBDInterface {
         for (int i = 0; i < entityDataDTOS.size(); i++) {
             builder.append("?");
             if (i + 1 != entityDataDTOS.size()) {
-                builder.append(",");
+                builder.append(", ");
             }
         }
     }
