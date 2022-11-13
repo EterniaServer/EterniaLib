@@ -137,4 +137,122 @@ public class TestSQLDatabase {
         Assertions.assertEquals(firstName, result.firstName);
         Assertions.assertEquals(birthdate, result.birthdate);
     }
+
+    @Test
+    void testInsertPersonWithId() throws SQLException {
+        Person person = new Person();
+        person.id = 1;
+        person.firstName = "John";
+        person.birthdate = Date.valueOf("2000-01-01");
+
+        Connection connection = Mockito.mock(Connection.class);
+        String insertQuery = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?)";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+
+        Mockito.when(sgbdInterface.insert(
+                personEntity.tableName(),
+                personEntity.getDataColumns(),
+                personEntity.getPrimaryKey()
+        )).thenReturn(insertQuery);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(insertQuery)).thenReturn(preparedStatement);
+
+        database.insert(Person.class, person);
+
+        Mockito.verify(preparedStatement, Mockito.times(1)).execute();
+    }
+
+    @Test
+    void testInsertPersonWithoutId() throws SQLException {
+        Person person = new Person();
+        person.firstName = "John";
+        person.birthdate = Date.valueOf("2000-01-01");
+
+        Connection connection = Mockito.mock(Connection.class);
+        String insertWithoutKey = "INSERT INTO eternia_person (firstName, birthdate) VALUES (?, ?)";
+        String getLastId = "SELECT LAST_INSERT_ID()";
+        Integer personId = 1;
+        PreparedStatement insertStatement = Mockito.mock(PreparedStatement.class);
+        PreparedStatement getStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+        ResultSetMetaData resultSetMetaData = Mockito.mock(ResultSetMetaData.class);
+
+        Mockito.when(sgbdInterface.insertWithoutKey(
+                personEntity.tableName(),
+                personEntity.getDataColumns()
+        )).thenReturn(insertWithoutKey);
+        Mockito.when(sgbdInterface.getLastInsertId(personEntity.tableName())).thenReturn(getLastId);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(insertWithoutKey)).thenReturn(insertStatement);
+        Mockito.when(connection.prepareStatement(getLastId)).thenReturn(getStatement);
+        Mockito.when(getStatement.executeQuery()).thenReturn(resultSet);
+        Mockito.when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
+        Mockito.when(resultSetMetaData.getColumnName(1)).thenReturn("id");
+        Mockito.when(resultSet.next()).thenReturn(true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(personId);
+
+        database.insert(Person.class, person);
+
+        Mockito.verify(insertStatement, Mockito.times(1)).execute();
+        Mockito.verify(getStatement, Mockito.times(1)).executeQuery();
+
+        Assertions.assertEquals(personId, person.id);
+    }
+
+    @Test
+    void testUpdatePerson() throws SQLException, DatabaseException {
+        Person person = new Person();
+        person.id = 1;
+        person.firstName = "John";
+        person.birthdate = Date.valueOf("2000-01-01");
+
+        Connection connection = Mockito.mock(Connection.class);
+        String updateQuery = "UPDATE eternia_person SET firstName = ?, birthdate = ? WHERE id = ?";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+
+        Mockito.when(sgbdInterface.update(
+                personEntity.tableName(),
+                personEntity.getDataColumns(),
+                personEntity.getPrimaryKey()
+        )).thenReturn(updateQuery);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(updateQuery)).thenReturn(preparedStatement);
+
+        database.update(Person.class, person);
+
+        Mockito.verify(preparedStatement, Mockito.times(1)).execute();
+    }
+
+    @Test
+    void testUpdatePersonShouldRaiseDatabaseException() {
+        Person person = new Person();
+        person.firstName = "John";
+        person.birthdate = Date.valueOf("2000-01-01");
+
+        Assertions.assertThrows(DatabaseException.class, () -> database.update(Person.class, person));
+    }
+
+    @Test
+    void testDeletePerson() throws SQLException {
+        Person person = new Person();
+        person.id = 1;
+        person.firstName = "John";
+        person.birthdate = Date.valueOf("2000-01-01");
+
+        Connection connection = Mockito.mock(Connection.class);
+        String deleteQuery = "DELETE FROM eternia_person WHERE id = 1";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+
+        Mockito.when(sgbdInterface.delete(
+                personEntity.tableName(),
+                personEntity.getPrimaryKey(),
+                person.id
+        )).thenReturn(deleteQuery);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(deleteQuery)).thenReturn(preparedStatement);
+
+        database.delete(Person.class, person.id);
+
+        Mockito.verify(preparedStatement, Mockito.times(1)).execute();
+    }
 }

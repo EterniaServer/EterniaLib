@@ -85,6 +85,11 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
+    public String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
+        return "DELETE FROM " + tableName + " WHERE " + primaryKeyDTO.columnName() + " = " + primaryKey + ";";
+    }
+
+    @Override
     public String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS) {
         StringBuilder builder = new StringBuilder();
 

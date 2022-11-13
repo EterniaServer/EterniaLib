@@ -54,9 +54,9 @@ public class SQLDatabase implements DatabaseInterface {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setJdbcUrl(
                     "jdbc:" + sgbdInterface.jdbcStr() + "://" +
-                            plugin.getString(Strings.DATABASE_HOST) +
-                            ":" + plugin.getString(Strings.DATABASE_PORT) +
-                            "/" + plugin.getString(Strings.DATABASE_DATABASE)
+                    plugin.getString(Strings.DATABASE_HOST) +
+                    ":" + plugin.getString(Strings.DATABASE_PORT) +
+                    "/" + plugin.getString(Strings.DATABASE_DATABASE)
             );
             hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
             hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
@@ -266,6 +266,9 @@ public class SQLDatabase implements DatabaseInterface {
         Object primaryValue;
         try {
             primaryValue = primaryField.get(instance);
+            if (primaryValue == null) {
+                throw new DatabaseException("Primary key is null");
+            }
         } catch (IllegalAccessException e) {
             throw new DatabaseException("");
         }
@@ -289,6 +292,23 @@ public class SQLDatabase implements DatabaseInterface {
         }
         catch (IllegalAccessException exception) {
             // TODO alert Class Exception
+        }
+    }
+
+    @Override
+    public void delete(Class<?> objectClass, Object primaryKey) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+
+        String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO, primaryKey);
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.execute();
+        }
+        catch (SQLException exception) {
+            // TODO alert SQL Exception
         }
     }
 
@@ -363,8 +383,8 @@ public class SQLDatabase implements DatabaseInterface {
                                List<EntityDataDTO> entityDataDTOS,
                                Object instance,
                                int startIndex) throws IllegalAccessException, SQLException {
-        for (int i = startIndex; i <= entityDataDTOS.size() + 1; i++) {
-            EntityDataDTO entityDataDTO = entityDataDTOS.get(i - 1);
+        for (int i = startIndex; i < entityDataDTOS.size() + startIndex; i++) {
+            EntityDataDTO entityDataDTO = entityDataDTOS.get(i - startIndex);
             FieldType type = entityDataDTO.type();
             Field dataField = entityDataDTO.field();
             setValueInStatement(type, i, dataField.get(instance), preparedStatement);

@@ -83,6 +83,19 @@ public class TestMariaDBSGBD {
     }
 
     @Test
+    void testDeleteQuery() {
+        String tableName = personEntity.tableName();
+
+        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        int primaryKey = 1;
+
+        String expected = "DELETE FROM eternia_person WHERE id = 1;";
+        String result = mariaDBSGBD.delete(tableName, primaryKeyDTO, primaryKey);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
     void testInsertWithoutKeyQuery() {
         String tableName = personEntity.tableName();
 

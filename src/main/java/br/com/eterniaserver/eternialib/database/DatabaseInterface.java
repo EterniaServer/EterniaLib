@@ -18,6 +18,8 @@ public interface DatabaseInterface {
 
     <T> void insert(Class<T> objectClass, Object instance);
 
+    void delete(Class<?> objectClass, Object instance);
+
     <T> void update(Class<T> objectClass, Object instance) throws DatabaseException;
 
     void register(Class<?> entityClass, Entity<?> entity) throws DatabaseException;

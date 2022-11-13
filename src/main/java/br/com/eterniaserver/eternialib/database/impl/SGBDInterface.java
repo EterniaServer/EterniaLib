@@ -18,6 +18,8 @@ public interface SGBDInterface {
 
     String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
 
+    String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey);
+
     String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS);
 
     String getLastInsertId(String tableName);
