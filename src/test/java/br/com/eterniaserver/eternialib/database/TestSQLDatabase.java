@@ -139,6 +139,41 @@ public class TestSQLDatabase {
     }
 
     @Test
+    void testGetPersonTwoTimes() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        String queryGet = "SELECT * FROM eternia_person WHERE id = 1";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+        Integer id = 1;
+        String firstName = "John";
+        Date birthdate = Date.valueOf("2000-01-01");
+
+        Mockito.when(sgbdInterface.selectByPrimary(
+                personEntity.tableName(),
+                personEntity.getPrimaryKey(),
+                id
+        )).thenReturn(queryGet);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(queryGet)).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        Mockito.when(resultSet.next()).thenReturn(true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(id);
+        Mockito.when(resultSet.getString("firstName")).thenReturn(firstName);
+        Mockito.when(resultSet.getDate("birthdate")).thenReturn(birthdate);
+
+        database.get(Person.class, id);
+        database.get(Person.class, id);
+
+        Mockito.verify(sgbdInterface, Mockito.times(1)).selectByPrimary(
+                personEntity.tableName(),
+                personEntity.getPrimaryKey(),
+                id
+        );
+    }
+
+    @Test
     void testInsertPersonWithId() throws SQLException {
         Person person = new Person();
         person.id = 1;
@@ -200,7 +235,7 @@ public class TestSQLDatabase {
     }
 
     @Test
-    void testUpdatePerson() throws SQLException, DatabaseException {
+    void testUpdatePerson() throws SQLException {
         Person person = new Person();
         person.id = 1;
         person.firstName = "John";
@@ -221,15 +256,6 @@ public class TestSQLDatabase {
         database.update(Person.class, person);
 
         Mockito.verify(preparedStatement, Mockito.times(1)).execute();
-    }
-
-    @Test
-    void testUpdatePersonShouldRaiseDatabaseException() {
-        Person person = new Person();
-        person.firstName = "John";
-        person.birthdate = Date.valueOf("2000-01-01");
-
-        Assertions.assertThrows(DatabaseException.class, () -> database.update(Person.class, person));
     }
 
     @Test

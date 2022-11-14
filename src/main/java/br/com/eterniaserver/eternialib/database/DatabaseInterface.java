@@ -12,6 +12,8 @@ public interface DatabaseInterface {
 
     void closeAllConnections();
 
+    <T> T getEntity(Class<T> objectClass, Object primaryKey);
+
     <T> List<T> listAll(Class<T> objectClass);
 
     <T> T get(Class<T> objectClass, Object primaryKey);
@@ -20,7 +22,7 @@ public interface DatabaseInterface {
 
     void delete(Class<?> objectClass, Object instance);
 
-    <T> void update(Class<T> objectClass, Object instance) throws DatabaseException;
+    <T> void update(Class<T> objectClass, Object instance);
 
     void register(Class<?> entityClass, Entity<?> entity) throws DatabaseException;
 

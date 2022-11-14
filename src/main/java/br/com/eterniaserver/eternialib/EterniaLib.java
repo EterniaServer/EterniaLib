@@ -4,6 +4,7 @@ import br.com.eterniaserver.eternialib.commands.CommandManagerInterface;
 import br.com.eterniaserver.eternialib.commands.impl.CommandManager;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.CoreCfg;
+import br.com.eterniaserver.eternialib.core.Manager;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
@@ -17,11 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class EterniaLib extends JavaPlugin {
 
     private static final String version = "4.0.0";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
+    private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
 
     private static DatabaseInterface database;
     private static CommandManagerInterface commandManager;
@@ -42,11 +48,26 @@ public class EterniaLib extends JavaPlugin {
     public void onEnable() {
         this.loadConfigurations();
         this.loadCommandManager();
+        this.loadCoreManager();
     }
 
     @Override
     public void onDisable() {
         EterniaLib.getDatabase().closeAllConnections();
+    }
+
+    public static UUID getUUIDOf(String playerName) {
+        return fetchByNameMap.get(playerName);
+    }
+
+    public static void registerNewUUID(String playerName, UUID uuid) {
+        String possibleOldName = fetchByUUIDMap.get(uuid);
+        if (possibleOldName != null) {
+            fetchByNameMap.remove(possibleOldName);
+        }
+
+        fetchByNameMap.put(playerName, uuid);
+        fetchByUUIDMap.put(uuid, playerName);
     }
 
     public static CommandManagerInterface getCmdManager() {
@@ -112,6 +133,10 @@ public class EterniaLib extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void loadCoreManager() {
+        new Manager(this);
     }
 
 }

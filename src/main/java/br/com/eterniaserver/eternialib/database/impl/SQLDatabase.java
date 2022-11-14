@@ -109,6 +109,21 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
+    public <T> T getEntity(Class<T> objectClass, Object primaryKey) {
+        Entity<?> entity = entityMap.get(objectClass);
+        if (entity == null) {
+            return null;
+        }
+
+        Object object = entity.getEntity(primaryKey);
+        if (object == null) {
+            return null;
+        }
+
+        return objectClass.cast(object);
+    }
+
+    @Override
     public <T> List<T> listAll(Class<T> objectClass) {
         List<T> entities = new ArrayList<>();
         Entity<?> entity = entityMap.get(objectClass);
@@ -119,9 +134,12 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet resultSet = statement.executeQuery()
         ) {
+            Field primaryKey = entity.getPrimaryKey().field();
+
             while (resultSet.next()) {
                 T instance = objectClass.getConstructor().newInstance();
                 populateObject(entity, instance, resultSet);
+                entity.addEntity(primaryKey.get(instance), instance);
                 entities.add(instance);
             }
         }
@@ -143,6 +161,11 @@ public class SQLDatabase implements DatabaseInterface {
     @Override
     public <T> T get(Class<T> objectClass, Object primaryKey) {
         Entity<?> entity = entityMap.get(objectClass);
+        Object object = entity.getEntity(primaryKey);
+        if (object != null) {
+            return objectClass.cast(object);
+        }
+
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
 
         String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO, primaryKey);
@@ -169,6 +192,8 @@ public class SQLDatabase implements DatabaseInterface {
         ) {
             // TODO alert Class Exception
         }
+
+        entity.addEntity(primaryKey, instance);
 
         return instance;
     }
@@ -221,6 +246,9 @@ public class SQLDatabase implements DatabaseInterface {
 
             connection.commit();
             connection.setAutoCommit(true);
+
+            Object primaryKey = primaryKeyDTO.field().get(instance);
+            entity.addEntity(primaryKey, instance);
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception
@@ -243,11 +271,14 @@ public class SQLDatabase implements DatabaseInterface {
         ) {
             FieldType primaryType = primaryKeyDTO.type();
             Field primaryField = primaryKeyDTO.field();
+            Object primaryKey = primaryField.get(instance);
 
-            setValueInStatement(primaryType, 1, primaryField.get(instance), statement);
+            setValueInStatement(primaryType, 1, primaryKey, statement);
             fillStatement(statement, entityDataDTOS, instance, 2);
 
             statement.execute();
+
+            entity.addEntity(primaryKey, instance);
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception
@@ -258,19 +289,27 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public <T> void update(Class<T> objectClass, Object instance) throws DatabaseException {
+    public <T> void update(Class<T> objectClass, Object instance) {
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         Field primaryField = primaryKeyDTO.field();
 
-        Object primaryValue;
+        Object primaryValue = null;
         try {
             primaryValue = primaryField.get(instance);
             if (primaryValue == null) {
                 throw new DatabaseException("Primary key is null");
             }
-        } catch (IllegalAccessException e) {
-            throw new DatabaseException("");
+        }
+        catch (IllegalAccessException e) {
+            // TODO alert IllegalAccessException
+        }
+        catch (DatabaseException e) {
+            // TODO alert DatAbaseException
+        }
+
+        if (primaryValue == null) {
+            return;
         }
 
         String tableName = entity.tableName();
@@ -286,6 +325,8 @@ public class SQLDatabase implements DatabaseInterface {
             setValueInStatement(primaryType, (entityDataDTOS.size() + 1), primaryValue, updateStatement);
 
             updateStatement.execute();
+
+            entity.addEntity(primaryValue, instance);
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception
@@ -306,6 +347,7 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
             statement.execute();
+            entity.removeEntity(primaryKey);
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception

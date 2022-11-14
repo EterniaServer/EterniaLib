@@ -13,9 +13,8 @@ import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Entity<T> {
 
@@ -23,6 +22,7 @@ public class Entity<T> {
     private final Field primaryKeyField;
     private final List<Field> dataFields;
     private final List<Field> referenceFields;
+    private final Map<Object, Object> entitiesCache = new ConcurrentHashMap<>();
 
     public Entity(Class<T> entityClass) throws EntityException {
         Field[] fields = entityClass.getFields();
@@ -36,6 +36,18 @@ public class Entity<T> {
         this.entityClass = entityClass;
         this.dataFields = getFieldsByAnnotation(fields, DataField.class);
         this.referenceFields = getFieldsByAnnotation(fields, ReferenceField.class);
+    }
+
+    public Object getEntity(Object primaryKey) {
+        return entitiesCache.get(primaryKey);
+    }
+
+    public void addEntity(Object primaryKey, Object entity) {
+        entitiesCache.put(primaryKey, entity);
+    }
+
+    public void removeEntity(Object primaryKey) {
+        entitiesCache.remove(primaryKey);
     }
 
     private List<Field> getFieldsByAnnotation(Field[] fields, Class<? extends Annotation> annotationClass) {
