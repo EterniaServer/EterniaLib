@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class TestEterniaLib {
@@ -26,7 +25,6 @@ public class TestEterniaLib {
     }
 
     @Test
-    @DisplayName("Static Getters")
     void testGetters() {
         Assertions.assertNotNull(EterniaLib.getDatabase());
         Assertions.assertNotNull(EterniaLib.getCmdManager());
@@ -35,7 +33,6 @@ public class TestEterniaLib {
     }
 
     @Test
-    @DisplayName("Test getComponentMessage")
     void testComponentMessage() {
         Component expect = Component
                 .text("Configuração eternia_central recarregada", NamedTextColor.GRAY)
@@ -46,7 +43,6 @@ public class TestEterniaLib {
     }
 
     @Test
-    @DisplayName("Test getMessage")
     void testGetMessage() {
         String expect = "<color:#aaaaaa>Configuração eternia_central recarregada<color:#555555>.";
         String result = plugin.getMessage(Messages.CONFIG_RELOADED, false, "eternia_central");
@@ -59,7 +55,6 @@ public class TestEterniaLib {
     }
 
     @Test
-    @DisplayName("Test parseColor")
     void testParseColor() {
         String colorMessage = "<color:#555555>HELLO WORLD";
 

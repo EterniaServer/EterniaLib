@@ -41,12 +41,12 @@ public class MySQLSGBD implements SGBDInterface {
 
     @Override
     public String selectAll(String tableName) {
-        return "SELECT * FROM " + tableName + ";";
+        return "SELECT * FROM %s;".formatted(tableName);
     }
 
     @Override
-    public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
-        return "SELECT * FROM " + tableName + " WHERE " + primaryKeyDTO.columnName() + " = " + primaryKey + ";";
+    public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO) {
+        return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.columnName());
     }
 
     @Override
@@ -85,8 +85,8 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey) {
-        return "DELETE FROM " + tableName + " WHERE " + primaryKeyDTO.columnName() + " = " + primaryKey + ";";
+    public String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO) {
+        return "DELETE FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.columnName());
     }
 
     @Override
@@ -156,10 +156,11 @@ public class MySQLSGBD implements SGBDInterface {
 
     @Override
     public String buildReferenceColumn(EntityReferenceDTO referenceDTO) {
-
-        return "FOREIGN KEY (" + referenceDTO.columnName() + ")" +
-                " REFERENCES " + referenceDTO.referenceTableName() + "(" +
-                referenceDTO.referenceColumnName() + ")" +
-                referenceMap.get(referenceDTO.mode());
+        return "FOREIGN KEY (%s) REFERENCES %s (%s)%s".formatted(
+                referenceDTO.columnName(),
+                referenceDTO.referenceTableName(),
+                referenceDTO.referenceColumnName(),
+                referenceMap.get(referenceDTO.mode())
+        );
     }
 }

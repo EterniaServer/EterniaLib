@@ -41,14 +41,14 @@ public interface ReloadableConfiguration {
     default void saveConfiguration(final boolean inFolder) {
         String folderPath = getFolderPath();
         if (inFolder && new File(folderPath).mkdir()) {
-            Bukkit.getLogger().log(Level.FINE, "Folder path " + folderPath + "created.");
+            Bukkit.getLogger().log(Level.FINE, "Folder path {0} created.", folderPath);
         }
 
         String filePath = getFilePath();
         try {
             outFileConfiguration().save(filePath);
         } catch (IOException exception) {
-            Bukkit.getLogger().log(Level.WARNING, "Creation failed to file " + filePath);
+            Bukkit.getLogger().log(Level.WARNING, "Creation failed to file {0}.", filePath);
         }
     }
 

@@ -37,7 +37,7 @@ public class SQLDatabase implements DatabaseInterface {
     public static class HikariConnection {
 
         private final HikariDataSource dataSource;
-        private final SGBDInterface sgbdInterface;;
+        private final SGBDInterface sgbdInterface;
 
         public HikariDataSource getDataSource() {
             return dataSource;
@@ -53,7 +53,7 @@ public class SQLDatabase implements DatabaseInterface {
 
             String databaseType = plugin.getString(Strings.DATABASE_TYPE);
             DatabaseType type = DatabaseType.valueOf(databaseType);
-            this.sgbdInterface = SGBDFactory(type);
+            this.sgbdInterface = sgbdFactory(type);
 
             if (type == DatabaseType.SQLITE) {
                 hikariConfig.setJdbcUrl(
@@ -89,7 +89,7 @@ public class SQLDatabase implements DatabaseInterface {
             this.dataSource = new HikariDataSource(hikariConfig);
         }
 
-        private SGBDInterface SGBDFactory(DatabaseType type) throws DatabaseException {
+        private SGBDInterface sgbdFactory(DatabaseType type) throws DatabaseException {
             switch (type) {
                 case MYSQL -> {
                     return new MySQLSGBD();
@@ -109,7 +109,7 @@ public class SQLDatabase implements DatabaseInterface {
     private final SGBDInterface sgbdInterface;
     private final Map<Class<?>, Entity<?>> entityMap = new ConcurrentHashMap<>();
 
-    public SQLDatabase(HikariDataSource dataSource, SGBDInterface sgbdInterface) throws DatabaseException {
+    public SQLDatabase(HikariDataSource dataSource, SGBDInterface sgbdInterface) {
         this.dataSource = dataSource;
         this.sgbdInterface = sgbdInterface;
     }
@@ -185,19 +185,22 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO);
 
-        String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO, primaryKey);
         T instance = null;
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery()
-        ) {
-            instance = objectClass.getConstructor().newInstance();
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
+            setValueInStatement(primaryKeyDTO.type(), 1, primaryKey, statement);
+            ResultSet resultSet = statement.executeQuery();
+
+            instance = objectClass.getConstructor().newInstance();
             if (resultSet.next()) {
                 populateObject(entity, instance, resultSet);
             }
+
+            resultSet.close();
+
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception
@@ -276,7 +279,7 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private <T> void onlyInsert(Entity<?> entity, Object instance) {
+    private void onlyInsert(Entity<?> entity, Object instance) {
         String tableName = entity.tableName();
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
@@ -359,13 +362,14 @@ public class SQLDatabase implements DatabaseInterface {
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
 
-        String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO, primaryKey);
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-        ) {
+        String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO);
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            setValueInStatement(primaryKeyDTO.type(), 1, primaryKey, statement);
             statement.execute();
             entity.removeEntity(primaryKey);
+
         }
         catch (SQLException exception) {
             // TODO alert SQL Exception

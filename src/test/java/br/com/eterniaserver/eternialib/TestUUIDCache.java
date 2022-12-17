@@ -7,7 +7,6 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -28,7 +27,6 @@ public class TestUUIDCache {
     }
 
     @Test
-    @DisplayName("Test get UUID by name from invalid player")
     void testGetUUIDFromNone() {
         String name = "yurinaomeudeus";
         UUID result = EterniaLib.getUUIDOf(name);
@@ -37,7 +35,6 @@ public class TestUUIDCache {
     }
 
     @Test
-    @DisplayName("Test get UUID by name after player join")
     void testGetUUIDAfterPlayerJoin() {
         String name = "yurinogueira";
         PlayerMock player = server.addPlayer(name);

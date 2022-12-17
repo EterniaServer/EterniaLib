@@ -12,13 +12,13 @@ public interface SGBDInterface {
 
     String selectAll(String tableName);
 
-    String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey);
+    String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO);
 
     String update(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
 
     String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO);
 
-    String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO, Object primaryKey);
+    String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO);
 
     String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS);
 

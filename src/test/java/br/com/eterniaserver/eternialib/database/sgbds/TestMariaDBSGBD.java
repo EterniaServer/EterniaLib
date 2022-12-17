@@ -48,10 +48,9 @@ public class TestMariaDBSGBD {
     @Test
     void testSelectByPrimary() {
         EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        int primaryKey = 1;
 
-        String expected = "SELECT * FROM eternia_person WHERE id = 1;";
-        String result = mariaDBSGBD.selectByPrimary(personEntity.tableName(), primaryKeyDTO, primaryKey);
+        String expected = "SELECT * FROM eternia_person WHERE id = ?;";
+        String result = mariaDBSGBD.selectByPrimary(personEntity.tableName(), primaryKeyDTO);
 
         Assertions.assertEquals(expected, result);
     }
@@ -85,12 +84,10 @@ public class TestMariaDBSGBD {
     @Test
     void testDeleteQuery() {
         String tableName = personEntity.tableName();
-
         EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        int primaryKey = 1;
 
-        String expected = "DELETE FROM eternia_person WHERE id = 1;";
-        String result = mariaDBSGBD.delete(tableName, primaryKeyDTO, primaryKey);
+        String expected = "DELETE FROM eternia_person WHERE id = ?;";
+        String result = mariaDBSGBD.delete(tableName, primaryKeyDTO);
 
         Assertions.assertEquals(expected, result);
     }
