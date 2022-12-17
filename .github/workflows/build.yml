@@ -14,8 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
+      el-mariadb:
         image: mariadb:latest
+        container_name: el-mariadb
         env:
           MYSQL_ROOT_USER: admin
           MYSQL_ROOT_PASSWORD: password
