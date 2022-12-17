@@ -16,11 +16,14 @@ sonar {
         property "sonar.organization", "eterniaserver"
         property "sonar.projectVersion", "${project.version}"
         property "sonar.sources", "src/main/java"
+        property "sonar.tests", "src/test/java"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
+        property("sonar.verbose", "true")
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.junit.reportsPath", "build/test-results/test"
     }
 }
 
