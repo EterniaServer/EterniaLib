@@ -8,5 +8,6 @@ public enum Messages {
     SNEAKED,
     ATTACKED,
     COMMAND_CANCELLED,
+    CONFIG_RELOADED,
 
 }

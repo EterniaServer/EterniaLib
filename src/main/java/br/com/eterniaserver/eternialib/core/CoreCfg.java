@@ -72,7 +72,7 @@ public class CoreCfg implements ReloadableConfiguration {
 
     @Override
     public void executeConfig() {
-        strings[Strings.PLUGIN_PREFIX.ordinal()] = inConfig.getString("server.plugin-prefix", "<color:#aaaaaa>[EL] ");
+        strings[Strings.PLUGIN_PREFIX.ordinal()] = inConfig.getString("server.plugin-prefix", "<color:#555555>[<color:#55ff55>E<color:#5555ff>L<color:#555555>] ");
         strings[Strings.DATABASE_TYPE.ordinal()] = inConfig.getString("database.type", "MARIADB");
         strings[Strings.DATABASE_HOST.ordinal()] = inConfig.getString("database.host", "el-mariadb");
         strings[Strings.DATABASE_PORT.ordinal()] = inConfig.getString("database.port", "3306");
@@ -115,6 +115,11 @@ public class CoreCfg implements ReloadableConfiguration {
         addMessage(
                 Messages.COMMAND_CANCELLED,
                 "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.CONFIG_RELOADED,
+                "<color:#aaaaaa>Configuração {0} recarregada<color:#555555>.",
                 ""
         );
 
