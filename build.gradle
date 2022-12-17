@@ -20,7 +20,6 @@ sonar {
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.jacoco.xmlReportPath", "${buildDir}/reports/jacoco.xml"
     }
 }
 
@@ -81,15 +80,15 @@ test {
         events "passed", "skipped", "failed"
     }
 
-    finalizedBy(jacocoTestReport)
+    finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
+    dependsOn test
     reports {
-        xml.enabled = true
-        xml.outputLocation = file("${buildDir}/reports/jacoco.xml")
+        xml.enabled true
+        csv.enabled true
     }
-    dependsOn(test)
 }
 
 tasks.build.dependsOn(shadowJar)
