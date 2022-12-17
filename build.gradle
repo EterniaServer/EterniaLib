@@ -9,14 +9,18 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
-sonarqube {
+sonar {
     properties {
+        property "sonar.projectName", "${project.name}"
         property "sonar.projectKey", "EterniaServer_EterniaLib"
-        property "sonar.organization", "eterniaserver"
-        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "EterniaServer"
+        property "sonar.projectVersion", "${project.version}"
+        property "sonar.sources", "src/main/java"
+        property "sonar.java.binaries", "build/classes/java/main"
+        property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.jacoco.xmlReportPath", "${buildDir}/reports/jacoco.xml"
-        property "sonar.junit.reportPaths", "${buildDir}/reports/jacoco.xml"
+        property "sonar.jacoco.reportPath", "build/jacoco/test.exec"
+        property "sonar.jacoco.reportMissing.force.zero", "true"
     }
 }
 
@@ -83,7 +87,6 @@ test {
 jacocoTestReport {
     reports {
         xml.enabled = true
-        xml.outputLocation = file("${buildDir}/reports/jacoco.xml")
     }
     dependsOn(test)
 }
