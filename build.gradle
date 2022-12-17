@@ -20,8 +20,8 @@ sonar {
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", "build/jacoco/test.exec"
-        property "sonar.jacoco.reportMissing.force.zero", "true"
+        property "sonar.coverage.jacoco.xmlReportPath", "${buildDir}/reports/jacoco.xml"
+        property "sonar.junit.reportPaths", "${buildDir}/reports/jacoco.xml"
     }
 }
 
@@ -88,6 +88,7 @@ test {
 jacocoTestReport {
     reports {
         xml.enabled = true
+        xml.outputLocation = file("${buildDir}/reports/jacoco.xml")
     }
     dependsOn(test)
 }
