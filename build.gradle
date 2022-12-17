@@ -34,14 +34,14 @@ java {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.0.1") {
         exclude group: "org.slf4j", module: "slf4j-api"
     }
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     testImplementation("org.mariadb.jdbc:mariadb-java-client:3.0.7")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testImplementation('org.mockito:mockito-core:4.8.0')
+    testImplementation('org.mockito:mockito-core:4.10.0')
     testImplementation("com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT")
 }
 

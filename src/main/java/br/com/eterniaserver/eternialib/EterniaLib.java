@@ -1,18 +1,24 @@
 package br.com.eterniaserver.eternialib;
 
-import br.com.eterniaserver.eternialib.commands.CommandManagerInterface;
-import br.com.eterniaserver.eternialib.commands.impl.CommandManager;
+import br.com.eterniaserver.eternialib.commands.AdvancedCommandManager;
+import br.com.eterniaserver.eternialib.commands.CommandManager;
+import br.com.eterniaserver.eternialib.commands.impl.AdvancedCommandManagerImpl;
+import br.com.eterniaserver.eternialib.commands.impl.CommandManagerImpl;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.CoreCfg;
 import br.com.eterniaserver.eternialib.core.Manager;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
+import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.DatabaseInterface;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,17 +36,27 @@ public class EterniaLib extends JavaPlugin {
     private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
 
     private static DatabaseInterface database;
-    private static CommandManagerInterface commandManager;
+    private static CommandManager commandManager;
+    private static AdvancedCommandManager advancedCommandManager;
 
     private final boolean[] booleans = new boolean[Booleans.values().length];
     private final int[] integers = new int[Integers.values().length];
     private final String[] strings = new String[Strings.values().length];
+    private final String[] messages = new String[Messages.values().length];
 
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
+
+    /* Plugin constructor */
     public EterniaLib() {
         super();
     }
 
-    protected EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    /* This constructor is used for testing purposes */
+    @SuppressWarnings("removal")
+    protected EterniaLib(org.bukkit.plugin.java.JavaPluginLoader loader,
+                         PluginDescriptionFile description,
+                         File dataFolder,
+                         File file) {
         super(loader, description, dataFolder, file);
     }
 
@@ -48,6 +64,7 @@ public class EterniaLib extends JavaPlugin {
     public void onEnable() {
         this.loadConfigurations();
         this.loadCommandManager();
+        this.loadAdvancedCommandManager();
         this.loadCoreManager();
     }
 
@@ -70,8 +87,12 @@ public class EterniaLib extends JavaPlugin {
         fetchByUUIDMap.put(uuid, playerName);
     }
 
-    public static CommandManagerInterface getCmdManager() {
+    public static CommandManager getCmdManager() {
         return commandManager;
+    }
+
+    public static AdvancedCommandManager getAdvancedCmdManager() {
+        return advancedCommandManager;
     }
 
     public static DatabaseInterface getDatabase() {
@@ -111,12 +132,16 @@ public class EterniaLib extends JavaPlugin {
         database = databaseImpl;
     }
 
-    private static void setCommandManagerInterface(CommandManagerInterface commandManagerImpl) {
+    private static void setCommandManagerInterface(CommandManager commandManagerImpl) {
         commandManager = commandManagerImpl;
     }
 
+    private static void setAdvancedCommandManagerInterface(AdvancedCommandManager advancedCommandManagerImpl) {
+        advancedCommandManager = advancedCommandManagerImpl;
+    }
+
     private void loadConfigurations() {
-        CoreCfg coreCfg = new CoreCfg(this, strings, integers, booleans);
+        CoreCfg coreCfg = new CoreCfg(this, messages, strings, integers, booleans);
 
         EterniaLib.registerConfiguration("eternialib", "core", coreCfg);
 
@@ -127,7 +152,8 @@ public class EterniaLib extends JavaPlugin {
 
     private void loadCommandManager() {
         try {
-            setCommandManagerInterface(new CommandManager(this));
+            CommandManager impl = new CommandManagerImpl(this);
+            setCommandManagerInterface(impl);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InvalidConfigurationException e) {
@@ -135,8 +161,36 @@ public class EterniaLib extends JavaPlugin {
         }
     }
 
+    private void loadAdvancedCommandManager() {
+        int ticksPerSecond = this.getInteger(Integers.COMMANDS_TICKS_PER_SECOND);
+        AdvancedCommandManager impl = new AdvancedCommandManagerImpl(this, ticksPerSecond);
+        setAdvancedCommandManagerInterface(impl);
+    }
+
     private void loadCoreManager() {
         new Manager(this);
+    }
+
+    public Component getComponentMessage(Messages messagesId, boolean prefix, String... args) {
+        return miniMessage.deserialize(getMessage(messagesId, prefix, args));
+    }
+
+    public String getMessage(Messages messagesId, boolean prefix, String... args) {
+        String message = messages[messagesId.ordinal()];
+
+        for (int i = 0; i < args.length; i++) {
+            message = message.replace("{" + i + "}", args[i]);
+        }
+
+        if (prefix) {
+            return getString(Strings.PLUGIN_PREFIX) + message;
+        }
+
+        return message;
+    }
+
+    public Component parseColor(String string) {
+        return miniMessage.deserialize(string);
     }
 
 }

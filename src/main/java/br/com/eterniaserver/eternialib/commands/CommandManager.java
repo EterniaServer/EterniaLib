@@ -10,7 +10,7 @@ import co.aikar.commands.CommandConditions;
 import co.aikar.commands.CommandContexts;
 import co.aikar.commands.CommandReplacements;
 
-public interface CommandManagerInterface {
+public interface CommandManager {
 
     void registerCommand(final BaseCommand baseCommand);
 

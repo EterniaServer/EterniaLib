@@ -1,7 +1,7 @@
 package br.com.eterniaserver.eternialib.commands.impl;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.commands.CommandManagerInterface;
+import br.com.eterniaserver.eternialib.commands.CommandManager;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.BukkitCommandExecutionContext;
@@ -18,13 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-public class CommandManager implements CommandManagerInterface {
+public class CommandManagerImpl implements CommandManager {
 
     private static final String ACF_MESSAGES = "command_messages.yml";
 
     private final PaperCommandManager manager;
 
-    public CommandManager(final EterniaLib plugin) throws IOException, InvalidConfigurationException {
+    public CommandManagerImpl(final EterniaLib plugin) throws IOException, InvalidConfigurationException {
         this.manager = new PaperCommandManager(plugin);
         this.manager.enableUnstableAPI("help");
 

@@ -8,4 +8,6 @@ public enum Integers {
     HIKARI_CONNECTION_TIME_OUT,
     HIKARI_LEAK_THRESHOLD,
 
+    COMMANDS_TICKS_PER_SECOND,
+
 }

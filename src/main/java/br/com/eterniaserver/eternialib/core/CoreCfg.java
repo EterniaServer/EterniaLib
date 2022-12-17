@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
+import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
@@ -24,14 +25,16 @@ public class CoreCfg implements ReloadableConfiguration {
 
     private final FileConfiguration inConfig;
     private final FileConfiguration outConfig;
+    private final String[] messages;
     private final String[] strings;
     private final int[] integers;
     private final boolean[] booleans;
 
-    public CoreCfg(EterniaLib plugin, String[] strings, int[] integers, boolean[] booleans) {
+    public CoreCfg(EterniaLib plugin, String[] messages, String[] strings, int[] integers, boolean[] booleans) {
         this.inConfig = YamlConfiguration.loadConfiguration(new File(getFilePath()));
         this.outConfig = new YamlConfiguration();
         this.plugin = plugin;
+        this.messages = messages;
         this.strings = strings;
         this.integers = integers;
         this.booleans = booleans;
@@ -59,7 +62,7 @@ public class CoreCfg implements ReloadableConfiguration {
 
     @Override
     public String[] messages() {
-        return null;
+        return messages;
     }
 
     @Override
@@ -83,6 +86,37 @@ public class CoreCfg implements ReloadableConfiguration {
         integers[Integers.HIKARI_CONNECTION_TIME_OUT.ordinal()] = inConfig.getInt("database.hikari.connection-timeout", 300000);
         integers[Integers.HIKARI_LEAK_THRESHOLD.ordinal()] = inConfig.getInt("database.hikari.leak-threshold", 300000);
         booleans[Booleans.HIKARI_ALLOW_POOL_SUSPENSION.ordinal()] = inConfig.getBoolean("database.hikari.pool.allow-suspension", false);
+
+        addMessage(
+                Messages.MOVED,
+                "<color:#aaaaaa>Você se moveu, por isso seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.BLOCK_BRAKED,
+                "<color:#aaaaaa>Você quebrou um bloco, por isso seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.JUMPED,
+                "<color:#aaaaaa>Você pulou, por isso seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.SNEAKED,
+                "<color:#aaaaaa>Você se agachou, por isso seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.ATTACKED,
+                "<color:#aaaaaa>Você atacou, por isso seu comando foi cancelado<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.COMMAND_CANCELLED,
+                "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>.",
+                ""
+        );
 
         outConfig.options().setHeader(List.of(
                 "Tipos de database disponíveis: MYSQL, MARIADB, POSTGRESQL",
