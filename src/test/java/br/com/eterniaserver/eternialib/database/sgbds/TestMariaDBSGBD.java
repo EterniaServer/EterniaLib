@@ -29,7 +29,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testJdbcStr() {
-        String expected = "mariadb";
+        String expected = "mariadb://";
         String result = mariaDBSGBD.jdbcStr();
 
         Assertions.assertEquals(expected, result);

@@ -8,6 +8,6 @@ public class MariaDBSGBD extends MySQLSGBD {
 
     @Override
     public String jdbcStr() {
-        return "mariadb";
+        return "mariadb://";
     }
 }

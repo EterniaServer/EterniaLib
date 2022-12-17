@@ -28,7 +28,7 @@ public class TestMySQLSGBD {
 
     @Test
     void testJdbcStr() {
-        String expected = "mysql";
+        String expected = "mysql://";
         String result = mySQLSGBD.jdbcStr();
 
         Assertions.assertEquals(expected, result);

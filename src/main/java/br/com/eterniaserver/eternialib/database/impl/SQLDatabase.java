@@ -14,6 +14,7 @@ import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
+import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -46,31 +47,45 @@ public class SQLDatabase implements DatabaseInterface {
             return sgbdInterface;
         }
 
-        public HikariConnection(EterniaLib plugin) throws DatabaseException {
+        public HikariConnection(EterniaLib plugin) throws DatabaseException, ClassNotFoundException {
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setPoolName("EterniaLib HikariPool");
+
             String databaseType = plugin.getString(Strings.DATABASE_TYPE);
             DatabaseType type = DatabaseType.valueOf(databaseType);
             this.sgbdInterface = SGBDFactory(type);
 
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(
-                    "jdbc:" + sgbdInterface.jdbcStr() + "://" +
-                    plugin.getString(Strings.DATABASE_HOST) +
-                    ":" + plugin.getString(Strings.DATABASE_PORT) +
-                    "/" + plugin.getString(Strings.DATABASE_DATABASE)
-            );
-            hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
-            hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
-            // MySQL specific configurations
-            hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            // Pool configurations
-            hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
-            hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
-            hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
-            hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
-            hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
-            hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
+            if (type == DatabaseType.SQLITE) {
+                hikariConfig.setJdbcUrl(
+                        "jdbc:" + sgbdInterface.jdbcStr() +
+                        plugin.getString(Strings.DATABASE_HOST)
+                );
+                Class.forName("org.sqlite.JDBC");
+                hikariConfig.setDriverClassName("org.sqlite.JDBC");
+            }
+            else {
+                hikariConfig.setJdbcUrl(
+                        "jdbc:" + sgbdInterface.jdbcStr() +
+                        plugin.getString(Strings.DATABASE_HOST) +
+                        ":" + plugin.getString(Strings.DATABASE_PORT) +
+                        "/" + plugin.getString(Strings.DATABASE_DATABASE)
+                );
+                hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
+                hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
+
+                // MySQL specific configurations
+                hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                // Pool configurations
+                hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
+                hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
+                hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
+                hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
+                hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
+                hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
+            }
+
             this.dataSource = new HikariDataSource(hikariConfig);
         }
 
@@ -81,6 +96,9 @@ public class SQLDatabase implements DatabaseInterface {
                 }
                 case MARIADB -> {
                     return new MariaDBSGBD();
+                }
+                case SQLITE -> {
+                    return new SQLiteSGBD();
                 }
                 default -> throw new DatabaseException("SGBD not implemented");
             }

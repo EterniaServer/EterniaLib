@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class MySQLSGBD implements SGBDInterface {
 
-    private final Map<FieldType, String> typeMap;
-    private final Map<ReferenceMode, String> referenceMap;
+    protected final Map<FieldType, String> typeMap;
+    protected final Map<ReferenceMode, String> referenceMap;
 
     public MySQLSGBD() {
         this.typeMap = new HashMap<>();
@@ -36,7 +36,7 @@ public class MySQLSGBD implements SGBDInterface {
 
     @Override
     public String jdbcStr() {
-        return "mysql";
+        return "mysql://";
     }
 
     @Override

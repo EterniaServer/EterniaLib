@@ -1,24 +1,6 @@
 version: "3.8"
 
 services:
-  el-mariadb:
-    build:
-      context: .
-      dockerfile: ./docker/mariadb/Dockerfile
-    image: el-mariadb
-    container_name: el-mariadb
-    restart: unless-stopped
-    networks:
-      - el-network
-    environment:
-      - MYSQL_ROOT_USER=admin
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=el_database
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-    ports:
-      - "3306:3306"
-
   el-java:
     build:
       context: .
@@ -28,13 +10,3 @@ services:
     command: tail -f /dev/null
     volumes:
       - ./src:/usr/src/src
-    depends_on:
-      - el-mariadb
-    networks:
-      - el-network
-
-networks:
-  el-network:
-
-volumes:
-  el-mariadb-data:

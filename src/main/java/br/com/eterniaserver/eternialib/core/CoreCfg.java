@@ -73,12 +73,12 @@ public class CoreCfg implements ReloadableConfiguration {
     @Override
     public void executeConfig() {
         strings[Strings.PLUGIN_PREFIX.ordinal()] = inConfig.getString("server.plugin-prefix", "<color:#555555>[<color:#55ff55>E<color:#5555ff>L<color:#555555>] ");
-        strings[Strings.DATABASE_TYPE.ordinal()] = inConfig.getString("database.type", "MARIADB");
-        strings[Strings.DATABASE_HOST.ordinal()] = inConfig.getString("database.host", "el-mariadb");
-        strings[Strings.DATABASE_PORT.ordinal()] = inConfig.getString("database.port", "3306");
-        strings[Strings.DATABASE_DATABASE.ordinal()] = inConfig.getString("database.database", "el_database");
-        strings[Strings.DATABASE_USER.ordinal()] = inConfig.getString("database.user", "user");
-        strings[Strings.DATABASE_PASSWORD.ordinal()] = inConfig.getString("database.password", "password");
+        strings[Strings.DATABASE_TYPE.ordinal()] = inConfig.getString("database.type", "SQLITE");
+        strings[Strings.DATABASE_HOST.ordinal()] = inConfig.getString("database.host", "sqlite.db");
+        strings[Strings.DATABASE_PORT.ordinal()] = inConfig.getString("database.port", "");
+        strings[Strings.DATABASE_DATABASE.ordinal()] = inConfig.getString("database.database", "");
+        strings[Strings.DATABASE_USER.ordinal()] = inConfig.getString("database.user", "");
+        strings[Strings.DATABASE_PASSWORD.ordinal()] = inConfig.getString("database.password", "");
         strings[Strings.DATABASE_TABLE.ordinal()] = inConfig.getString("database.table-cache", "el_cache");
         integers[Integers.HIKARI_MIN_POOL_SIZE.ordinal()] = inConfig.getInt("database.hikari.pool.min-size", 10);
         integers[Integers.HIKARI_MAX_POOL_SIZE.ordinal()] = inConfig.getInt("database.hikari.pool.max-size", 10);
@@ -156,7 +156,11 @@ public class CoreCfg implements ReloadableConfiguration {
             );
 
             this.plugin.setDatabase(sqlDatabase);
-        } catch (DatabaseException e) {
+        }
+        catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+        catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
