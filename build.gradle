@@ -3,7 +3,10 @@ plugins {
     id "jacoco"
     id "org.sonarqube" version "3.5.0.2730"
     id "com.github.johnrengelman.shadow" version "7.1.0"
-    id "com.adarshr.test-logger" version "3.2.0"
+}
+
+jacoco {
+    toolVersion = "0.8.8"
 }
 
 sonarqube {
@@ -12,13 +15,8 @@ sonarqube {
         property "sonar.organization", "eterniaserver"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
-        property 'sonar.jacoco.reportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
-    }
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
+        property "sonar.coverage.jacoco.xmlReportPath", "${buildDir}/reports/jacoco.xml"
+        property "sonar.junit.reportPaths", "${buildDir}/reports/jacoco.xml"
     }
 }
 
@@ -70,26 +68,6 @@ shadowJar {
     relocate "co.aikar.locales", "br.com.eterniaserver.locales"
 }
 
-testlogger {
-    theme "standard"
-    showExceptions true
-    showStackTraces true
-    showFullStackTraces false
-    showCauses true
-    slowThreshold 2000
-    showSummary true
-    showSimpleNames false
-    showPassed true
-    showSkipped true
-    showFailed true
-    showOnlySlow false
-    showStandardStreams false
-    showPassedStandardStreams true
-    showSkippedStandardStreams true
-    showFailedStandardStreams true
-    logLevel "lifecycle"
-}
-
 test {
     useJUnitPlatform()
 
@@ -98,6 +76,16 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
+
+    finalizedBy(jacocoTestReport)
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        xml.outputLocation = file("${buildDir}/reports/jacoco.xml")
+    }
+    dependsOn(test)
 }
 
 tasks.build.dependsOn(shadowJar)
