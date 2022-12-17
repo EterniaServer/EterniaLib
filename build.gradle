@@ -16,6 +16,7 @@ sonar {
         property "sonar.organization", "EterniaServer"
         property "sonar.projectVersion", "${project.version}"
         property "sonar.sources", "src/main/java"
+        property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
