@@ -43,4 +43,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
-        run: ./gradlew clean build test jacocoTestReport sonar --info
+        run: ./gradlew clean build test jacocoTestReport sonarqube --info
