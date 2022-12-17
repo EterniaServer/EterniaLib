@@ -11,6 +11,11 @@ sonarqube {
         property "sonar.projectKey", "EterniaServer_EterniaLib"
         property "sonar.organization", "eterniaserver"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.verbose", true
+        property "sonar.coverage.jacoco.xmlReportPath", "${project.buildDir}/reports/jacoco.xml"
+        property "sonar.junit.reportPaths", "${project.buildDir}/reports/jacoco.xml"
+        property "sonar.sources", "src/main"
+        property "sonar.tests", "src/test"
     }
 }
 
@@ -96,6 +101,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
+    finalizedBy jacocoTestReport
 }
 
 tasks.build.dependsOn(shadowJar)
