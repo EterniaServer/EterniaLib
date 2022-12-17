@@ -1,5 +1,6 @@
 plugins {
     id "java"
+    id "jacoco"
     id "org.sonarqube" version "3.5.0.2730"
     id "com.github.johnrengelman.shadow" version "7.1.0"
     id "com.adarshr.test-logger" version "3.2.0"
@@ -10,6 +11,12 @@ sonarqube {
         property "sonar.projectKey", "EterniaServer_EterniaLib"
         property "sonar.organization", "eterniaserver"
         property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }
 
