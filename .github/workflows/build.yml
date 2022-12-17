@@ -13,19 +13,6 @@ jobs:
     name: Build and analyze
     runs-on: ubuntu-latest
 
-    services:
-      el-mariadb:
-        image: mariadb:latest
-        container_name: el-mariadb
-        env:
-          MYSQL_ROOT_USER: admin
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: el_database
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-        ports:
-          - 3306:3306
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
