@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static final String version = "4.0.0";
+    private static final String VERSION = "4.0.0";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
     private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
@@ -100,7 +100,7 @@ public class EterniaLib extends JavaPlugin {
     }
 
     public static String getVersion() {
-        return version;
+        return VERSION;
     }
 
     public static ReloadableConfiguration getConfiguration(String entry) {

@@ -237,7 +237,7 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private <T> void insertAndGetKey(Entity<?> entity, Object instance) {
+    private void insertAndGetKey(Entity<?> entity, Object instance) {
         String tableName = entity.tableName();
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
@@ -381,11 +381,11 @@ public class SQLDatabase implements DatabaseInterface {
         StringBuilder builder = new StringBuilder();
         buildCreateTable(builder, entity);
         buildPrimaryKeyColumn(builder, primaryKeyDTO);
-        if (dataDTOS.size() > 0) {
+        if (!dataDTOS.isEmpty()) {
             builder.append(", ");
             buildDataColumns(builder, dataDTOS);
         }
-        if (referenceDTOS.size() > 0) {
+        if (!referenceDTOS.isEmpty()) {
             builder.append(", ");
             buildReferenceColumns(builder, referenceDTOS);
         }

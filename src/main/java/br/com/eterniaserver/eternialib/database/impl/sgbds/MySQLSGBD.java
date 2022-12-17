@@ -7,7 +7,7 @@ import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
 import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +17,8 @@ public class MySQLSGBD implements SGBDInterface {
     protected final Map<ReferenceMode, String> referenceMap;
 
     public MySQLSGBD() {
-        this.typeMap = new HashMap<>();
-        this.referenceMap = new HashMap<>();
+        this.typeMap = new EnumMap<>(FieldType.class);
+        this.referenceMap = new EnumMap<>(ReferenceMode.class);
 
         typeMap.put(FieldType.UUID, "CHAR(36)");
         typeMap.put(FieldType.STRING, "VARCHAR(256)");
@@ -75,7 +75,7 @@ public class MySQLSGBD implements SGBDInterface {
 
         builder.append("INSERT INTO ").append(tableName).append(" (");
         builder.append(primaryKeyDTO.columnName());
-        if (entityDataDTOS.size() > 0) {
+        if (!entityDataDTOS.isEmpty()) {
             builder.append(", ");
         }
         buildInsert(builder, entityDataDTOS);

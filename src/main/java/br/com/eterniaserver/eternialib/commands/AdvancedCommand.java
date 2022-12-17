@@ -61,4 +61,13 @@ public abstract class AdvancedCommand {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        String senderUUIDInString = sender().getUniqueId().toString();
+        String commandCategoryName = getCategory().name();
+        String timeInString = String.valueOf(neededTimeInSeconds());
+
+        return (senderUUIDInString + commandCategoryName + timeInString).hashCode();
+    }
+
 }
