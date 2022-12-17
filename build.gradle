@@ -21,7 +21,6 @@ sonar {
         property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPath", "${buildDir}/reports/jacoco.xml"
-        property "sonar.junit.reportPaths", "${buildDir}/reports/jacoco.xml"
     }
 }
 
