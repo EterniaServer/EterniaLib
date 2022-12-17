@@ -29,10 +29,6 @@ public class PlayerHandler implements Listener {
         final String playerName = event.getName();
         final UUID uuid = event.getUniqueId();
 
-        if (EterniaLib.getUUIDOf(playerName) != null) {
-            return;
-        }
-
         EterniaLib.registerNewUUID(playerName, uuid);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
