@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
 
 public class EterniaLib extends JavaPlugin {
 
@@ -157,6 +158,8 @@ public class EterniaLib extends JavaPlugin {
         coreCfg.executeConfig();
         coreCfg.executeCritical();
         coreCfg.saveConfiguration(true);
+
+        getLogger().log(Level.INFO, "Registered and loaded configurations");
     }
 
     private void loadCommandManager() {
