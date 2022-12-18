@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib.core;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.core.commands.Eternia;
 import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
 import br.com.eterniaserver.eternialib.core.handlers.PlayerHandler;
 import br.com.eterniaserver.eternialib.database.Entity;
@@ -17,6 +18,8 @@ public class Manager {
         this.plugin = plugin;
 
         registerEntities();
+        loadCompletions();
+        registerCommands();
     }
 
     private void registerEntities() {
@@ -34,5 +37,12 @@ public class Manager {
         plugin.getServer().getPluginManager().registerEvents(new PlayerHandler(plugin), plugin);
     }
 
+    private void loadCompletions() {
+        EterniaLib.getCmdManager().getCommandCompletions().registerCompletion("eternia_cmds", completionContext -> plugin.getConfigurations());
+    }
+
+    private void registerCommands() {
+        EterniaLib.getCmdManager().registerCommand(new Eternia(plugin));
+    }
 
 }

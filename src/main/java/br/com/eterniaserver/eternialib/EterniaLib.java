@@ -22,7 +22,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +34,7 @@ public class EterniaLib extends JavaPlugin {
 
     private static final String VERSION = "4.0.0";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
+    private static final List<String> configurationsList = new ArrayList<>();
     private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
     private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
 
@@ -62,8 +65,8 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.loadConfigurations();
         this.loadCommandManager();
+        this.loadConfigurations();
         this.loadAdvancedCommandManager();
         this.loadCoreManager();
     }
@@ -103,12 +106,18 @@ public class EterniaLib extends JavaPlugin {
         return VERSION;
     }
 
-    public static ReloadableConfiguration getConfiguration(String entry) {
+    public List<String> getConfigurations() {
+        return configurationsList;
+    }
+
+    public ReloadableConfiguration getConfiguration(String entry) {
         return configurations.get(entry);
     }
 
     public static void registerConfiguration(String plugin, String config, ReloadableConfiguration configuration) {
         String entry = plugin + "_" + config;
+
+        configurationsList.add(entry);
         configurations.put(entry, configuration);
     }
 

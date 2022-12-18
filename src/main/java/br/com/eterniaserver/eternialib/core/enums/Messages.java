@@ -9,5 +9,8 @@ public enum Messages {
     ATTACKED,
     COMMAND_CANCELLED,
     CONFIG_RELOADED,
+    CONFIG_INVALID,
+    CONFIG_BLOCKED,
+    CONFIG_ADVICE,
 
 }

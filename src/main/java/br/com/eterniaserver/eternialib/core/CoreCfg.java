@@ -1,13 +1,16 @@
 package br.com.eterniaserver.eternialib.core;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.configuration.CommandLocale;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
+import br.com.eterniaserver.eternialib.core.enums.Commands;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -28,6 +31,8 @@ public class CoreCfg implements ReloadableConfiguration {
     private final String[] strings;
     private final int[] integers;
     private final boolean[] booleans;
+
+    private final CommandLocale[] commandLocales = new CommandLocale[Commands.values().length];
 
     public CoreCfg(EterniaLib plugin, String[] messages, String[] strings, int[] integers, boolean[] booleans) {
         this.inConfig = YamlConfiguration.loadConfiguration(new File(getFilePath()));
@@ -62,6 +67,11 @@ public class CoreCfg implements ReloadableConfiguration {
     @Override
     public String[] messages() {
         return messages;
+    }
+
+    @Override
+    public CommandLocale[] commandsLocale() {
+        return commandLocales;
     }
 
     @Override
@@ -119,8 +129,38 @@ public class CoreCfg implements ReloadableConfiguration {
         addMessage(
                 Messages.CONFIG_RELOADED,
                 "<color:#aaaaaa>Configuração {0} recarregada<color:#555555>.",
-                ""
+                "0: Nome da configuração"
         );
+        addMessage(
+                Messages.CONFIG_INVALID,
+                "<color:#aaaaaa>Não foi encontrado nenhuma configuração com o nome <color:#00aaaa>{0}<color:#555555>.",
+                "0: Nome da configuração"
+        );
+        addMessage(
+                Messages.CONFIG_BLOCKED,
+                "<color:#aaaaaa>A configuração <color:#00aaaa>{0}<color:#aaaaaa> não pode ser recarregada<color:#555555>.",
+                "0: Nome da configuração"
+        );
+        addMessage(
+                Messages.CONFIG_ADVICE,
+                "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>.",
+                "0: Nome da configuração"
+        );
+
+        addCommandLocale(Commands.ETERNIA, new CommandLocale(
+                "eternia",
+                "eternia.settings",
+                " <página>",
+                " Receba ajuda para as configurações internas dos plugins 'Eternia'",
+                ""
+        ));
+        addCommandLocale(Commands.ETERNIA_RELOAD, new CommandLocale(
+                "reload",
+                "eternia.settings.reload",
+                " <configuração>",
+                " Reinicie algum módulo de algum plugin",
+                ""
+        ));
 
         outConfig.options().setHeader(List.of(
                 "Tipos de database disponíveis: MYSQL, MARIADB, POSTGRESQL",
@@ -147,6 +187,16 @@ public class CoreCfg implements ReloadableConfiguration {
 
     @Override
     public void executeCritical() {
+        for (Commands command : Commands.values()) {
+            CommandLocale commandLocale = commandsLocale()[command.ordinal()];
+            EterniaLib.getCmdManager().getCommandReplacements().addReplacements(
+                    command.name().toLowerCase(), commandLocale.name(),
+                    command.name().toLowerCase() + "_description", commandLocale.description(),
+                    command.name().toLowerCase() + "_perm", commandLocale.perm(),
+                    command.name().toLowerCase() + "_syntax", commandLocale.syntax()
+            );
+        }
+
         SQLDatabase.HikariConnection hikariConnection = new SQLDatabase.HikariConnection(this.plugin);
         SQLDatabase sqlDatabase = new SQLDatabase(
                 hikariConnection.getDataSource(),

@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib.configuration;
 
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
+import br.com.eterniaserver.eternialib.configuration.enums.PathType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -21,21 +22,44 @@ public interface ReloadableConfiguration {
 
     String[] messages();
 
+    CommandLocale[] commandsLocale();
+
     ConfigurationCategory category();
 
     void executeConfig();
 
     void executeCritical();
 
+    default <E extends Enum<E>> void addCommandLocale(Enum<E> commandsEnum, CommandLocale locale) {
+        FileConfiguration inFile = inFileConfiguration();
+        FileConfiguration outFile = outFileConfiguration();
+
+        CommandLocale[] commandLocales = commandsLocale();
+
+        String name = inFile.getString(PathType.COMMAND_NAME.getPath(commandsEnum), locale.name());
+        String syntax = inFile.getString(PathType.COMMAND_SYNTAX.getPath(commandsEnum), locale.syntax());
+        String description = inFile.getString(PathType.COMMAND_DESCRIPTION.getPath(commandsEnum), locale.description());
+        String permission = inFile.getString(PathType.COMMAND_PERMISSION.getPath(commandsEnum), locale.perm());
+        String aliases = inFile.getString(PathType.COMMAND_ALIASES.getPath(commandsEnum), locale.aliases());
+
+        commandLocales[commandsEnum.ordinal()] = new CommandLocale(name, syntax, description, permission, aliases);
+
+        outFile.set(PathType.COMMAND_NAME.getPath(commandsEnum), name);
+        outFile.set(PathType.COMMAND_SYNTAX.getPath(commandsEnum), syntax);
+        outFile.set(PathType.COMMAND_DESCRIPTION.getPath(commandsEnum), description);
+        outFile.set(PathType.COMMAND_PERMISSION.getPath(commandsEnum), permission);
+        outFile.set(PathType.COMMAND_ALIASES.getPath(commandsEnum), aliases);
+    }
+
     default <E extends Enum<E>> void addMessage(Enum<E> messagesEnum, String text, String notes) {
         FileConfiguration inFile = inFileConfiguration();
         FileConfiguration outFile = outFileConfiguration();
         String[] messages = messages();
 
-        messages[messagesEnum.ordinal()] = inFile.getString(getPath(messagesEnum, false), text);
+        messages[messagesEnum.ordinal()] = inFile.getString(PathType.MESSAGE.getPath(messagesEnum), text);
 
-        outFile.set(getPath(messagesEnum, false), messages[messagesEnum.ordinal()]);
-        outFile.set(getPath(messagesEnum, true), notes);
+        outFile.set(PathType.MESSAGE.getPath(messagesEnum), messages[messagesEnum.ordinal()]);
+        outFile.set(PathType.MESSAGE_NOTE.getPath(messagesEnum), notes);
     }
 
     default void saveConfiguration(final boolean inFolder) {
@@ -52,11 +76,4 @@ public interface ReloadableConfiguration {
         }
     }
 
-    private <E extends Enum<E>> String getPath(Enum<E> messagesEnum, boolean isHelp) {
-        if (isHelp) {
-            return "messages." + messagesEnum.name() + ".notes";
-        }
-
-        return "messages." + messagesEnum.name() + ".text";
-    }
 }
