@@ -6,6 +6,7 @@ import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
+import br.com.eterniaserver.eternialib.utils.entities.Company;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterAll;
@@ -59,6 +60,11 @@ public class TestSQLDatabase {
         Mockito.when(dataSource.getConnection()).thenReturn(connection);
 
         Assertions.assertNotNull(database.getConnection());
+    }
+
+    @Test
+    void testBlockMultiplePrimaryKeys() {
+        Assertions.assertThrows(EntityException.class, () -> new Entity<>(Company.class));
     }
 
     @Test
