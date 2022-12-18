@@ -1,46 +1,22 @@
 package br.com.eterniaserver.eternialib.commands;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
 import br.com.eterniaserver.eternialib.core.configs.CoreCfg;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
+
 import co.aikar.commands.CommandHelp;
+
 import net.kyori.adventure.text.Component;
+
 import org.bukkit.command.CommandSender;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
+
 import org.mockito.Mockito;
 
 public class TestEterniaCmdCmd {
-
-    private static ServerMock server;
-
-    @BeforeAll
-    public static void setUp() {
-        server = MockBukkit.mock();
-        MockBukkit.load(EterniaLib.class);
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        MockBukkit.unmock();
-    }
-
-    @Test
-    void testEterniaPerformingHelpCommand() {
-        PlayerMock playerMock = server.addPlayer();
-
-        boolean expect = true;
-        boolean result = playerMock.performCommand("eternia");
-
-        Assertions.assertEquals(expect, result);
-    }
 
     @Test
     void testEterniaHelpCommand() {
@@ -52,16 +28,6 @@ public class TestEterniaCmdCmd {
         eterniaCmd.onHelp(commandHelp);
 
         Mockito.verify(commandHelp, Mockito.times(1)).showHelp();
-    }
-
-    @Test
-    void testEterniaPerformingReloadBlockedConfig() {
-        PlayerMock playerMock = server.addPlayer();
-
-        boolean expect = true;
-        boolean result = playerMock.performCommand("eternia reload eternialib_core");
-
-        Assertions.assertEquals(expect, result);
     }
 
     @Test
@@ -86,7 +52,6 @@ public class TestEterniaCmdCmd {
         Mockito.verify(coreCfg, Mockito.times(0)).executeCritical();
     }
 
-
     @Test
     void testEterniaReloadWarningAdviceConfigWithCheck() {
         CommandSender sender = Mockito.mock(CommandSender.class);
@@ -108,6 +73,29 @@ public class TestEterniaCmdCmd {
         Mockito.verify(sender, Mockito.times(1)).sendMessage(component);
         Mockito.verify(coreCfg, Mockito.times(1)).executeConfig();
         Mockito.verify(coreCfg, Mockito.times(1)).executeCritical();
+    }
+
+    @Test
+    void testEterniaReloadWarningAdviceConfigWithWrongCheck() {
+        CommandSender sender = Mockito.mock(CommandSender.class);
+        EterniaLib plugin = Mockito.mock(EterniaLib.class);
+        CoreCfg coreCfg = Mockito.mock(CoreCfg.class);
+        Component component = Mockito.mock(Component.class);
+
+        String entry = "eterniatest_config:d";
+        String configString = "eterniatest_config";
+        EterniaCmd eterniaCmd = new EterniaCmd(plugin);
+
+        Mockito.when(coreCfg.category()).thenReturn(ConfigurationCategory.WARNING_ADVICE);
+        Mockito.when(plugin.getConfiguration(configString)).thenReturn(coreCfg);
+        Mockito.when(plugin.getComponentMessage(Messages.CONFIG_ADVICE, true, configString)).thenReturn(component);
+
+        eterniaCmd.onReload(sender, entry);
+
+        Mockito.verify(plugin, Mockito.times(1)).getComponentMessage(Messages.CONFIG_ADVICE, true, configString);
+        Mockito.verify(sender, Mockito.times(1)).sendMessage(component);
+        Mockito.verify(coreCfg, Mockito.times(0)).executeConfig();
+        Mockito.verify(coreCfg, Mockito.times(0)).executeCritical();
     }
 
     @Test
