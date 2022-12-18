@@ -15,6 +15,7 @@ import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -47,20 +48,23 @@ public class SQLDatabase implements DatabaseInterface {
             return sgbdInterface;
         }
 
-        public HikariConnection(EterniaLib plugin) throws DatabaseException, ClassNotFoundException {
+        public HikariConnection(EterniaLib plugin) {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setPoolName("EterniaLib HikariPool");
 
             String databaseType = plugin.getString(Strings.DATABASE_TYPE);
             DatabaseType type = DatabaseType.valueOf(databaseType);
-            this.sgbdInterface = sgbdFactory(type);
+            this.sgbdInterface = switch (type) {
+                case MYSQL -> new MySQLSGBD();
+                case MARIADB -> new MariaDBSGBD();
+                case SQLITE -> new SQLiteSGBD();
+            };
 
             if (type == DatabaseType.SQLITE) {
                 hikariConfig.setJdbcUrl(
                         "jdbc:" + sgbdInterface.jdbcStr() +
                         plugin.getString(Strings.DATABASE_HOST)
                 );
-                Class.forName("org.sqlite.JDBC");
                 hikariConfig.setDriverClassName("org.sqlite.JDBC");
             }
             else {
@@ -87,21 +91,6 @@ public class SQLDatabase implements DatabaseInterface {
             }
 
             this.dataSource = new HikariDataSource(hikariConfig);
-        }
-
-        private SGBDInterface sgbdFactory(DatabaseType type) throws DatabaseException {
-            switch (type) {
-                case MYSQL -> {
-                    return new MySQLSGBD();
-                }
-                case MARIADB -> {
-                    return new MariaDBSGBD();
-                }
-                case SQLITE -> {
-                    return new SQLiteSGBD();
-                }
-                default -> throw new DatabaseException("SGBD not implemented");
-            }
         }
     }
 

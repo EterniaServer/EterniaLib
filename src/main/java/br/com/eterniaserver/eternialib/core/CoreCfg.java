@@ -7,7 +7,6 @@ import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
-import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -148,20 +147,12 @@ public class CoreCfg implements ReloadableConfiguration {
 
     @Override
     public void executeCritical() {
-        try {
-            SQLDatabase.HikariConnection hikariConnection = new SQLDatabase.HikariConnection(this.plugin);
-            SQLDatabase sqlDatabase = new SQLDatabase(
-                    hikariConnection.getDataSource(),
-                    hikariConnection.getSGBDInterface()
-            );
+        SQLDatabase.HikariConnection hikariConnection = new SQLDatabase.HikariConnection(this.plugin);
+        SQLDatabase sqlDatabase = new SQLDatabase(
+                hikariConnection.getDataSource(),
+                hikariConnection.getSGBDInterface()
+        );
 
-            this.plugin.setDatabase(sqlDatabase);
-        }
-        catch (DatabaseException e) {
-            throw new RuntimeException(e);
-        }
-        catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.plugin.setDatabase(sqlDatabase);
     }
 }
