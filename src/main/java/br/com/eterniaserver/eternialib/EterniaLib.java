@@ -154,12 +154,12 @@ public class EterniaLib extends JavaPlugin {
         CoreCfg coreCfg = new CoreCfg(this, messages, strings, integers, booleans);
 
         EterniaLib.registerConfiguration("eternialib", "core", coreCfg);
+        getLogger().log(Level.INFO, "Registered configuration: eternialib_core, category {0}", coreCfg.category());
 
         coreCfg.executeConfig();
         coreCfg.executeCritical();
         coreCfg.saveConfiguration(true);
 
-        getLogger().log(Level.INFO, "Registered and loaded configurations");
     }
 
     private void loadCommandManager() {
