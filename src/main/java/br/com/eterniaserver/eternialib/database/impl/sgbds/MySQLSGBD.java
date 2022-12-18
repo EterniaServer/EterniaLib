@@ -79,7 +79,10 @@ public class MySQLSGBD implements SGBDInterface {
             builder.append(", ");
         }
         buildInsert(builder, entityDataDTOS);
-        builder.append(", ?);");
+        if (!entityDataDTOS.isEmpty()) {
+            builder.append(", ");
+        }
+        builder.append("?);");
 
         return builder.toString();
     }

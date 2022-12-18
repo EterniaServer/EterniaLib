@@ -7,6 +7,7 @@ import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
+import br.com.eterniaserver.eternialib.utils.entities.PersonLink;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +24,7 @@ public class TestSQLDatabase {
 
     private static SQLDatabase database;
     private static Entity<Person> personEntity;
+    private static Entity<PersonLink> personLinkEntity;
 
     private static SGBDInterface sgbdInterface;
     private static HikariDataSource dataSource;
@@ -32,6 +34,7 @@ public class TestSQLDatabase {
         MockBukkit.mock();
         MockBukkit.load(EterniaLib.class);
         personEntity = new Entity<>(Person.class);
+        personLinkEntity = new Entity<>(PersonLink.class);
 
         sgbdInterface = Mockito.mock(SGBDInterface.class);
         dataSource = Mockito.mock(HikariDataSource.class);
@@ -46,6 +49,9 @@ public class TestSQLDatabase {
         Mockito.when(preparedStatement.executeUpdate()).thenReturn(1);
 
         database.register(Person.class, personEntity);
+        database.register(PersonLink.class, personLinkEntity);
+
+        Mockito.verify(sgbdInterface, Mockito.times(2)).buildReferenceColumn(any());
     }
 
     @AfterAll

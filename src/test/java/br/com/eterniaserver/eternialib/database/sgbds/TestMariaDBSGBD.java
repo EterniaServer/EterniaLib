@@ -6,6 +6,7 @@ import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
+import br.com.eterniaserver.eternialib.utils.entities.EmptyTable;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
 import br.com.eterniaserver.eternialib.utils.entities.PersonNotNull;
 import org.junit.jupiter.api.Assertions;
@@ -18,12 +19,14 @@ public class TestMariaDBSGBD {
 
     private static MySQLSGBD mariaDBSGBD;
     private static Entity<Person> personEntity;
+    private static Entity<EmptyTable> emptyTableEntity;
     private static Entity<PersonNotNull> personNotNullEntity;
 
     @BeforeAll
     public static void init() throws EntityException {
         mariaDBSGBD = new MariaDBSGBD();
         personEntity = new Entity<>(Person.class);
+        emptyTableEntity = new Entity<>(EmptyTable.class);
         personNotNullEntity = new Entity<>(PersonNotNull.class);
     }
 
@@ -76,6 +79,19 @@ public class TestMariaDBSGBD {
         List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
+        String result = mariaDBSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testInsertQueryDatelessEntity() {
+        String tableName = emptyTableEntity.tableName();
+
+        EntityPrimaryKeyDTO primaryKeyDTO = emptyTableEntity.getPrimaryKey();
+        List<EntityDataDTO> entityDataDTOS = emptyTableEntity.getDataColumns();
+
+        String expected = "INSERT INTO eternia_empty_table (id) VALUES (?);";
         String result = mariaDBSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
 
         Assertions.assertEquals(expected, result);

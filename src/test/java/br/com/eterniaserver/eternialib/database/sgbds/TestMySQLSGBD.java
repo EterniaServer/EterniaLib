@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
+import br.com.eterniaserver.eternialib.utils.entities.EmptyTable;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
 import br.com.eterniaserver.eternialib.utils.entities.PersonNotNull;
 import org.junit.jupiter.api.Assertions;
@@ -17,12 +18,14 @@ public class TestMySQLSGBD {
 
     private static MySQLSGBD mySQLSGBD;
     private static Entity<Person> personEntity;
+    private static Entity<EmptyTable> emptyTableEntity;
     private static Entity<PersonNotNull> personNotNullEntity;
 
     @BeforeAll
     public static void init() throws EntityException {
         mySQLSGBD = new MySQLSGBD();
         personEntity = new Entity<>(Person.class);
+        emptyTableEntity = new Entity<>(EmptyTable.class);
         personNotNullEntity = new Entity<>(PersonNotNull.class);
     }
 
@@ -47,7 +50,6 @@ public class TestMySQLSGBD {
     @Test
     void testSelectByPrimary() {
         EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        int primaryKey = 1;
 
         String expected = "SELECT * FROM eternia_person WHERE id = ?;";
         String result = mySQLSGBD.selectByPrimary(personEntity.tableName(), primaryKeyDTO);
@@ -76,6 +78,19 @@ public class TestMySQLSGBD {
         List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
+        String result = mySQLSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testInsertQueryDatelessEntity() {
+        String tableName = emptyTableEntity.tableName();
+
+        EntityPrimaryKeyDTO primaryKeyDTO = emptyTableEntity.getPrimaryKey();
+        List<EntityDataDTO> entityDataDTOS = emptyTableEntity.getDataColumns();
+
+        String expected = "INSERT INTO eternia_empty_table (id) VALUES (?);";
         String result = mySQLSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
 
         Assertions.assertEquals(expected, result);
