@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 public class TestCommandLocale {
 
     @Test
-    public void testValid() {
+    void testValid() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 "syntax",
@@ -23,7 +23,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testInvalid() {
+    void testInvalid() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new CommandLocale(
                 null,
                 "syntax",
@@ -34,7 +34,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testNullSyntax() {
+    void testNullSyntax() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 null,
@@ -51,7 +51,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testNullDescription() {
+    void testNullDescription() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 "syntax",
@@ -68,7 +68,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testNullPermission() {
+    void testNullPermission() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 "syntax",
@@ -85,7 +85,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testEmptyPermission() {
+    void testEmptyPermission() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 "syntax",
@@ -102,7 +102,7 @@ public class TestCommandLocale {
     }
 
     @Test
-    public void testNullAliases() {
+    void testNullAliases() {
         CommandLocale commandLocale = new CommandLocale(
                 "name",
                 "syntax",
