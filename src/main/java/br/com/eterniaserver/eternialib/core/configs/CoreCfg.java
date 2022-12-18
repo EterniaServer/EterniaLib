@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.core;
+package br.com.eterniaserver.eternialib.core.configs;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.configuration.CommandLocale;

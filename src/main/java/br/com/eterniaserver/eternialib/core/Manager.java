@@ -1,7 +1,7 @@
 package br.com.eterniaserver.eternialib.core;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.core.commands.Eternia;
+import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
 import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
 import br.com.eterniaserver.eternialib.core.handlers.PlayerHandler;
 import br.com.eterniaserver.eternialib.database.Entity;
@@ -42,7 +42,7 @@ public class Manager {
     }
 
     private void registerCommands() {
-        EterniaLib.getCmdManager().registerCommand(new Eternia(plugin));
+        EterniaLib.getCmdManager().registerCommand(new EterniaCmd(plugin));
     }
 
 }

@@ -23,11 +23,11 @@ import org.bukkit.command.CommandSender;
 
 
 @CommandAlias("%eternia")
-public class Eternia extends BaseCommand {
+public class EterniaCmd extends BaseCommand {
 
     private final EterniaLib plugin;
 
-    public Eternia(EterniaLib plugin) {
+    public EterniaCmd(EterniaLib plugin) {
         this.plugin = plugin;
     }
 

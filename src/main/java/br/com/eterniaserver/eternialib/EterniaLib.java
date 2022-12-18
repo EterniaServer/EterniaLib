@@ -5,7 +5,7 @@ import br.com.eterniaserver.eternialib.commands.CommandManager;
 import br.com.eterniaserver.eternialib.commands.impl.AdvancedCommandManagerImpl;
 import br.com.eterniaserver.eternialib.commands.impl.CommandManagerImpl;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
-import br.com.eterniaserver.eternialib.core.CoreCfg;
+import br.com.eterniaserver.eternialib.core.configs.CoreCfg;
 import br.com.eterniaserver.eternialib.core.Manager;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
