@@ -7,6 +7,7 @@ import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 import br.com.eterniaserver.eternialib.utils.entities.EmptyTable;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
+import br.com.eterniaserver.eternialib.utils.entities.PersonLink;
 import br.com.eterniaserver.eternialib.utils.entities.PersonNotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,6 +19,7 @@ public class TestSQLiteSGBD  {
 
     private static SQLiteSGBD sqLiteSGBD;
     private static Entity<Person> personEntity;
+    private static Entity<PersonLink> personLinkEntity;
     private static Entity<EmptyTable> emptyTableEntity;
     private static Entity<PersonNotNull> personNotNullEntity;
 
@@ -25,6 +27,7 @@ public class TestSQLiteSGBD  {
     public static void init() throws EntityException {
         sqLiteSGBD = new SQLiteSGBD();
         personEntity = new Entity<>(Person.class);
+        personLinkEntity = new Entity<>(PersonLink.class);
         emptyTableEntity = new Entity<>(EmptyTable.class);
         personNotNullEntity = new Entity<>(PersonNotNull.class);
     }
@@ -79,6 +82,14 @@ public class TestSQLiteSGBD  {
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
         String result = sqLiteSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testBuildReferenceColumn() {
+        String expected = "FOREIGN KEY (firstPersonId) REFERENCES eternia_person (id) ON DELETE CASCADE";
+        String result = sqLiteSGBD.buildReferenceColumn(personLinkEntity.getReferenceColumns().get(0));
 
         Assertions.assertEquals(expected, result);
     }
