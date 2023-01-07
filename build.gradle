@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "jacoco"
     id "org.sonarqube" version "3.3"
+    id "io.freefair.lombok" version "6.6.1"
     id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
@@ -107,10 +108,3 @@ processResources {
         expand props
     }
 }
-
-tasks.register("cleanJar", {
-    exec {
-        workingDir "build/libs"
-        commandLine "zip", "-d", "${project.name}-${version}-all.jar", "acf*.properties"
-    }
-})
