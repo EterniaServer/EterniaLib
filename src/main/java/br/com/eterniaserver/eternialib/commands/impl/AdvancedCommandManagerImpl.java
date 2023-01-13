@@ -32,14 +32,14 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
     }
 
     @Override
-    public void checkHasBreakingRule(UUID uuid, AdvancedRules rules) {
+    public void checkHasBreakingRule(UUID uuid, AdvancedRules rule) {
         String commandEntry = getCommandEntry(uuid, AdvancedCategory.TIMED);
         AdvancedCommand registeredCommand = commandsMap.get(commandEntry);
-        if (registeredCommand == null || registeredCommand.hasRule(rules)) {
+        if (registeredCommand == null || registeredCommand.hasRule(rule)) {
             return;
         }
 
-        Component message = switch (rules) {
+        Component message = switch (rule) {
             case NOT_MOVE -> plugin.getComponentMessage(Messages.MOVED, true);
             case NOT_ATTACK -> plugin.getComponentMessage(Messages.ATTACKED, true);
             case NOT_BREAK_BLOCK -> plugin.getComponentMessage(Messages.BLOCK_BRAKED, true);
