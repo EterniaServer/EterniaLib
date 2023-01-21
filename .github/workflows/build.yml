@@ -3,10 +3,11 @@ name: SonarCloud
 on:
   push:
     branches:
-      - master
-      - 4.0
-  pull_request:
-    types: [opened, synchronize, reopened]
+      - main
+      - 'test/**'
+      - 'fix/**'
+      - 'feature/**'
+      - 'refactor/**'
 
 jobs:
   build:
