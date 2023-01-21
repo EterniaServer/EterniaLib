@@ -18,6 +18,7 @@ import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class SQLDatabase implements DatabaseInterface {
 
@@ -151,7 +153,7 @@ public class SQLDatabase implements DatabaseInterface {
             }
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            loggerSQLError(query);
         }
         catch (
                 InvocationTargetException |
@@ -159,7 +161,7 @@ public class SQLDatabase implements DatabaseInterface {
                 IllegalAccessException |
                 NoSuchMethodException e
         ) {
-            // TODO alert Class Exception
+            loggerEntityError(objectClass.getName());
         }
 
         return entities;
@@ -192,7 +194,7 @@ public class SQLDatabase implements DatabaseInterface {
 
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            loggerSQLError(query);
         }
         catch (
                 InvocationTargetException |
@@ -200,7 +202,7 @@ public class SQLDatabase implements DatabaseInterface {
                 IllegalAccessException |
                 NoSuchMethodException e
         ) {
-            // TODO alert Class Exception
+            loggerEntityError(objectClass.getName());
         }
 
         entity.addEntity(primaryKey, instance);
@@ -218,7 +220,7 @@ public class SQLDatabase implements DatabaseInterface {
         try {
             primaryValue = primaryField.get(instance);
         } catch (IllegalAccessException e) {
-            // TODO alert;
+            loggerEntityError(objectClass.getName());
         }
 
         if (primaryValue == null) {
@@ -261,9 +263,11 @@ public class SQLDatabase implements DatabaseInterface {
             entity.addEntity(primaryKey, instance);
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            String twoQuery = "%s or %s".formatted(insertQuery, getIdQuery);
+            loggerSQLError(twoQuery);
         }
         catch (IllegalAccessException exception) {
+            loggerEntityError(entity.getClass().getName());
             // TODO alert Class Exception
         }
     }
@@ -291,15 +295,16 @@ public class SQLDatabase implements DatabaseInterface {
             entity.addEntity(primaryKey, instance);
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            loggerSQLError(insertQuery);
         }
         catch (IllegalAccessException exception) {
-            // TODO alert Class Exception
+            loggerEntityError(entity.getClass().getName());
         }
     }
 
     @Override
     public <T> void update(Class<T> objectClass, Object instance) {
+        String objectName = objectClass.getName();
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
         Field primaryField = primaryKeyDTO.field();
@@ -312,10 +317,12 @@ public class SQLDatabase implements DatabaseInterface {
             }
         }
         catch (IllegalAccessException e) {
-            // TODO alert IllegalAccessException
+            loggerEntityError(objectName);
         }
         catch (DatabaseException e) {
-            // TODO alert DatAbaseException
+            Bukkit.getLogger().log(Level.SEVERE, "Entity class: {0}, error: {1}.", new String[]{
+                    objectName, e.getMessage()
+            });
         }
 
         if (primaryValue == null) {
@@ -339,10 +346,10 @@ public class SQLDatabase implements DatabaseInterface {
             entity.addEntity(primaryValue, instance);
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            loggerSQLError(updateQuery);
         }
         catch (IllegalAccessException exception) {
-            // TODO alert Class Exception
+            loggerEntityError(objectName);
         }
     }
 
@@ -361,7 +368,7 @@ public class SQLDatabase implements DatabaseInterface {
 
         }
         catch (SQLException exception) {
-            // TODO alert SQL Exception
+            loggerSQLError(query);
         }
     }
 
@@ -487,5 +494,13 @@ public class SQLDatabase implements DatabaseInterface {
                 builder.append(", ");
             }
         }
+    }
+
+    private void loggerEntityError(String entityClassName) {
+        Bukkit.getLogger().log(Level.SEVERE, "Error reading the class: {0}.", entityClassName);
+    }
+
+    private void loggerSQLError(String sqlQuery) {
+        Bukkit.getLogger().log(Level.SEVERE, "Error in the SQL query: {0}.", sqlQuery);
     }
 }

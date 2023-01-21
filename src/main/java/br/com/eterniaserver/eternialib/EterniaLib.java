@@ -167,9 +167,9 @@ public class EterniaLib extends JavaPlugin {
             CommandManager impl = new CommandManagerImpl(this);
             setCommandManagerInterface(impl);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            getLogger().log(Level.SEVERE, "Error when creating or loading YML configuration file.");
         } catch (InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            getLogger().log(Level.SEVERE, "YML configuration file is invalid.");
         }
     }
 
