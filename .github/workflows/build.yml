@@ -49,6 +49,7 @@ jobs:
     name: Publish to repository branch
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
