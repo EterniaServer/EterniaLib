@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import br.com.eterniaserver.eternialib.commands.CommandManager;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,6 +31,16 @@ public class TestEterniaLib {
         Assertions.assertNotNull(EterniaLib.getCmdManager());
         Assertions.assertNotNull(EterniaLib.getVersion());
         Assertions.assertNotNull(EterniaLib.getAdvancedCmdManager());
+    }
+
+    @Test
+    void testCommandManagerGetters() {
+        CommandManager commandManager = EterniaLib.getCmdManager();
+
+        Assertions.assertNotNull(commandManager.getCommandCompletions());
+        Assertions.assertNotNull(commandManager.getCommandConditions());
+        Assertions.assertNotNull(commandManager.getCommandContexts());
+        Assertions.assertNotNull(commandManager.getCommandReplacements());
     }
 
     @Test
