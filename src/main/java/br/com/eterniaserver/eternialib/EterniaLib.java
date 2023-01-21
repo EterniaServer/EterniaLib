@@ -16,7 +16,6 @@ import br.com.eterniaserver.eternialib.database.DatabaseInterface;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -168,9 +167,9 @@ public class EterniaLib extends JavaPlugin {
             CommandManager impl = new CommandManagerImpl(this);
             setCommandManagerInterface(impl);
         } catch (IOException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error when creating or loading YML configuration file.");
+            getLogger().log(Level.SEVERE, "Error when creating or loading YML configuration file.");
         } catch (InvalidConfigurationException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "YML configuration file is invalid.");
+            getLogger().log(Level.SEVERE, "YML configuration file is invalid.");
         }
     }
 
