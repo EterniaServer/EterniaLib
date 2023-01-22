@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class TestUUIDCache {
+class TestUUIDCache {
 
     private static ServerMock server;
 

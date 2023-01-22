@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
 
-public class TestEterniaCmdCmd {
+class TestEterniaCmdCmd {
 
     @Test
     void testEterniaHelpCommand() {

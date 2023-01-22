@@ -18,9 +18,10 @@ import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
-import java.lang.reflect.Field;
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -135,7 +136,7 @@ public class SQLDatabase implements DatabaseInterface {
     @Override
     public <T> List<T> listAll(Class<T> objectClass) {
         List<T> entities = new ArrayList<>();
-        Entity<?> entity = entityMap.get(objectClass);
+        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
 
         String query = sgbdInterface.selectAll(entity.tableName());
         try (
@@ -143,12 +144,12 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet resultSet = statement.executeQuery()
         ) {
-            Field primaryKey = entity.getPrimaryKey().field();
+            EntityPrimaryKeyDTO<T> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
             while (resultSet.next()) {
                 T instance = objectClass.getConstructor().newInstance();
                 populateObject(entity, instance, resultSet);
-                entity.addEntity(primaryKey.get(instance), instance);
+                entity.addEntity(getValueFromPrimary(entityPrimaryKeyDTO.getGetterMethod(), instance), instance);
                 entities.add(instance);
             }
         }
@@ -169,20 +170,20 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> T get(Class<T> objectClass, Object primaryKey) {
-        Entity<?> entity = entityMap.get(objectClass);
+        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
         Object object = entity.getEntity(primaryKey);
         if (object != null) {
             return objectClass.cast(object);
         }
 
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO);
 
         T instance = null;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            setValueInStatement(primaryKeyDTO.type(), 1, primaryKey, statement);
+            setValueInStatement(primaryKeyDTO.getFieldType(), 1, primaryKey, statement);
             ResultSet resultSet = statement.executeQuery();
 
             instance = objectClass.getConstructor().newInstance();
@@ -212,16 +213,10 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> void insert(Class<T> objectClass, Object instance) {
-        Entity<?> entity = entityMap.get(objectClass);
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        Field primaryField = primaryKeyDTO.field();
+        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
-        Object primaryValue = null;
-        try {
-            primaryValue = primaryField.get(instance);
-        } catch (IllegalAccessException e) {
-            loggerEntityError(objectClass.getName());
-        }
+        Object primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
 
         if (primaryValue == null) {
             insertAndGetKey(entity, instance);
@@ -231,93 +226,18 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private void insertAndGetKey(Entity<?> entity, Object instance) {
-        String tableName = entity.tableName();
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
-
-        String insertQuery = sgbdInterface.insertWithoutKey(tableName, entityDataDTOS);
-        String getIdQuery = sgbdInterface.getLastInsertId(tableName);
-
-        try (
-                Connection connection = getConnection();
-                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-                PreparedStatement getIdStatement = connection.prepareStatement(getIdQuery)
-        ) {
-            connection.setAutoCommit(false);
-            fillStatement(insertStatement, entityDataDTOS, instance, 1);
-
-            insertStatement.execute();
-            ResultSet resultSet = getIdStatement.executeQuery();
-            if (resultSet.next()) {
-                FieldType type = primaryKeyDTO.type();
-                Field field = primaryKeyDTO.field();
-                String columnName = resultSet.getMetaData().getColumnName(1);
-                setValueInField(type, field, instance, resultSet, columnName);
-            }
-
-            connection.commit();
-            connection.setAutoCommit(true);
-
-            Object primaryKey = primaryKeyDTO.field().get(instance);
-            entity.addEntity(primaryKey, instance);
-        }
-        catch (SQLException exception) {
-            String twoQuery = "%s or %s".formatted(insertQuery, getIdQuery);
-            loggerSQLError(twoQuery);
-        }
-        catch (IllegalAccessException exception) {
-            loggerEntityError(entity.getClass().getName());
-            // TODO alert Class Exception
-        }
-    }
-
-    private void onlyInsert(Entity<?> entity, Object instance) {
-        String tableName = entity.tableName();
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
-
-        String insertQuery = sgbdInterface.insert(tableName, entityDataDTOS, primaryKeyDTO);
-
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(insertQuery)
-        ) {
-            FieldType primaryType = primaryKeyDTO.type();
-            Field primaryField = primaryKeyDTO.field();
-            Object primaryKey = primaryField.get(instance);
-
-            setValueInStatement(primaryType, 1, primaryKey, statement);
-            fillStatement(statement, entityDataDTOS, instance, 2);
-
-            statement.execute();
-
-            entity.addEntity(primaryKey, instance);
-        }
-        catch (SQLException exception) {
-            loggerSQLError(insertQuery);
-        }
-        catch (IllegalAccessException exception) {
-            loggerEntityError(entity.getClass().getName());
-        }
-    }
-
     @Override
     public <T> void update(Class<T> objectClass, Object instance) {
         String objectName = objectClass.getName();
-        Entity<?> entity = entityMap.get(objectClass);
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        Field primaryField = primaryKeyDTO.field();
+        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         Object primaryValue = null;
         try {
-            primaryValue = primaryField.get(instance);
+            primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
             if (primaryValue == null) {
                 throw new DatabaseException("Primary key is null");
             }
-        }
-        catch (IllegalAccessException e) {
-            loggerEntityError(objectName);
         }
         catch (DatabaseException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Entity class: {0}, error: {1}.", new String[]{
@@ -330,13 +250,13 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         String tableName = entity.tableName();
-        List<EntityDataDTO> entityDataDTOS = entity.getDataColumns();
+        List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
         String updateQuery = sgbdInterface.update(tableName, entityDataDTOS, primaryKeyDTO);
         try (
                 Connection connection = getConnection();
                 PreparedStatement updateStatement = connection.prepareStatement(updateQuery)
         ) {
-            FieldType primaryType = primaryKeyDTO.type();
+            FieldType primaryType = primaryKeyDTO.getFieldType();
 
             fillStatement(updateStatement, entityDataDTOS, instance, 1);
             setValueInStatement(primaryType, (entityDataDTOS.size() + 1), primaryValue, updateStatement);
@@ -354,15 +274,15 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public void delete(Class<?> objectClass, Object primaryKey) {
-        Entity<?> entity = entityMap.get(objectClass);
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
+    public <T> void delete(Class<T> objectClass, Object primaryKey) {
+        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO);
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            setValueInStatement(primaryKeyDTO.type(), 1, primaryKey, statement);
+            setValueInStatement(primaryKeyDTO.getFieldType(), 1, primaryKey, statement);
             statement.execute();
             entity.removeEntity(primaryKey);
 
@@ -373,9 +293,9 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public void register(Class<?> entityClass, Entity<?> entity) throws DatabaseException {
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        List<EntityDataDTO> dataDTOS = entity.getDataColumns();
+    public <T> void register(Class<T> entityClass, Entity<T> entity) throws DatabaseException {
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<T>> dataDTOS = entity.getEntityDataDTOList();
         List<EntityReferenceDTO> referenceDTOS = entity.getReferenceColumns();
 
         StringBuilder builder = new StringBuilder();
@@ -404,50 +324,127 @@ public class SQLDatabase implements DatabaseInterface {
         entityMap.put(entityClass, entity);
     }
 
-    private <T> void populateObject(Entity<?> entity, T instance, ResultSet resultSet) throws SQLException, IllegalAccessException {
-        EntityPrimaryKeyDTO primaryKeyDTO = entity.getPrimaryKey();
-        Field primaryField = primaryKeyDTO.field();
-        FieldType primaryType = primaryKeyDTO.type();
-        String primaryName = primaryKeyDTO.columnName();
+    private <T> void insertAndGetKey(Entity<T> entity, Object instance) {
+        String tableName = entity.tableName();
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
 
-        setValueInField(primaryType, primaryField, instance, resultSet, primaryName);
+        String insertQuery = sgbdInterface.insertWithoutKey(tableName, entityDataDTOS);
+        String getIdQuery = sgbdInterface.getLastInsertId(tableName);
 
-        for (EntityDataDTO dataDTO : entity.getDataColumns()) {
-            String columnName = dataDTO.columnName();
-            Field field = dataDTO.field();
-            FieldType type = dataDTO.type();
+        try (
+                Connection connection = getConnection();
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                PreparedStatement getIdStatement = connection.prepareStatement(getIdQuery)
+        ) {
+            connection.setAutoCommit(false);
+            fillStatement(insertStatement, entityDataDTOS, instance, 1);
 
-            setValueInField(type, field, instance, resultSet, columnName);
+            insertStatement.execute();
+            ResultSet resultSet = getIdStatement.executeQuery();
+            if (resultSet.next()) {
+                FieldType type = primaryKeyDTO.getFieldType();
+                MethodHandle setter = primaryKeyDTO.getSetterMethod();
+                String columnName = resultSet.getMetaData().getColumnName(1);
+                setValueInField(setter, type, instance, resultSet, columnName);
+            }
+
+            connection.commit();
+            connection.setAutoCommit(true);
+
+            Object primaryKey = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+            entity.addEntity(primaryKey, instance);
+        }
+        catch (SQLException exception) {
+            String twoQuery = "%s or %s".formatted(insertQuery, getIdQuery);
+            loggerSQLError(twoQuery);
+        }
+        catch (IllegalAccessException exception) {
+            loggerEntityError(entity.getClass().getName());
         }
     }
 
+    private <T> void onlyInsert(Entity<T> entity, Object instance) {
+        String tableName = entity.tableName();
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
+
+        String insertQuery = sgbdInterface.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(insertQuery)
+        ) {
+            FieldType primaryType = primaryKeyDTO.getFieldType();
+            Object primaryKey = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+
+            setValueInStatement(primaryType, 1, primaryKey, statement);
+            fillStatement(statement, entityDataDTOS, instance, 2);
+
+            statement.execute();
+
+            entity.addEntity(primaryKey, instance);
+        }
+        catch (SQLException exception) {
+            loggerSQLError(insertQuery);
+        }
+        catch (IllegalAccessException exception) {
+            loggerEntityError(entity.getClass().getName());
+        }
+    }
+
+    private <T> void populateObject(Entity<T> entity, T instance, ResultSet resultSet) throws SQLException, IllegalAccessException {
+        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        MethodHandle primarySetter = primaryKeyDTO.getSetterMethod();
+        FieldType primaryType = primaryKeyDTO.getFieldType();
+        String primaryName = primaryKeyDTO.getColumnName();
+
+        setValueInField(primarySetter, primaryType, instance, resultSet, primaryName);
+
+        for (EntityDataDTO<?> dataDTO : entity.getEntityDataDTOList()) {
+            String columnName = dataDTO.getColumnName();
+            MethodHandle setter = dataDTO.getSetterMethod();
+            FieldType type = dataDTO.getFieldType();
+
+            setValueInField(setter, type, instance, resultSet, columnName);
+        }
+    }
+
+    @SneakyThrows
+    private Object getValueFromPrimary(MethodHandle getter, Object instance) {
+        return getter.invoke(instance);
+    }
+
+    @SneakyThrows
     private <T> void setValueInField(
+            MethodHandle setter,
             FieldType type,
-            Field field,
             T instance,
             ResultSet resultSet,
             String columnName
     ) throws SQLException, IllegalAccessException {
         switch (type) {
-            case UUID -> field.set(instance, UUID.fromString(resultSet.getString(columnName)));
-            case STRING, TEXT -> field.set(instance, resultSet.getString(columnName));
-            case INTEGER -> field.set(instance, resultSet.getInt(columnName));
-            case DOUBLE -> field.set(instance, resultSet.getDouble(columnName));
-            case DATE, DATETIME -> field.set(instance, resultSet.getDate(columnName));
-            case DECIMAL -> field.set(instance, resultSet.getBigDecimal(columnName));
-            default -> field.set(instance, resultSet.getObject(columnName));
+            case UUID -> setter.invoke(instance, UUID.fromString(resultSet.getString(columnName)));
+            case STRING, TEXT -> setter.invoke(instance, resultSet.getString(columnName));
+            case INTEGER -> setter.invoke(instance, resultSet.getInt(columnName));
+            case DOUBLE -> setter.invoke(instance, resultSet.getDouble(columnName));
+            case DATE, DATETIME -> setter.invoke(instance, resultSet.getDate(columnName));
+            case DECIMAL -> setter.invoke(instance, resultSet.getBigDecimal(columnName));
+            default -> setter.invoke(instance, resultSet.getObject(columnName));
         }
     }
 
-    private void fillStatement(PreparedStatement preparedStatement,
-                               List<EntityDataDTO> entityDataDTOS,
+    @SneakyThrows
+    private <T> void fillStatement(PreparedStatement preparedStatement,
+                               List<EntityDataDTO<T>> entityDataDTOS,
                                Object instance,
                                int startIndex) throws IllegalAccessException, SQLException {
         for (int i = startIndex; i < entityDataDTOS.size() + startIndex; i++) {
-            EntityDataDTO entityDataDTO = entityDataDTOS.get(i - startIndex);
-            FieldType type = entityDataDTO.type();
-            Field dataField = entityDataDTO.field();
-            setValueInStatement(type, i, dataField.get(instance), preparedStatement);
+            EntityDataDTO<T> entityDataDTO = entityDataDTOS.get(i - startIndex);
+            FieldType type = entityDataDTO.getFieldType();
+            MethodHandle getter = entityDataDTO.getGetterMethod();
+
+            setValueInStatement(type, i, getter.invoke(instance), preparedStatement);
         }
     }
 
@@ -468,17 +465,17 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private void buildCreateTable(StringBuilder builder, Entity<?> entity) {
+    private <T> void buildCreateTable(StringBuilder builder, Entity<T> entity) {
         builder.append("CREATE TABLE IF NOT EXISTS ").append(entity.tableName()).append(" (");
     }
 
-    private void buildPrimaryKeyColumn(StringBuilder builder, EntityPrimaryKeyDTO primaryKeyDTO) {
+    private <T> void buildPrimaryKeyColumn(StringBuilder builder, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
         builder.append(sgbdInterface.buildPrimaryColumn(primaryKeyDTO));
     }
 
-    private void buildDataColumns(StringBuilder builder, List<EntityDataDTO> dataDTOS) {
+    private <T> void buildDataColumns(StringBuilder builder, List<EntityDataDTO<T>> dataDTOS) {
         for (int i = 0; i < dataDTOS.size(); i++) {
-            EntityDataDTO dataDTO = dataDTOS.get(i);
+            EntityDataDTO<T> dataDTO = dataDTOS.get(i);
             builder.append(sgbdInterface.buildDataColumn(dataDTO));
             if (i + 1 != dataDTOS.size()) {
                 builder.append(", ");

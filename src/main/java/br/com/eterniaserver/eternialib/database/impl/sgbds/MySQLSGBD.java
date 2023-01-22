@@ -45,36 +45,36 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String selectByPrimary(String tableName, EntityPrimaryKeyDTO primaryKeyDTO) {
-        return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.columnName());
+    public <T> String selectByPrimary(String tableName, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
+        return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.getColumnName());
     }
 
     @Override
-    public String update(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO) {
+    public <T> String update(String tableName, List<EntityDataDTO<T>> entityDataDTOS, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("UPDATE ").append(tableName).append(" SET ");
         for (int i = 0; i < entityDataDTOS.size(); i++) {
             EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
-            builder.append(entityDataDTO.columnName()).append(" = ");
+            builder.append(entityDataDTO.getColumnName()).append(" = ");
             builder.append("?");
 
             if (i + 1 != entityDataDTOS.size()) {
                 builder.append(", ");
             }
         }
-        builder.append(" WHERE ").append(primaryKeyDTO.columnName());
+        builder.append(" WHERE ").append(primaryKeyDTO.getColumnName());
         builder.append(" = ").append("?").append(";");
 
         return builder.toString();
     }
 
     @Override
-    public String insert(String tableName, List<EntityDataDTO> entityDataDTOS, EntityPrimaryKeyDTO primaryKeyDTO) {
+    public <T> String insert(String tableName, List<EntityDataDTO<T>> entityDataDTOS, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("INSERT INTO ").append(tableName).append(" (");
-        builder.append(primaryKeyDTO.columnName());
+        builder.append(primaryKeyDTO.getColumnName());
         if (!entityDataDTOS.isEmpty()) {
             builder.append(", ");
         }
@@ -88,12 +88,12 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String delete(String tableName, EntityPrimaryKeyDTO primaryKeyDTO) {
-        return "DELETE FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.columnName());
+    public <T> String delete(String tableName, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
+        return "DELETE FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.getColumnName());
     }
 
     @Override
-    public String insertWithoutKey(String tableName, List<EntityDataDTO> entityDataDTOS) {
+    public <T> String insertWithoutKey(String tableName, List<EntityDataDTO<T>> entityDataDTOS) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("INSERT INTO ").append(tableName).append(" (");
@@ -103,10 +103,10 @@ public class MySQLSGBD implements SGBDInterface {
         return builder.toString();
     }
 
-    private void buildInsert(StringBuilder builder, List<EntityDataDTO> entityDataDTOS) {
+    private <T> void buildInsert(StringBuilder builder, List<EntityDataDTO<T>> entityDataDTOS) {
         for (int i = 0; i < entityDataDTOS.size(); i++) {
             EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
-            builder.append(entityDataDTO.columnName());
+            builder.append(entityDataDTO.getColumnName());
 
             if (i + 1 != entityDataDTOS.size()) {
                 builder.append(", ");
@@ -127,13 +127,13 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String buildPrimaryColumn(EntityPrimaryKeyDTO primaryKeyDTO) {
+    public <T> String buildPrimaryColumn(EntityPrimaryKeyDTO<T> primaryKeyDTO) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(primaryKeyDTO.columnName()).append(" ");
-        builder.append(typeMap.get(primaryKeyDTO.type()));
+        builder.append(primaryKeyDTO.getColumnName()).append(" ");
+        builder.append(typeMap.get(primaryKeyDTO.getFieldType()));
 
-        if (primaryKeyDTO.autoIncrement()) {
+        if (primaryKeyDTO.isAutoIncrement()) {
             builder.append(" AUTO_INCREMENT PRIMARY KEY");
         }
         else {
@@ -144,13 +144,13 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String buildDataColumn(EntityDataDTO dataDTO) {
+    public <T> String buildDataColumn(EntityDataDTO<T> dataDTO) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(dataDTO.columnName()).append(" ");
-        builder.append(typeMap.get(dataDTO.type()));
+        builder.append(dataDTO.getColumnName()).append(" ");
+        builder.append(typeMap.get(dataDTO.getFieldType()));
 
-        if (dataDTO.notNull()) {
+        if (dataDTO.isNotNull()) {
             builder.append(" NOT NULL");
         }
 

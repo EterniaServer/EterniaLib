@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class TestSQLiteSGBD  {
+class TestSQLiteSGBD  {
 
     private static SQLiteSGBD sqLiteSGBD;
     private static Entity<Person> personEntity;
@@ -24,7 +24,7 @@ public class TestSQLiteSGBD  {
     private static Entity<PersonNotNull> personNotNullEntity;
 
     @BeforeAll
-    public static void init() throws EntityException {
+    public static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
         sqLiteSGBD = new SQLiteSGBD();
         personEntity = new Entity<>(Person.class);
         personLinkEntity = new Entity<>(PersonLink.class);
@@ -52,7 +52,7 @@ public class TestSQLiteSGBD  {
 
     @Test
     void testSelectByPrimary() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "SELECT * FROM eternia_person WHERE id = ?;";
         String result = sqLiteSGBD.selectByPrimary(personEntity.tableName(), primaryKeyDTO);
@@ -64,8 +64,8 @@ public class TestSQLiteSGBD  {
     void testUpdateQuery() {
         String tableName = personEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "UPDATE eternia_person SET firstName = ?, birthdate = ? WHERE id = ?;";
         String result = sqLiteSGBD.update(tableName, entityDataDTOS, primaryKeyDTO);
@@ -77,8 +77,8 @@ public class TestSQLiteSGBD  {
     void testInsertQuery() {
         String tableName = personEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
         String result = sqLiteSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
@@ -98,8 +98,8 @@ public class TestSQLiteSGBD  {
     void testInsertQueryDatelessEntity() {
         String tableName = emptyTableEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = emptyTableEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = emptyTableEntity.getDataColumns();
+        EntityPrimaryKeyDTO<EmptyTable> primaryKeyDTO = emptyTableEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<EmptyTable>> entityDataDTOS = emptyTableEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_empty_table (id) VALUES (?);";
         String result = sqLiteSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
@@ -110,7 +110,7 @@ public class TestSQLiteSGBD  {
     @Test
     void testDeleteQuery() {
         String tableName = personEntity.tableName();
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "DELETE FROM eternia_person WHERE id = ?;";
         String result = sqLiteSGBD.delete(tableName, primaryKeyDTO);
@@ -122,7 +122,7 @@ public class TestSQLiteSGBD  {
     void testInsertWithoutKeyQuery() {
         String tableName = personEntity.tableName();
 
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_person (firstName, birthdate) VALUES (?, ?);";
         String result = sqLiteSGBD.insertWithoutKey(tableName, entityDataDTOS);
@@ -142,7 +142,7 @@ public class TestSQLiteSGBD  {
 
     @Test
     void testBuildPrimaryColumn() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "id BIGINT AUTO_INCREMENT PRIMARY KEY";
         String result = sqLiteSGBD.buildPrimaryColumn(primaryKeyDTO);
@@ -152,7 +152,7 @@ public class TestSQLiteSGBD  {
 
     @Test
     void testBuildPrimaryColumnWithoutAutoIncrement() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personNotNullEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<PersonNotNull> primaryKeyDTO = personNotNullEntity.getEntityPrimaryKeyDTO();
 
         String expected = "id BIGINT PRIMARY KEY NOT NULL";
         String result = sqLiteSGBD.buildPrimaryColumn(primaryKeyDTO);
@@ -162,7 +162,7 @@ public class TestSQLiteSGBD  {
 
     @Test
     void testBuildDataColumn() {
-        EntityDataDTO dataDTO = personEntity.getDataColumns().get(0);
+        EntityDataDTO<Person> dataDTO = personEntity.getEntityDataDTOList().get(0);
 
         String expected = "firstName VARCHAR(256)";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);
@@ -172,7 +172,7 @@ public class TestSQLiteSGBD  {
 
     @Test
     void testBuildDataColumnNotNull() {
-        EntityDataDTO dataDTO = personNotNullEntity.getDataColumns().get(0);
+        EntityDataDTO<PersonNotNull> dataDTO = personNotNullEntity.getEntityDataDTOList().get(0);
 
         String expected = "firstName VARCHAR(256) NOT NULL";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);

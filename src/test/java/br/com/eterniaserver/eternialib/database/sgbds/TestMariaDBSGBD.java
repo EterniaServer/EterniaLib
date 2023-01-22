@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class TestMariaDBSGBD {
+class TestMariaDBSGBD {
 
     private static MySQLSGBD mariaDBSGBD;
     private static Entity<Person> personEntity;
@@ -25,7 +25,7 @@ public class TestMariaDBSGBD {
     private static Entity<PersonNotNull> personNotNullEntity;
 
     @BeforeAll
-    public static void init() throws EntityException {
+    public static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
         mariaDBSGBD = new MariaDBSGBD();
         personEntity = new Entity<>(Person.class);
         personLinkEntity = new Entity<>(PersonLink.class);
@@ -53,7 +53,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testSelectByPrimary() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "SELECT * FROM eternia_person WHERE id = ?;";
         String result = mariaDBSGBD.selectByPrimary(personEntity.tableName(), primaryKeyDTO);
@@ -65,8 +65,8 @@ public class TestMariaDBSGBD {
     void testUpdateQuery() {
         String tableName = personEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "UPDATE eternia_person SET firstName = ?, birthdate = ? WHERE id = ?;";
         String result = mariaDBSGBD.update(tableName, entityDataDTOS, primaryKeyDTO);
@@ -86,8 +86,8 @@ public class TestMariaDBSGBD {
     void testInsertQuery() {
         String tableName = personEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
         String result = mariaDBSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
@@ -99,8 +99,8 @@ public class TestMariaDBSGBD {
     void testInsertQueryDatelessEntity() {
         String tableName = emptyTableEntity.tableName();
 
-        EntityPrimaryKeyDTO primaryKeyDTO = emptyTableEntity.getPrimaryKey();
-        List<EntityDataDTO> entityDataDTOS = emptyTableEntity.getDataColumns();
+        EntityPrimaryKeyDTO<EmptyTable> primaryKeyDTO = emptyTableEntity.getEntityPrimaryKeyDTO();
+        List<EntityDataDTO<EmptyTable>> entityDataDTOS = emptyTableEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_empty_table (id) VALUES (?);";
         String result = mariaDBSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
@@ -111,7 +111,7 @@ public class TestMariaDBSGBD {
     @Test
     void testDeleteQuery() {
         String tableName = personEntity.tableName();
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "DELETE FROM eternia_person WHERE id = ?;";
         String result = mariaDBSGBD.delete(tableName, primaryKeyDTO);
@@ -123,7 +123,7 @@ public class TestMariaDBSGBD {
     void testInsertWithoutKeyQuery() {
         String tableName = personEntity.tableName();
 
-        List<EntityDataDTO> entityDataDTOS = personEntity.getDataColumns();
+        List<EntityDataDTO<Person>> entityDataDTOS = personEntity.getEntityDataDTOList();
 
         String expected = "INSERT INTO eternia_person (firstName, birthdate) VALUES (?, ?);";
         String result = mariaDBSGBD.insertWithoutKey(tableName, entityDataDTOS);
@@ -143,7 +143,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testBuildPrimaryColumn() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 
         String expected = "id BIGINT AUTO_INCREMENT PRIMARY KEY";
         String result = mariaDBSGBD.buildPrimaryColumn(primaryKeyDTO);
@@ -153,7 +153,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testBuildPrimaryColumnWithoutAutoIncrement() {
-        EntityPrimaryKeyDTO primaryKeyDTO = personNotNullEntity.getPrimaryKey();
+        EntityPrimaryKeyDTO<PersonNotNull> primaryKeyDTO = personNotNullEntity.getEntityPrimaryKeyDTO();
 
         String expected = "id BIGINT PRIMARY KEY NOT NULL";
         String result = mariaDBSGBD.buildPrimaryColumn(primaryKeyDTO);
@@ -163,7 +163,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testBuildDataColumn() {
-        EntityDataDTO dataDTO = personEntity.getDataColumns().get(0);
+        EntityDataDTO<Person> dataDTO = personEntity.getEntityDataDTOList().get(0);
 
         String expected = "firstName VARCHAR(256)";
         String result = mariaDBSGBD.buildDataColumn(dataDTO);
@@ -173,7 +173,7 @@ public class TestMariaDBSGBD {
 
     @Test
     void testBuildDataColumnNotNull() {
-        EntityDataDTO dataDTO = personNotNullEntity.getDataColumns().get(0);
+        EntityDataDTO<PersonNotNull> dataDTO = personNotNullEntity.getEntityDataDTOList().get(0);
 
         String expected = "firstName VARCHAR(256) NOT NULL";
         String result = mariaDBSGBD.buildDataColumn(dataDTO);
