@@ -28,7 +28,7 @@ public class Manager {
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
         catch (EntityException | DatabaseException | NoSuchMethodException | IllegalAccessException exception) {
-            throw new RuntimeException(exception);
+            plugin.getLogger().severe("Error while registering entities: " + exception.getMessage());
         }
 
         List<PlayerUUID> playerUUIDList = EterniaLib.getDatabase().listAll(PlayerUUID.class);
