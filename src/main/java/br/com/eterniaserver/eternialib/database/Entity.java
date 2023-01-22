@@ -22,22 +22,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Entity<T> {
 
     private final Class<T> entityClass;
-    private final Field primaryKeyField;
-    private final List<Field> dataFields;
+    private final EntityPrimaryKeyDTO<T> entityPrimaryKeyDTO;
+    private final List<EntityDataDTO<T>> entityDataDTOList;
     private final List<Field> referenceFields;
     private final Map<Object, Object> entitiesCache = new ConcurrentHashMap<>();
 
-    public Entity(Class<T> entityClass) throws EntityException {
-        Field[] fields = entityClass.getFields();
-        List<Field> primaryKeyFields = getFieldsByAnnotation(entityClass.getFields(), PrimaryKeyField.class);
+    public Entity(Class<T> entityClass) throws EntityException, NoSuchMethodException, IllegalAccessException {
+        this.entityClass = entityClass;
+
+        Field[] fields = entityClass.getDeclaredFields();
+        List<Field> primaryKeyFields = getFieldsByAnnotation(fields, PrimaryKeyField.class);
 
         if (primaryKeyFields.size() > 1) {
             throw new EntityException("EterniaLib only supports single primary keys");
         }
 
-        this.primaryKeyField = primaryKeyFields.get(0);
-        this.entityClass = entityClass;
-        this.dataFields = getFieldsByAnnotation(fields, DataField.class);
+        Field primaryKeyField = primaryKeyFields.get(0);
+        List<Field> dataFields = getFieldsByAnnotation(fields, DataField.class);
+
+        this.entityPrimaryKeyDTO = getPrimaryKey(primaryKeyField);
+        this.entityDataDTOList = getDataColumns(dataFields);
         this.referenceFields = getFieldsByAnnotation(fields, ReferenceField.class);
     }
 
@@ -62,32 +66,41 @@ public class Entity<T> {
         return table.tableName();
     }
 
-    public EntityPrimaryKeyDTO getPrimaryKey() {
+    public EntityPrimaryKeyDTO<T> getEntityPrimaryKeyDTO() {
+        return entityPrimaryKeyDTO;
+    }
+
+    public List<EntityDataDTO<T>> getEntityDataDTOList() {
+        return entityDataDTOList;
+    }
+
+    private EntityPrimaryKeyDTO<T> getPrimaryKey(Field primaryKeyField) throws NoSuchMethodException, IllegalAccessException {
         PrimaryKeyField key = primaryKeyField.getAnnotation(PrimaryKeyField.class);
         String columnName = key.columnName();
         FieldType fieldType = key.type();
         boolean autoIncrement = key.autoIncrement();
 
-        return new EntityPrimaryKeyDTO(
-                primaryKeyField,
+        return new EntityPrimaryKeyDTO<>(
+                entityClass,
+                primaryKeyField.getName(),
                 columnName,
                 fieldType,
                 autoIncrement
         );
     }
 
+    private List<EntityDataDTO<T>> getDataColumns(List<Field> dataFields) throws NoSuchMethodException, IllegalAccessException {
+        List<EntityDataDTO<T>> data = new ArrayList<>();
 
-    public List<EntityDataDTO> getDataColumns() {
-        List<EntityDataDTO> data = new ArrayList<>();
-
-        for (Field field : this.dataFields) {
+        for (Field field : dataFields) {
             DataField column = field.getAnnotation(DataField.class);
             String columnName = column.columnName();
             FieldType fieldType = column.type();
             boolean notNull = column.notNull();
 
-            EntityDataDTO dataDTO = new EntityDataDTO(
-                    field,
+            EntityDataDTO<T> dataDTO = new EntityDataDTO<>(
+                    this.entityClass,
+                    field.getName(),
                     columnName,
                     fieldType,
                     notNull

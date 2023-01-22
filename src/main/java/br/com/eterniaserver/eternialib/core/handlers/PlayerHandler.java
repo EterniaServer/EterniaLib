@@ -36,8 +36,8 @@ public class PlayerHandler implements Listener {
             boolean shouldInsert = playerUUID == null;
 
             playerUUID = shouldInsert ? new PlayerUUID() : playerUUID;
-            playerUUID.uuid = uuid;
-            playerUUID.playerName = playerName;
+            playerUUID.setUuid(uuid);
+            playerUUID.setPlayerName(playerName);
 
             if (shouldInsert) {
                 EterniaLib.getDatabase().insert(PlayerUUID.class, playerUUID);

@@ -8,7 +8,7 @@ public enum FieldType {
     INTEGER,
     DOUBLE,
     DATE,
-    DATETIME,
+    TIMESTAMP,
     DECIMAL
 
 }

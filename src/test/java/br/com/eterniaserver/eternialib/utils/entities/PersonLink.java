@@ -6,12 +6,16 @@ import br.com.eterniaserver.eternialib.database.annotations.ReferenceField;
 import br.com.eterniaserver.eternialib.database.annotations.Table;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Table(tableName = "eternia_person_link")
+@Getter
+@Setter
 public class PersonLink {
 
     @PrimaryKeyField(columnName = "id", type = FieldType.INTEGER, autoIncrement = true)
-    public Integer id;
+    private Integer id;
 
     @ReferenceField(columnName = "firstPersonId",
                     mode = ReferenceMode.CASCADE,
@@ -19,7 +23,7 @@ public class PersonLink {
                     referenceTableName = "eternia_person",
                     referenceColumnName = "id")
     @DataField(columnName = "firstPersonId", type = FieldType.INTEGER)
-    public Integer firstPersonId;
+    private Integer firstPersonId;
 
     @ReferenceField(columnName = "secondPersonId",
                     mode = ReferenceMode.CASCADE,
@@ -27,6 +31,6 @@ public class PersonLink {
                     referenceTableName = "eternia_person",
                     referenceColumnName = "id")
     @DataField(columnName = "secondPersonId", type = FieldType.INTEGER)
-    public Integer secondPersonId;
+    private Integer secondPersonId;
 
 }

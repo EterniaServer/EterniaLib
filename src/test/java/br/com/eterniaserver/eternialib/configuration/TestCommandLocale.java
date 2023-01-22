@@ -3,7 +3,7 @@ package br.com.eterniaserver.eternialib.configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestCommandLocale {
+class TestCommandLocale {
 
     @Test
     void testValid() {

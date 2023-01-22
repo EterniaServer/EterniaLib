@@ -27,12 +27,12 @@ public class Manager {
             Entity<PlayerUUID> entity = new Entity<>(PlayerUUID.class);
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
-        catch (EntityException | DatabaseException exception) {
-            // Todo alert registration error
+        catch (EntityException | DatabaseException | NoSuchMethodException | IllegalAccessException exception) {
+            throw new RuntimeException(exception);
         }
 
         List<PlayerUUID> playerUUIDList = EterniaLib.getDatabase().listAll(PlayerUUID.class);
-        playerUUIDList.forEach(playerUUID -> EterniaLib.registerNewUUID(playerUUID.playerName, playerUUID.uuid));
+        playerUUIDList.forEach(playerUUID -> EterniaLib.registerNewUUID(playerUUID.getPlayerName(), playerUUID.getUuid()));
 
         plugin.getServer().getPluginManager().registerEvents(new PlayerHandler(plugin), plugin);
     }
