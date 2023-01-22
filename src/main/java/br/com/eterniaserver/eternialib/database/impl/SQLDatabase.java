@@ -25,10 +25,11 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class SQLDatabase implements DatabaseInterface {
     @Override
     public <T> List<T> listAll(Class<T> objectClass) {
         List<T> entities = new ArrayList<>();
-        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        Entity<T> entity = getEntity(objectClass);
 
         String query = sgbdInterface.selectAll(entity.tableName());
         try (
@@ -170,7 +171,7 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> T get(Class<T> objectClass, Object primaryKey) {
-        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        Entity<T> entity = getEntity(objectClass);
         Object object = entity.getEntity(primaryKey);
         if (object != null) {
             return objectClass.cast(object);
@@ -213,7 +214,7 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> void insert(Class<T> objectClass, Object instance) {
-        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        Entity<T> entity = getEntity(objectClass);
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         Object primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
@@ -229,7 +230,7 @@ public class SQLDatabase implements DatabaseInterface {
     @Override
     public <T> void update(Class<T> objectClass, Object instance) {
         String objectName = objectClass.getName();
-        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        Entity<T> entity = getEntity(objectClass);
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         Object primaryValue = null;
@@ -275,7 +276,7 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> void delete(Class<T> objectClass, Object primaryKey) {
-        Entity<T> entity = (Entity<T>) entityMap.get(objectClass);
+        Entity<T> entity = getEntity(objectClass);
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO);
@@ -322,6 +323,11 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         entityMap.put(entityClass, entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Entity<T> getEntity(Class<T> objectClass) {
+        return (Entity<T>) entityMap.get(objectClass);
     }
 
     private <T> void insertAndGetKey(Entity<T> entity, Object instance) {
@@ -428,7 +434,8 @@ public class SQLDatabase implements DatabaseInterface {
             case STRING, TEXT -> setter.invoke(instance, resultSet.getString(columnName));
             case INTEGER -> setter.invoke(instance, resultSet.getInt(columnName));
             case DOUBLE -> setter.invoke(instance, resultSet.getDouble(columnName));
-            case DATE, DATETIME -> setter.invoke(instance, resultSet.getDate(columnName));
+            case DATE -> setter.invoke(instance, resultSet.getDate(columnName));
+            case TIMESTAMP -> setter.invoke(instance, resultSet.getTimestamp(columnName));
             case DECIMAL -> setter.invoke(instance, resultSet.getBigDecimal(columnName));
             default -> setter.invoke(instance, resultSet.getObject(columnName));
         }
@@ -459,7 +466,8 @@ public class SQLDatabase implements DatabaseInterface {
             case STRING, TEXT -> statement.setString(position, (String) value);
             case INTEGER -> statement.setInt(position, (Integer) value);
             case DOUBLE -> statement.setDouble(position, (Double) value);
-            case DATE, DATETIME -> statement.setDate(position, (Date) value);
+            case DATE -> statement.setDate(position, (Date) value);
+            case TIMESTAMP -> statement.setTimestamp(position, (Timestamp) value);
             case DECIMAL -> statement.setBigDecimal(position, (BigDecimal) value);
             default -> statement.setObject(position, value);
         }

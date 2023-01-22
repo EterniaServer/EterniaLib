@@ -7,7 +7,7 @@ import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Table(tableName = "eternia_person")
 @Getter

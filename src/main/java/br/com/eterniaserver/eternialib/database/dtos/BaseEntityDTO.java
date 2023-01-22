@@ -3,7 +3,8 @@ package br.com.eterniaserver.eternialib.database.dtos;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public abstract class BaseEntityDTO {
@@ -23,7 +24,8 @@ public abstract class BaseEntityDTO {
             case DOUBLE -> Double.class;
             case DECIMAL -> BigDecimal.class;
             case INTEGER -> Integer.class;
-            case DATE, DATETIME -> Date.class;
+            case DATE -> Date.class;
+            case TIMESTAMP -> Timestamp.class;
         };
     }
 

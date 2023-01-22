@@ -31,11 +31,11 @@ public class EntityDataDTO<T> extends BaseEntityDTO {
 
         Class<?> fieldClassType = getClassFromFieldType(fieldType);
 
-        Method getterMethod = clazz.getMethod(getterName(fieldName));
-        Method setterMethod = clazz.getMethod(setterName(fieldName), fieldClassType);
+        Method getterMethodBase = clazz.getMethod(getterName(fieldName));
+        Method setterMethodBase = clazz.getMethod(setterName(fieldName), fieldClassType);
 
-        this.getterMethod = MethodHandles.lookup().unreflect(getterMethod);
-        this.setterMethod = MethodHandles.lookup().unreflect(setterMethod);
+        this.getterMethod = MethodHandles.lookup().unreflect(getterMethodBase);
+        this.setterMethod = MethodHandles.lookup().unreflect(setterMethodBase);
     }
 
 }

@@ -27,7 +27,7 @@ public class MySQLSGBD implements SGBDInterface {
         typeMap.put(FieldType.DOUBLE, "DOUBLE(64, 32)");
         typeMap.put(FieldType.DECIMAL, "DECIMAL(32, 8)");
         typeMap.put(FieldType.DATE, "DATE");
-        typeMap.put(FieldType.DATETIME, "DATETIME");
+        typeMap.put(FieldType.TIMESTAMP, "DATETIME");
 
         referenceMap.put(ReferenceMode.RESTRICT, "");
         referenceMap.put(ReferenceMode.CASCADE, " ON DELETE CASCADE");
@@ -55,7 +55,7 @@ public class MySQLSGBD implements SGBDInterface {
 
         builder.append("UPDATE ").append(tableName).append(" SET ");
         for (int i = 0; i < entityDataDTOS.size(); i++) {
-            EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
+            EntityDataDTO<T> entityDataDTO = entityDataDTOS.get(i);
             builder.append(entityDataDTO.getColumnName()).append(" = ");
             builder.append("?");
 
@@ -105,7 +105,7 @@ public class MySQLSGBD implements SGBDInterface {
 
     private <T> void buildInsert(StringBuilder builder, List<EntityDataDTO<T>> entityDataDTOS) {
         for (int i = 0; i < entityDataDTOS.size(); i++) {
-            EntityDataDTO entityDataDTO = entityDataDTOS.get(i);
+            EntityDataDTO<T> entityDataDTO = entityDataDTOS.get(i);
             builder.append(entityDataDTO.getColumnName());
 
             if (i + 1 != entityDataDTOS.size()) {

@@ -22,7 +22,7 @@ public interface SGBDInterface {
 
     <T> String insertWithoutKey(String tableName, List<EntityDataDTO<T>> entityDataDTOS);
 
-    <T> String getLastInsertId(String tableName);
+    String getLastInsertId(String tableName);
 
     <T> String buildPrimaryColumn(EntityPrimaryKeyDTO<T> primaryKeyDTO);
 
