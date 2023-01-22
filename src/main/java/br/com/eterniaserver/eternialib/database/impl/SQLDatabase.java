@@ -18,18 +18,20 @@ import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
+
 import org.bukkit.Bukkit;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.InvocationTargetException;
+
 import java.math.BigDecimal;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Date;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -154,15 +156,10 @@ public class SQLDatabase implements DatabaseInterface {
                 entities.add(instance);
             }
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             loggerSQLError(query);
         }
-        catch (
-                InvocationTargetException |
-                InstantiationException |
-                IllegalAccessException |
-                NoSuchMethodException e
-        ) {
+        catch (Throwable ignored) {
             loggerEntityError(objectClass.getName());
         }
 
@@ -195,15 +192,10 @@ public class SQLDatabase implements DatabaseInterface {
             resultSet.close();
 
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             loggerSQLError(query);
         }
-        catch (
-                InvocationTargetException |
-                InstantiationException |
-                IllegalAccessException |
-                NoSuchMethodException e
-        ) {
+        catch (Throwable ignored) {
             loggerEntityError(objectClass.getName());
         }
 
@@ -217,7 +209,13 @@ public class SQLDatabase implements DatabaseInterface {
         Entity<T> entity = getEntity(objectClass);
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
-        Object primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+        Object primaryValue = null;
+        try {
+            primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+        }
+        catch (Throwable ignored) {
+            loggerEntityError(objectClass.getName());
+        }
 
         if (primaryValue == null) {
             insertAndGetKey(entity, instance);
@@ -240,10 +238,13 @@ public class SQLDatabase implements DatabaseInterface {
                 throw new DatabaseException("Primary key is null");
             }
         }
-        catch (DatabaseException e) {
+        catch (DatabaseException exception) {
             Bukkit.getLogger().log(Level.SEVERE, "Entity class: {0}, error: {1}.", new String[]{
-                    objectName, e.getMessage()
+                    objectName, exception.getMessage()
             });
+        }
+        catch (Throwable ignored) {
+            loggerEntityError(objectName);
         }
 
         if (primaryValue == null) {
@@ -266,10 +267,10 @@ public class SQLDatabase implements DatabaseInterface {
 
             entity.addEntity(primaryValue, instance);
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             loggerSQLError(updateQuery);
         }
-        catch (IllegalAccessException exception) {
+        catch (Throwable ignored) {
             loggerEntityError(objectName);
         }
     }
@@ -288,7 +289,7 @@ public class SQLDatabase implements DatabaseInterface {
             entity.removeEntity(primaryKey);
 
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             loggerSQLError(query);
         }
     }
@@ -318,7 +319,7 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
         ) {
             preparedStatement.execute();
-        } catch (SQLException exception) {
+        } catch (SQLException ignored) {
             throw new DatabaseException("Error when creating " + entity.tableName() + " table.");
         }
 
@@ -361,11 +362,11 @@ public class SQLDatabase implements DatabaseInterface {
             Object primaryKey = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
             entity.addEntity(primaryKey, instance);
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             String twoQuery = "%s or %s".formatted(insertQuery, getIdQuery);
             loggerSQLError(twoQuery);
         }
-        catch (IllegalAccessException exception) {
+        catch (Throwable ignored) {
             loggerEntityError(entity.getClass().getName());
         }
     }
@@ -391,15 +392,15 @@ public class SQLDatabase implements DatabaseInterface {
 
             entity.addEntity(primaryKey, instance);
         }
-        catch (SQLException exception) {
+        catch (SQLException ignored) {
             loggerSQLError(insertQuery);
         }
-        catch (IllegalAccessException exception) {
+        catch (Throwable ignored) {
             loggerEntityError(entity.getClass().getName());
         }
     }
 
-    private <T> void populateObject(Entity<T> entity, T instance, ResultSet resultSet) throws SQLException, IllegalAccessException {
+    private <T> void populateObject(Entity<T> entity, T instance, ResultSet resultSet) throws Throwable {
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         MethodHandle primarySetter = primaryKeyDTO.getSetterMethod();
         FieldType primaryType = primaryKeyDTO.getFieldType();
@@ -416,19 +417,17 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    @SneakyThrows
-    private Object getValueFromPrimary(MethodHandle getter, Object instance) {
+    private Object getValueFromPrimary(MethodHandle getter, Object instance) throws Throwable {
         return getter.invoke(instance);
     }
 
-    @SneakyThrows
     private <T> void setValueInField(
             MethodHandle setter,
             FieldType type,
             T instance,
             ResultSet resultSet,
             String columnName
-    ) throws SQLException, IllegalAccessException {
+    ) throws Throwable {
         switch (type) {
             case UUID -> setter.invoke(instance, UUID.fromString(resultSet.getString(columnName)));
             case STRING, TEXT -> setter.invoke(instance, resultSet.getString(columnName));
@@ -441,11 +440,10 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    @SneakyThrows
     private <T> void fillStatement(PreparedStatement preparedStatement,
                                List<EntityDataDTO<T>> entityDataDTOS,
                                Object instance,
-                               int startIndex) throws IllegalAccessException, SQLException {
+                               int startIndex) throws Throwable {
         for (int i = startIndex; i < entityDataDTOS.size() + startIndex; i++) {
             EntityDataDTO<T> entityDataDTO = entityDataDTOS.get(i - startIndex);
             FieldType type = entityDataDTO.getFieldType();
