@@ -20,8 +20,8 @@ sonarqube  {
         property "sonar.sources", "src/main/java"
         property "sonar.tests", "src/test/java"
         property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.java.binaries", "build/classes/java/main"
-        property "sonar.java.libraries", "build/libs/${project.name}-${project.version}-all.jar"
+        property "sonar.java.binaries", "build/classes"
+        property "sonar.java.libraries", ["build/libs", "build/dependencies"]
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.verbose", "true"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.0.2-ALPHA"
+version = "4.0.3-ALPHA"
 
 repositories {
     mavenCentral()
