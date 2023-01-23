@@ -152,7 +152,7 @@ public class CoreCfg implements ReloadableConfiguration {
                 "eternia.settings",
                 " <página>",
                 " Receba ajuda para as configurações internas dos plugins 'Eternia'",
-                ""
+                "eternialib"
         ));
         addCommandLocale(Commands.ETERNIA_RELOAD, new CommandLocale(
                 "reload",

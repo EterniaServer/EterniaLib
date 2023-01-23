@@ -11,11 +11,13 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.UUID;
 
 class TestEntityPrimaryKeyDTO {
 
     private static EntityPrimaryKeyDTO<Complete> idKey;
     private static EntityPrimaryKeyDTO<Complete> firstNameKey;
+    private static EntityPrimaryKeyDTO<Complete> uuidKey;
     private static EntityPrimaryKeyDTO<Complete> descriptionKey;
     private static EntityPrimaryKeyDTO<Complete> birthdateKey;
     private static EntityPrimaryKeyDTO<Complete> moneyKey;
@@ -26,6 +28,7 @@ class TestEntityPrimaryKeyDTO {
     public static void init() throws NoSuchMethodException, IllegalAccessException {
         idKey = new EntityPrimaryKeyDTO<>(Complete.class, "id", "id", FieldType.INTEGER, true);
         firstNameKey = new EntityPrimaryKeyDTO<>(Complete.class, "firstName", "first_name", FieldType.STRING, false);
+        uuidKey = new EntityPrimaryKeyDTO<>(Complete.class, "uuid", "uuid", FieldType.UUID, false);
         descriptionKey = new EntityPrimaryKeyDTO<>(Complete.class, "description", "description", FieldType.TEXT, false);
         birthdateKey = new EntityPrimaryKeyDTO<>(Complete.class, "birthdate", "birthdate", FieldType.DATE, false);
         moneyKey = new EntityPrimaryKeyDTO<>(Complete.class, "money", "money", FieldType.DECIMAL, false);
@@ -39,6 +42,7 @@ class TestEntityPrimaryKeyDTO {
 
         Integer id = 1;
         String firstName = "Nome";
+        UUID uuid = UUID.randomUUID();
         String description = "Descrição";
         Date birthdate = Date.valueOf(LocalDate.of(2000, 1, 1));
         BigDecimal money = new BigDecimal("100.00");
@@ -47,6 +51,7 @@ class TestEntityPrimaryKeyDTO {
 
         complete.setId(id);
         complete.setFirstName(firstName);
+        complete.setUuid(uuid);
         complete.setDescription(description);
         complete.setBirthdate(birthdate);
         complete.setMoney(money);
@@ -55,6 +60,7 @@ class TestEntityPrimaryKeyDTO {
 
         Assertions.assertEquals(id, idKey.getGetterMethod().invoke(complete));
         Assertions.assertEquals(firstName, firstNameKey.getGetterMethod().invoke(complete));
+        Assertions.assertEquals(uuid, uuidKey.getGetterMethod().invoke(complete));
         Assertions.assertEquals(description, descriptionKey.getGetterMethod().invoke(complete));
         Assertions.assertEquals(birthdate, birthdateKey.getGetterMethod().invoke(complete));
         Assertions.assertEquals(money, moneyKey.getGetterMethod().invoke(complete));
@@ -68,6 +74,7 @@ class TestEntityPrimaryKeyDTO {
 
         Integer id = 1;
         String firstName = "Nome";
+        UUID uuid = UUID.randomUUID();
         String description = "Descrição";
         Date birthdate = Date.valueOf(LocalDate.of(2000, 1, 1));
         BigDecimal money = new BigDecimal("100.00");
@@ -76,6 +83,7 @@ class TestEntityPrimaryKeyDTO {
 
         idKey.getSetterMethod().invoke(complete, id);
         firstNameKey.getSetterMethod().invoke(complete, firstName);
+        uuidKey.getSetterMethod().invoke(complete, uuid);
         descriptionKey.getSetterMethod().invoke(complete, description);
         birthdateKey.getSetterMethod().invoke(complete, birthdate);
         moneyKey.getSetterMethod().invoke(complete, money);
@@ -84,6 +92,7 @@ class TestEntityPrimaryKeyDTO {
 
         Assertions.assertEquals(id, complete.getId());
         Assertions.assertEquals(firstName, complete.getFirstName());
+        Assertions.assertEquals(uuid, complete.getUuid());
         Assertions.assertEquals(description, complete.getDescription());
         Assertions.assertEquals(birthdate, complete.getBirthdate());
         Assertions.assertEquals(money, complete.getMoney());
