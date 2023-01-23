@@ -4,10 +4,8 @@ on:
   push:
     branches:
       - main
-      - 'test/**'
-      - 'fix/**'
-      - 'feature/**'
-      - 'refactor/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:

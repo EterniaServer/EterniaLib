@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.sql.Date;
+import java.util.UUID;
 
 @Table(tableName = "eternia_complete")
 @Getter
@@ -19,6 +20,10 @@ public class Complete {
     @PrimaryKeyField(columnName = "id", type = FieldType.INTEGER, autoIncrement = true)
     @DataField(columnName = "id", type = FieldType.STRING)
     private Integer id;
+
+    @PrimaryKeyField(columnName = "uuid", type = FieldType.UUID, autoIncrement = true)
+    @DataField(columnName = "uuid", type = FieldType.UUID)
+    private UUID uuid;
 
     @PrimaryKeyField(columnName = "first_name", type = FieldType.STRING, autoIncrement = true)
     @DataField(columnName = "firstName", type = FieldType.STRING)

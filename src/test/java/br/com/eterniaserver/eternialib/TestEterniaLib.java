@@ -1,14 +1,22 @@
 package br.com.eterniaserver.eternialib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+
 import br.com.eterniaserver.eternialib.commands.CommandManager;
+import br.com.eterniaserver.eternialib.commands.impl.CommandManagerImpl;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 class TestEterniaLib {
 
@@ -41,6 +49,13 @@ class TestEterniaLib {
         Assertions.assertNotNull(commandManager.getCommandConditions());
         Assertions.assertNotNull(commandManager.getCommandContexts());
         Assertions.assertNotNull(commandManager.getCommandReplacements());
+    }
+
+    @Test
+    void testRegenerateCmdManagerNotCollider() throws IOException, InvalidConfigurationException {
+        CommandManager commandManager = new CommandManagerImpl(plugin);
+
+        Assertions.assertNotEquals(EterniaLib.getCmdManager(), commandManager);
     }
 
     @Test
