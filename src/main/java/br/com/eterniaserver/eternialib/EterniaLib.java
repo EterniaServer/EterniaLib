@@ -19,6 +19,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ import java.util.logging.Level;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static final String VERSION = "4.0.4";
+    private static final String VERSION = "4.0.5";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> configurationsList = new ArrayList<>();
     private static final List<String> errorsCode = new LinkedList<>();
@@ -52,12 +53,11 @@ public class EterniaLib extends JavaPlugin {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    /* Plugin constructor */
     public EterniaLib() {
         super();
     }
 
-    /* This constructor is used for testing purposes */
+    @TestOnly
     @SuppressWarnings("removal")
     protected EterniaLib(org.bukkit.plugin.java.JavaPluginLoader loader,
                          PluginDescriptionFile description,

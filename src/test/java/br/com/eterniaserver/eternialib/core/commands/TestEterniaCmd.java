@@ -1,8 +1,7 @@
-package br.com.eterniaserver.eternialib.commands;
+package br.com.eterniaserver.eternialib.core.commands;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
-import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
 import br.com.eterniaserver.eternialib.core.configs.CoreCfg;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
 
-class TestEterniaCmdCmd {
+class TestEterniaCmd {
 
     @Test
     void testEterniaHelpCommand() {

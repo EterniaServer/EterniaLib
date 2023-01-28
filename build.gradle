@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.0.4-ALPHA"
+version = "4.0.5-ALPHA"
 
 repositories {
     mavenCentral()
@@ -66,7 +66,7 @@ dependencies {
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     testImplementation("org.xerial:sqlite-jdbc:3.40.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testImplementation('org.mockito:mockito-core:4.10.0')
+    testImplementation('org.mockito:mockito-inline:5.0.0')
     testImplementation("com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT")
 }
 

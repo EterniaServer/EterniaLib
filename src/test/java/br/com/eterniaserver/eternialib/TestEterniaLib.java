@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.UUID;
 
 class TestEterniaLib {
 
@@ -86,6 +87,31 @@ class TestEterniaLib {
 
         Component expect = Component.text("HELLO WORLD").color(NamedTextColor.DARK_GRAY);
         Component result = plugin.parseColor(colorMessage);
+
+        Assertions.assertEquals(expect, result);
+    }
+
+    @Test
+    void testRegisterNewUUIDWithoutPossibleName() {
+        String playerName = "test";
+        UUID expect = UUID.randomUUID();
+
+        EterniaLib.registerNewUUID(playerName, expect);
+        UUID result = EterniaLib.getUUIDOf(playerName);
+
+        Assertions.assertEquals(expect, result);
+    }
+
+    @Test
+    void testRegisterNewUUIDWithPossibleName() {
+        String playerName = "test";
+        UUID oldUUid = UUID.randomUUID();
+        UUID expect = UUID.randomUUID();
+
+        EterniaLib.registerNewUUID(playerName, oldUUid);
+        EterniaLib.registerNewUUID(playerName, expect);
+
+        UUID result = EterniaLib.getUUIDOf(playerName);
 
         Assertions.assertEquals(expect, result);
     }

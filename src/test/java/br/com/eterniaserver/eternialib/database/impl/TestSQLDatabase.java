@@ -1,11 +1,10 @@
-package br.com.eterniaserver.eternialib.database;
+package br.com.eterniaserver.eternialib.database.impl;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
-import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
-import br.com.eterniaserver.eternialib.database.impl.SQLDatabase;
 import br.com.eterniaserver.eternialib.utils.entities.Company;
 import br.com.eterniaserver.eternialib.utils.entities.Person;
 import com.zaxxer.hikari.HikariDataSource;
@@ -36,11 +35,10 @@ class TestSQLDatabase {
     public static void loadAndTestRegisterEntity() throws EntityException, DatabaseException, SQLException, NoSuchMethodException, IllegalAccessException {
         MockBukkit.mock();
         MockBukkit.load(EterniaLib.class);
-        personEntity = new Entity<>(Person.class);
 
+        personEntity = new Entity<>(Person.class);
         sgbdInterface = Mockito.mock(SGBDInterface.class);
         dataSource = Mockito.mock(HikariDataSource.class);
-
         database = new SQLDatabase(dataSource, sgbdInterface);
 
         Connection connection = Mockito.mock(Connection.class);

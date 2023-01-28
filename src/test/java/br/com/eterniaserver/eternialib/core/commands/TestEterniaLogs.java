@@ -1,7 +1,6 @@
-package br.com.eterniaserver.eternialib.commands;
+package br.com.eterniaserver.eternialib.core.commands;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.core.commands.EterniaLogs;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;

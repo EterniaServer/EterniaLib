@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.database.sgbds;
+package br.com.eterniaserver.eternialib.database.impl.sgbds;
 
 import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;

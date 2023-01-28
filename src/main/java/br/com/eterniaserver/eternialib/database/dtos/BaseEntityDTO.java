@@ -19,13 +19,13 @@ public abstract class BaseEntityDTO {
 
     protected Class<?> getClassFromFieldType(FieldType fieldType) {
         return switch (fieldType) {
-            case STRING, TEXT -> String.class;
             case UUID -> UUID.class;
             case DOUBLE -> Double.class;
             case DECIMAL -> BigDecimal.class;
             case INTEGER -> Integer.class;
             case DATE -> Date.class;
             case TIMESTAMP -> Timestamp.class;
+            default -> String.class;
         };
     }
 

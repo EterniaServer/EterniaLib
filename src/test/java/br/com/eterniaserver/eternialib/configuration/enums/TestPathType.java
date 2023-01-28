@@ -1,10 +1,9 @@
-package br.com.eterniaserver.eternialib.configuration;
+package br.com.eterniaserver.eternialib.configuration.enums;
 
-import br.com.eterniaserver.eternialib.configuration.enums.PathType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class TestCommandPathType {
+class TestPathType {
 
     enum TestEnum {TEST}
 

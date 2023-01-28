@@ -2,9 +2,10 @@ package br.com.eterniaserver.eternialib.core.handlers;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
-import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
+import br.com.eterniaserver.eternialib.core.runnables.SynchronizePlayerUUID;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,21 +32,9 @@ public class PlayerHandler implements Listener {
 
         EterniaLib.registerNewUUID(playerName, uuid);
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            PlayerUUID playerUUID = EterniaLib.getDatabase().getEntity(PlayerUUID.class, uuid);
-            boolean shouldInsert = playerUUID == null;
+        SynchronizePlayerUUID synchronizePlayerUUID = new SynchronizePlayerUUID(uuid, playerName);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, synchronizePlayerUUID);
 
-            playerUUID = shouldInsert ? new PlayerUUID() : playerUUID;
-            playerUUID.setUuid(uuid);
-            playerUUID.setPlayerName(playerName);
-
-            if (shouldInsert) {
-                EterniaLib.getDatabase().insert(PlayerUUID.class, playerUUID);
-            }
-            else {
-                EterniaLib.getDatabase().update(PlayerUUID.class, playerUUID);
-            }
-        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
