@@ -144,22 +144,40 @@ public class CoreCfg implements ReloadableConfiguration {
         addMessage(
                 Messages.CONFIG_ADVICE,
                 "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>.",
-                "0: Nome da configuração"
+                ""
+        );
+        addMessage(
+                Messages.LOG_EMPTY,
+                "<color:#aaaaaa>Nenhum código de log encontrada no plugin EterniaLib<color:#555555>.",
+                ""
+        );
+        addMessage(
+                Messages.CONFIG_ADVICE,
+                "<color:#aaaaaa>Os seguintes códigos de log foram encontrados: <color:#00aaaa>{0}<color:#555555>.",
+                "0: Lista de erros"
         );
 
         addCommandLocale(Commands.ETERNIA, new CommandLocale(
                 "eternia",
-                "eternia.settings",
                 " <página>",
                 " Receba ajuda para as configurações internas dos plugins 'Eternia'",
+                "eternia.settings",
                 "eternialib"
         ));
         addCommandLocale(Commands.ETERNIA_RELOAD, new CommandLocale(
                 "reload",
-                "eternia.settings.reload",
                 " <configuração>",
                 " Reinicie algum módulo de algum plugin",
-                ""
+                "eternia.settings.reload",
+                null
+        ));
+        addCommandLocale(Commands.ETERNIA_LOGS, new CommandLocale(
+                "elogs",
+                null,
+                " Verifique os logs do plugin EterniaLib",
+                "eternia.settings.logs",
+                null
+
         ));
 
         outConfig.options().setHeader(List.of(

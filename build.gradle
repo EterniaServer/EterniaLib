@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.0.3-ALPHA"
+version = "4.0.4-ALPHA"
 
 repositories {
     mavenCentral()

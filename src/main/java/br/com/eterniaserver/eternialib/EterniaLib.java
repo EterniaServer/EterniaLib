@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,9 +34,10 @@ import java.util.logging.Level;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static final String VERSION = "4.0.3";
+    private static final String VERSION = "4.0.4";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> configurationsList = new ArrayList<>();
+    private static final List<String> errorsCode = new LinkedList<>();
     private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
     private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
 
@@ -89,6 +91,10 @@ public class EterniaLib extends JavaPlugin {
 
         fetchByNameMap.put(playerName, uuid);
         fetchByUUIDMap.put(uuid, playerName);
+    }
+
+    public static void registerLog(String error) {
+        errorsCode.add(error);
     }
 
     public static CommandManager getCmdManager() {
@@ -148,6 +154,10 @@ public class EterniaLib extends JavaPlugin {
 
     private static void setAdvancedCommandManagerInterface(AdvancedCommandManager advancedCommandManagerImpl) {
         advancedCommandManager = advancedCommandManagerImpl;
+    }
+
+    public List<String> getErrors() {
+        return errorsCode;
     }
 
     private void loadConfigurations() {
