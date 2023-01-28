@@ -12,5 +12,7 @@ public enum Messages {
     CONFIG_INVALID,
     CONFIG_BLOCKED,
     CONFIG_ADVICE,
+    LOG_LIST_OF_LOGS,
+    LOG_EMPTY,
 
 }

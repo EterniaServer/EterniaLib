@@ -2,11 +2,10 @@ package br.com.eterniaserver.eternialib.core;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
+import br.com.eterniaserver.eternialib.core.commands.EterniaLogs;
 import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
 import br.com.eterniaserver.eternialib.core.handlers.PlayerHandler;
 import br.com.eterniaserver.eternialib.database.Entity;
-import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
-import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 
 import java.util.List;
 
@@ -27,7 +26,8 @@ public class Manager {
             Entity<PlayerUUID> entity = new Entity<>(PlayerUUID.class);
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
-        catch (EntityException | DatabaseException | NoSuchMethodException | IllegalAccessException exception) {
+        catch (Exception exception) {
+            EterniaLib.registerLog("EE-301-Manager.java");
             plugin.getLogger().severe("Error while registering entities: " + exception.getMessage());
         }
 
@@ -43,6 +43,7 @@ public class Manager {
 
     private void registerCommands() {
         EterniaLib.getCmdManager().registerCommand(new EterniaCmd(plugin));
+        EterniaLib.getCmdManager().registerCommand(new EterniaLogs(plugin));
     }
 
 }
