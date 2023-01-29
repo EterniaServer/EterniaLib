@@ -2,7 +2,7 @@ package br.com.eterniaserver.eternialib.database.dto;
 
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
-import br.com.eterniaserver.eternialib.utils.entities.Complete;
+import br.com.eterniaserver.eternialib.utils.Complete;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

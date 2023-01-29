@@ -35,16 +35,16 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
     public void checkHasBreakingRule(UUID uuid, AdvancedRules rule) {
         String commandEntry = getCommandEntry(uuid, AdvancedCategory.TIMED);
         AdvancedCommand registeredCommand = commandsMap.get(commandEntry);
-        if (registeredCommand == null || registeredCommand.hasRule(rule)) {
+        if (registeredCommand == null || !registeredCommand.hasRule(rule)) {
             return;
         }
 
         Component message = switch (rule) {
-            case NOT_MOVE -> plugin.getComponentMessage(Messages.MOVED, true);
             case NOT_ATTACK -> plugin.getComponentMessage(Messages.ATTACKED, true);
             case NOT_BREAK_BLOCK -> plugin.getComponentMessage(Messages.BLOCK_BRAKED, true);
             case NOT_JUMP -> plugin.getComponentMessage(Messages.JUMPED, true);
             case NOT_SNEAK -> plugin.getComponentMessage(Messages.SNEAKED, true);
+            default -> plugin.getComponentMessage(Messages.MOVED, true);
         };
 
         registeredCommand.abort(message);
@@ -129,7 +129,8 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
     @Override
     public void run() {
         Iterator<Map.Entry<String, AdvancedCommand>> i = commandsMap.entrySet().iterator();
-        for (Map.Entry<String, AdvancedCommand> entry = i.next(); i.hasNext(); entry = i.next()) {
+        while (i.hasNext()) {
+            Map.Entry<String, AdvancedCommand> entry = i.next();
             AdvancedCommand command = entry.getValue();
             boolean isTimed = command.getCategory() == AdvancedCategory.TIMED;
             boolean finishedTicks = command.increaseCommandTicks(tickDelay);
