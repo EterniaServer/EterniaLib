@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.utils.entities;
+package br.com.eterniaserver.eternialib.utils;
 
 import br.com.eterniaserver.eternialib.database.annotations.PrimaryKeyField;
 import br.com.eterniaserver.eternialib.database.annotations.Table;
