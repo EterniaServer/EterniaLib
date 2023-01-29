@@ -41,11 +41,6 @@ class TestSQLDatabase {
         dataSource = Mockito.mock(HikariDataSource.class);
         database = new SQLDatabase(dataSource, sgbdInterface);
 
-
-
-
-
-
         Connection connection = Mockito.mock(Connection.class);
         PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
 
