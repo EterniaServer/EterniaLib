@@ -35,7 +35,7 @@ import java.util.logging.Level;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static final String VERSION = "4.0.7";
+    private static final String VERSION = "4.0.8";
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> configurationsList = new ArrayList<>();
     private static final List<String> errorsCode = new LinkedList<>();
