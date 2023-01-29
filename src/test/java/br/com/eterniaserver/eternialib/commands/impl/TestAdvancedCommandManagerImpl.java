@@ -75,6 +75,48 @@ class TestAdvancedCommandManagerImpl {
     }
 
     @Test
+    void testCheckHasBreakingRules() {
+        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        Player player = Mockito.mock(Player.class);
+        AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
+
+        UUID uuid = UUID.randomUUID();
+        AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
+
+        Mockito.when(advancedCommand.getCategory()).thenReturn(AdvancedCategory.TIMED);
+        Mockito.when(advancedCommand.sender()).thenReturn(player);
+        Mockito.when(player.getUniqueId()).thenReturn(uuid);
+        Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_ATTACK)).thenReturn(true);
+        Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_BREAK_BLOCK)).thenReturn(true);
+        Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_JUMP)).thenReturn(true);
+        Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_SNEAK)).thenReturn(true);
+        Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_MOVE)).thenReturn(true);
+
+        advancedCommandManager.addTimedCommand(advancedCommand);
+        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_ATTACK);
+        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
+        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
+        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_SNEAK);
+        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_MOVE);
+
+        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
+                Messages.ATTACKED, true
+        );
+        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
+                Messages.BLOCK_BRAKED, true
+        );
+        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
+                Messages.JUMPED, true
+        );
+        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
+                Messages.SNEAKED, true
+        );
+        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
+                Messages.MOVED, true
+        );
+    }
+
+    @Test
     void testGetAndRemoveCommandWithCommand() {
         EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
         Player player = Mockito.mock(Player.class);
