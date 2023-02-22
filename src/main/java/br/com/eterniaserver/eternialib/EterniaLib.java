@@ -17,11 +17,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.TestOnly;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,19 +49,6 @@ public class EterniaLib extends JavaPlugin {
     private final String[] messages = new String[Messages.values().length];
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
-
-    public EterniaLib() {
-        super();
-    }
-
-    @TestOnly
-    @SuppressWarnings("removal")
-    protected EterniaLib(org.bukkit.plugin.java.JavaPluginLoader loader,
-                         PluginDescriptionFile description,
-                         File dataFolder,
-                         File file) {
-        super(loader, description, dataFolder, file);
-    }
 
     @Override
     public void onEnable() {

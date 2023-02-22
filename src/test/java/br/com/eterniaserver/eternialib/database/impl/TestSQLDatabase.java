@@ -1,14 +1,11 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.utils.Company;
 import br.com.eterniaserver.eternialib.utils.Person;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,9 +30,6 @@ class TestSQLDatabase {
 
     @BeforeAll
     public static void loadAndTestRegisterEntity() throws EntityException, DatabaseException, SQLException, NoSuchMethodException, IllegalAccessException {
-        MockBukkit.mock();
-        MockBukkit.load(EterniaLib.class);
-
         personEntity = new Entity<>(Person.class);
         sgbdInterface = Mockito.mock(SGBDInterface.class);
         dataSource = Mockito.mock(HikariDataSource.class);
@@ -49,11 +43,6 @@ class TestSQLDatabase {
         Mockito.when(preparedStatement.executeUpdate()).thenReturn(1);
 
         database.register(Person.class, personEntity);
-    }
-
-    @AfterAll
-    public static void unload() {
-        MockBukkit.unmock();
     }
 
     @Test
