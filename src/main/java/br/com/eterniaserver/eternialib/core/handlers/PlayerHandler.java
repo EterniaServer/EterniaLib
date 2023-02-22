@@ -3,8 +3,9 @@ package br.com.eterniaserver.eternialib.core.handlers;
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
 import br.com.eterniaserver.eternialib.core.runnables.SynchronizePlayerUUID;
-import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,6 +15,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 
 import java.util.UUID;
 
