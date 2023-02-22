@@ -18,18 +18,16 @@ public class SynchronizePlayerUUID implements Runnable {
     @Override
     public void run() {
         PlayerUUID playerUUID = EterniaLib.getDatabase().getEntity(PlayerUUID.class, uuid);
-        boolean shouldInsert = playerUUID == null;
 
-        playerUUID = shouldInsert ? new PlayerUUID() : playerUUID;
-        playerUUID.setUuid(uuid);
-        playerUUID.setPlayerName(playerName);
-
-        if (shouldInsert) {
+        if (playerUUID == null) {
+            playerUUID = new PlayerUUID(uuid, playerName);
             EterniaLib.getDatabase().insert(PlayerUUID.class, playerUUID);
         }
         else {
+            playerUUID.setUuid(uuid);
+            playerUUID.setPlayerName(playerName);
             EterniaLib.getDatabase().update(PlayerUUID.class, playerUUID);
         }
     }
 
-}
+} 

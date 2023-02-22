@@ -51,7 +51,7 @@ public interface ReloadableConfiguration {
         outFile.set(PathType.COMMAND_ALIASES.getPath(commandsEnum), aliases);
     }
 
-    default <E extends Enum<E>> void addMessage(Enum<E> messagesEnum, String text, String notes) {
+    default <E extends Enum<E>> void addMessage(Enum<E> messagesEnum, String text, String... notes) {
         FileConfiguration inFile = inFileConfiguration();
         FileConfiguration outFile = outFileConfiguration();
         String[] messages = messages();
@@ -59,6 +59,11 @@ public interface ReloadableConfiguration {
         messages[messagesEnum.ordinal()] = inFile.getString(PathType.MESSAGE.getPath(messagesEnum), text);
 
         outFile.set(PathType.MESSAGE.getPath(messagesEnum), messages[messagesEnum.ordinal()]);
+
+        for (int i = 0; i < notes.length; i++) {
+            notes[i] = "%d: %s".formatted(i, notes[i]);
+        }
+
         outFile.set(PathType.MESSAGE_NOTE.getPath(messagesEnum), notes);
     }
 

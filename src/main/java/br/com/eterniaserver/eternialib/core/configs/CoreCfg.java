@@ -19,6 +19,10 @@ import java.util.List;
 
 public class CoreCfg implements ReloadableConfiguration {
 
+    private static final String EMPTY_NOTE = "";
+    private static final String ERROR_LIST_NOTE = "Lista de erros";
+    private static final String CONFIG_NAME_NOTE = "Nome da configuração";
+
     private static final String PLUGIN_PATH = "plugins" + File.separator + "EterniaLib";
     private static final String FOLDER_PATH = PLUGIN_PATH + File.separator + "config";
     private static final String FILE_PATH = FOLDER_PATH + File.separator + "core.yml";
@@ -99,62 +103,62 @@ public class CoreCfg implements ReloadableConfiguration {
         addMessage(
                 Messages.MOVED,
                 "<color:#aaaaaa>Você se moveu, por isso seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.BLOCK_BRAKED,
                 "<color:#aaaaaa>Você quebrou um bloco, por isso seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.JUMPED,
                 "<color:#aaaaaa>Você pulou, por isso seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.SNEAKED,
                 "<color:#aaaaaa>Você se agachou, por isso seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.ATTACKED,
                 "<color:#aaaaaa>Você atacou, por isso seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.COMMAND_CANCELLED,
                 "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.CONFIG_RELOADED,
                 "<color:#aaaaaa>Configuração {0} recarregada<color:#555555>.",
-                "0: Nome da configuração"
+                CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_INVALID,
                 "<color:#aaaaaa>Não foi encontrado nenhuma configuração com o nome <color:#00aaaa>{0}<color:#555555>.",
-                "0: Nome da configuração"
+                CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_BLOCKED,
                 "<color:#aaaaaa>A configuração <color:#00aaaa>{0}<color:#aaaaaa> não pode ser recarregada<color:#555555>.",
-                "0: Nome da configuração"
+                CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
                 "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.LOG_EMPTY,
                 "<color:#aaaaaa>Nenhum código de log encontrada no plugin EterniaLib<color:#555555>.",
-                ""
+                EMPTY_NOTE
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
                 "<color:#aaaaaa>Os seguintes códigos de log foram encontrados: <color:#00aaaa>{0}<color:#555555>.",
-                "0: Lista de erros"
+                ERROR_LIST_NOTE
         );
 
         addCommandLocale(Commands.ETERNIA, new CommandLocale(
