@@ -13,5 +13,3 @@
 ## Dependencies
 ### Hard
 - [PaperMC](https://github.com/PaperMC/Paper)
-### Soft
-- [ProtocolSupport](https://github.com/ProtocolSupport/ProtocolSupport)

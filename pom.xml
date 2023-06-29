@@ -6,20 +6,17 @@
 
     <groupId>br.com.eterniaserver</groupId>
     <artifactId>EterniaLib</artifactId>
-    <version>3.0.0-STABLE</version>
+    <version>3.0.1-STABLE</version>
 
     <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <pluginRepositories>
         <pluginRepository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
             <id>maven-snapshots</id>
             <url>https://repository.apache.org/content/repositories/snapshots/</url>
         </pluginRepository>
@@ -32,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <excludes>
                         <exclude>**/package-info.java</exclude>
@@ -42,7 +39,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0-SNAPSHOT</version>
+                <version>3.5.0</version>
                 <configuration>
                     <relocations>
                         <relocation>
@@ -116,7 +113,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.1.2</version>
                 <configuration>
                     <junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
                     <trimStackTrace>false</trimStackTrace>
@@ -125,7 +122,7 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.9.0.2155</version>
+                <version>3.9.1.2184</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -182,76 +179,44 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.ProtocolSupport</groupId>
-            <artifactId>ProtocolSupport</artifactId>
-            <version>-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>2.2.1</version>
+            <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.0</version>
+            <version>5.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.5.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>6.3</version>
-            <scope>test</scope>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.9.1.2184</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.0-M1</version>
+            <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.11.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.16</artifactId>
-            <version>1.5.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.34.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.4.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>2.7.3</version>
+            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -9,6 +9,5 @@ public enum Booleans {
 
     MYSQL,
     LOBBY_SYSTEM,
-    PROTOCOL_SUPPORT,
 
 }

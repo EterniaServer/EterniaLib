@@ -24,13 +24,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import org.bukkit.plugin.java.JavaPluginLoader;
-
-import protocolsupport.api.ProtocolSupportAPI;
-import protocolsupport.api.ProtocolVersion;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,16 +57,7 @@ public class EterniaLib extends JavaPlugin {
 
     private final CustomizableMessage[] messages = new CustomizableMessage[Messages.values().length];
     private final List<ItemStack> itemStacks = new ArrayList<>();
-    private final List<String> protocolVersions = new ArrayList<>();
     private final String[] strings = new String[Strings.values().length];
-
-    public EterniaLib() {
-        super();
-    }
-
-    protected EterniaLib(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-    }
 
     @Override
     public void onEnable() {
@@ -94,14 +80,10 @@ public class EterniaLib extends JavaPlugin {
         if (getBool(Booleans.LOBBY_SYSTEM)) {
             this.getServer().getPluginManager().registerEvents(new LobbyHandler(this, itemStacks), this);
         }
-
-        if (getBool(Booleans.PROTOCOL_SUPPORT)) {
-            hookIntoProtocolSupport();
-        }
     }
 
     private void loadAllConfigs() throws IOException {
-        final ConfigsCfg configsCfg = new ConfigsCfg(strings, integers, booleans, protocolVersions, this::loadDatabase);
+        final ConfigsCfg configsCfg = new ConfigsCfg(strings, integers, booleans, this::loadDatabase);
         final MessagesCfg messagesCfg = new MessagesCfg(messages);
         final LobbyCfg lobbyCfg = new LobbyCfg(strings, booleans, integers, itemStacks);
 
@@ -189,14 +171,6 @@ public class EterniaLib extends JavaPlugin {
         } catch (IOException | ClassNotFoundException e) {
             report(getMessage(Messages.ERROR));
             this.getServer().getPluginManager().disablePlugin(this);
-        }
-    }
-
-    private void hookIntoProtocolSupport() {
-        for (final ProtocolVersion version : ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_4_7, ProtocolVersion.MINECRAFT_1_16_4)) {
-            if (!protocolVersions.contains(version.name())) {
-                ProtocolSupportAPI.disableProtocolVersion(version);
-            }
         }
     }
 
