@@ -22,6 +22,14 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <distributionManagement>
+        <repository>
+            <id>EterniaLib</id>
+            <name>br.com.eterniaserver</name>
+            <url>https://maven.pkg.github.com/eterniaserver/eternialib</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
