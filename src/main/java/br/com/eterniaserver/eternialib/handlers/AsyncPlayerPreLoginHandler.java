@@ -14,11 +14,16 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.util.UUID;
 
-public record AsyncPlayerPreLoginHandler(EterniaLib plugin) implements Listener {
+public class AsyncPlayerPreLoginHandler implements Listener {
+
+    private final EterniaLib plugin;
+
+    public AsyncPlayerPreLoginHandler(EterniaLib plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
-
         if (UUIDFetcher.getUUIDOf(event.getName()) != null) {
             return;
         }
@@ -31,7 +36,6 @@ public record AsyncPlayerPreLoginHandler(EterniaLib plugin) implements Listener 
         insert.columns.set(Constants.UUID_STR, Constants.PLAYER_NAME_STR);
         insert.values.set(uuid.toString(), playerName);
         SQL.execute(insert);
-
     }
 
 }
