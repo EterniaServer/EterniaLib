@@ -12,21 +12,21 @@ public interface SGBDInterface {
 
     String selectAll(String tableName);
 
-    <T> String selectByPrimary(String tableName, EntityPrimaryKeyDTO<T> primaryKeyDTO);
+    String selectByPrimary(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
-    <T> String update(String tableName, List<EntityDataDTO<T>> entityDataDTOS, EntityPrimaryKeyDTO<T> primaryKeyDTO);
+    String update(String tableName, List<? extends EntityDataDTO<?>> entityDataDTOS, EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
-    <T> String insert(String tableName, List<EntityDataDTO<T>> entityDataDTOS, EntityPrimaryKeyDTO<T> primaryKeyDTO);
+    String insert(String tableName, List<? extends EntityDataDTO<?>> entityDataDTOS, EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
-    <T> String delete(String tableName, EntityPrimaryKeyDTO<T> primaryKeyDTO);
+    String delete(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
-    <T> String insertWithoutKey(String tableName, List<EntityDataDTO<T>> entityDataDTOS);
+    String insertWithoutKey(String tableName, List<? extends EntityDataDTO<?>> entityDataDTOS);
 
     String getLastInsertId(String tableName);
 
-    <T> String buildPrimaryColumn(EntityPrimaryKeyDTO<T> primaryKeyDTO);
+    String buildPrimaryColumn(EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
-    <T> String buildDataColumn(EntityDataDTO<T> dataDTO);
+    String buildDataColumn(EntityDataDTO<?> dataDTO);
 
     String buildReferenceColumn(EntityReferenceDTO referenceDTO);
 

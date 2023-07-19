@@ -46,8 +46,3 @@ dependencies {
 **Annotation Command Framework (ACF)**
 - **https://github.com/aikar/commands**
 - Thanks for creating such a complete command framework.
-
-**MockBukkit**
-- https://github.com/MockBukkit/MockBukkit/
-- Thanks for providing a great way to create lots of unit tests to ensure great stability in plugins.
-

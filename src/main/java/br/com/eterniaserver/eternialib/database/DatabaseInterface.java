@@ -18,11 +18,13 @@ public interface DatabaseInterface {
 
     <T> T get(Class<T> objectClass, Object primaryKey);
 
-    <T> void insert(Class<T> objectClass, Object instance);
+    <T> boolean save(Class<T> objectClass, T instance);
 
-    <T> void delete(Class<T> objectClass, Object instance);
+    <T> void insert(Class<T> objectClass, T instance);
 
-    <T> void update(Class<T> objectClass, Object instance);
+    <T> void delete(Class<T> objectClass, Object primaryKey);
+
+    <T> void update(Class<T> objectClass, T instance);
 
     <T> void register(Class<T> entityClass, Entity<T> entity) throws DatabaseException;
 

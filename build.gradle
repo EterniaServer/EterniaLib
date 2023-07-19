@@ -60,14 +60,11 @@ java {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:5.0.1") {
-        exclude group: "org.slf4j", module: "slf4j-api"
-    }
+    implementation("com.zaxxer:HikariCP:5.0.1") { exclude group: "org.slf4j", module: "slf4j-api" }
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    testImplementation("org.xerial:sqlite-jdbc:3.40.0.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testImplementation('org.mockito:mockito-inline:5.0.0')
-    testImplementation('com.github.seeseemelk:MockBukkit-v1.19:2.145.0')
+    testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
 

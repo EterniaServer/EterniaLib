@@ -60,6 +60,7 @@ public class SQLDatabase implements DatabaseInterface {
 
             String databaseType = plugin.getString(Strings.DATABASE_TYPE);
             DatabaseType type = DatabaseType.valueOf(databaseType);
+
             this.sgbdInterface = switch (type) {
                 case MYSQL -> new MySQLSGBD();
                 case MARIADB -> new MariaDBSGBD();
@@ -139,7 +140,7 @@ public class SQLDatabase implements DatabaseInterface {
     @Override
     public <T> List<T> listAll(Class<T> objectClass) {
         List<T> entities = new ArrayList<>();
-        Entity<T> entity = getEntity(objectClass);
+        Entity<?> entity = entityMap.get(objectClass);
 
         String query = sgbdInterface.selectAll(entity.tableName());
         try (
@@ -147,7 +148,7 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet resultSet = statement.executeQuery()
         ) {
-            EntityPrimaryKeyDTO<T> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+            EntityPrimaryKeyDTO<?> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
             while (resultSet.next()) {
                 T instance = objectClass.getConstructor().newInstance();
@@ -168,16 +169,15 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> T get(Class<T> objectClass, Object primaryKey) {
-        Entity<T> entity = getEntity(objectClass);
-        Object object = entity.getEntity(primaryKey);
-        if (object != null) {
-            return objectClass.cast(object);
+        Entity<?> entity = entityMap.get(objectClass);
+        T instance = getEntity(objectClass, primaryKey);
+        if (instance != null) {
+            return instance;
         }
 
-        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO);
 
-        T instance = null;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -205,9 +205,31 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public <T> void insert(Class<T> objectClass, Object instance) {
-        Entity<T> entity = getEntity(objectClass);
-        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+    public <T> boolean save(Class<T> objectClass, T instance) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+
+        Object primaryValue = null;
+        try {
+            primaryValue = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+            if (primaryValue != null) {
+                update(objectClass, instance);
+            }
+            else {
+                insert(objectClass, instance);
+            }
+        }
+        catch (Throwable ignored) {
+            loggerEntityError(objectClass.getName());
+        }
+
+        return primaryValue == null;
+    }
+
+    @Override
+    public <T> void insert(Class<T> objectClass, T instance) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         Object primaryValue = null;
         try {
@@ -226,10 +248,10 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public <T> void update(Class<T> objectClass, Object instance) {
+    public <T> void update(Class<T> objectClass, T instance) {
         String objectName = objectClass.getName();
-        Entity<T> entity = getEntity(objectClass);
-        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         Object primaryValue = null;
         try {
@@ -252,7 +274,7 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         String tableName = entity.tableName();
-        List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
+        List<? extends EntityDataDTO<?>> entityDataDTOS = entity.getEntityDataDTOList();
         String updateQuery = sgbdInterface.update(tableName, entityDataDTOS, primaryKeyDTO);
         try (
                 Connection connection = getConnection();
@@ -277,8 +299,8 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> void delete(Class<T> objectClass, Object primaryKey) {
-        Entity<T> entity = getEntity(objectClass);
-        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
         String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO);
         try (Connection connection = getConnection();
@@ -324,11 +346,6 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         entityMap.put(entityClass, entity);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Entity<T> getEntity(Class<T> objectClass) {
-        return (Entity<T>) entityMap.get(objectClass);
     }
 
     private <T> void insertAndGetKey(Entity<T> entity, Object instance) {
@@ -400,8 +417,8 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private <T> void populateObject(Entity<T> entity, T instance, ResultSet resultSet) throws Throwable {
-        EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+    private <T> void populateObject(Entity<?> entity, T instance, ResultSet resultSet) throws Throwable {
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         MethodHandle primarySetter = primaryKeyDTO.getSetterMethod();
         FieldType primaryType = primaryKeyDTO.getFieldType();
         String primaryName = primaryKeyDTO.getColumnName();
@@ -440,12 +457,12 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private <T> void fillStatement(PreparedStatement preparedStatement,
-                               List<EntityDataDTO<T>> entityDataDTOS,
+    private void fillStatement(PreparedStatement preparedStatement,
+                               List<? extends EntityDataDTO<?>> entityDataDTOS,
                                Object instance,
                                int startIndex) throws Throwable {
         for (int i = startIndex; i < entityDataDTOS.size() + startIndex; i++) {
-            EntityDataDTO<T> entityDataDTO = entityDataDTOS.get(i - startIndex);
+            EntityDataDTO<?> entityDataDTO = entityDataDTOS.get(i - startIndex);
             FieldType type = entityDataDTO.getFieldType();
             MethodHandle getter = entityDataDTO.getGetterMethod();
 
@@ -471,17 +488,17 @@ public class SQLDatabase implements DatabaseInterface {
         }
     }
 
-    private <T> void buildCreateTable(StringBuilder builder, Entity<T> entity) {
+    private void buildCreateTable(StringBuilder builder, Entity<?> entity) {
         builder.append("CREATE TABLE IF NOT EXISTS ").append(entity.tableName()).append(" (");
     }
 
-    private <T> void buildPrimaryKeyColumn(StringBuilder builder, EntityPrimaryKeyDTO<T> primaryKeyDTO) {
+    private void buildPrimaryKeyColumn(StringBuilder builder, EntityPrimaryKeyDTO<?> primaryKeyDTO) {
         builder.append(sgbdInterface.buildPrimaryColumn(primaryKeyDTO));
     }
 
-    private <T> void buildDataColumns(StringBuilder builder, List<EntityDataDTO<T>> dataDTOS) {
+    private void buildDataColumns(StringBuilder builder, List<? extends EntityDataDTO<?>> dataDTOS) {
         for (int i = 0; i < dataDTOS.size(); i++) {
-            EntityDataDTO<T> dataDTO = dataDTOS.get(i);
+            EntityDataDTO<?> dataDTO = dataDTOS.get(i);
             builder.append(sgbdInterface.buildDataColumn(dataDTO));
             if (i + 1 != dataDTOS.size()) {
                 builder.append(", ");
