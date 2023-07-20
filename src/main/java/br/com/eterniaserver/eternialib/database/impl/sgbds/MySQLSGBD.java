@@ -35,8 +35,11 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String jdbcStr() {
-        return "mysql://";
+    public String jdbcStr(String... args) {
+        if (args.length != 3) {
+            return null;
+        }
+        return "jdbc:mysql://%s:%s/%s".formatted(args[0], args[1], args[2]);
     }
 
     @Override

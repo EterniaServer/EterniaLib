@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SGBDInterface {
 
-    String jdbcStr();
+    String jdbcStr(String... args);
 
     String selectAll(String tableName);
 

@@ -33,10 +33,16 @@ class TestMySQLSGBD {
 
     @Test
     void testJdbcStr() {
-        String expected = "mysql://";
         String result = mySQLSGBD.jdbcStr();
 
-        Assertions.assertEquals(expected, result);
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void testValidJdbcStr() {
+        String result = mySQLSGBD.jdbcStr("localhost", "3306", "eternia");
+
+        Assertions.assertEquals("jdbc:mysql://localhost:3306/eternia", result);
     }
 
     @Test

@@ -33,10 +33,16 @@ class TestSQLiteSGBD  {
 
     @Test
     void testJdbcStr() {
-        String expected = "sqlite:";
         String result = sqLiteSGBD.jdbcStr();
 
-        Assertions.assertEquals(expected, result);
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void testValidJdbcStr() {
+        String result = sqLiteSGBD.jdbcStr("eternia");
+
+        Assertions.assertEquals("jdbc:sqlite:eternia", result);
     }
 
     @Test

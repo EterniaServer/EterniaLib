@@ -33,10 +33,16 @@ class TestMariaDBSGBD {
 
     @Test
     void testJdbcStr() {
-        String expected = "mariadb://";
         String result = mariaDBSGBD.jdbcStr();
 
-        Assertions.assertEquals(expected, result);
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void testValidJdbcStr() {
+        String result = mariaDBSGBD.jdbcStr("localhost", "3306", "eternia");
+
+        Assertions.assertEquals("jdbc:mariadb://localhost:3306/eternia", result);
     }
 
     @Test

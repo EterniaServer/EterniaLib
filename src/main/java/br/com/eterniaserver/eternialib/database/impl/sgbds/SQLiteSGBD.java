@@ -7,8 +7,11 @@ public class SQLiteSGBD extends MySQLSGBD {
     }
 
     @Override
-    public String jdbcStr() {
-        return "sqlite:";
+    public String jdbcStr(String... args) {
+        if (args.length < 1) {
+            return null;
+        }
+        return "jdbc:sqlite:%s".formatted(args[0]);
     }
 
     @Override
