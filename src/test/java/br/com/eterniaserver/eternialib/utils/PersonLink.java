@@ -22,7 +22,7 @@ public class PersonLink {
                     notNull = true,
                     referenceTableName = "eternia_person",
                     referenceColumnName = "id")
-    @DataField(columnName = "firstPersonId", type = FieldType.INTEGER)
+    @DataField(columnName = "firstPersonId", notNull = true, type = FieldType.INTEGER)
     private Integer firstPersonId;
 
     @ReferenceField(columnName = "secondPersonId",
@@ -30,7 +30,7 @@ public class PersonLink {
                     notNull = true,
                     referenceTableName = "eternia_person",
                     referenceColumnName = "id")
-    @DataField(columnName = "secondPersonId", type = FieldType.INTEGER)
+    @DataField(columnName = "secondPersonId", notNull = true, type = FieldType.INTEGER)
     private Integer secondPersonId;
 
 }

@@ -14,6 +14,7 @@ public class EntityDataDTO<T> extends BaseEntityDTO {
     private final MethodHandle getterMethod;
     private final MethodHandle setterMethod;
 
+    private final String fieldName;
     private final String columnName;
     private final FieldType fieldType;
     private final boolean notNull;
@@ -28,6 +29,7 @@ public class EntityDataDTO<T> extends BaseEntityDTO {
         this.columnName = columnName;
         this.fieldType = fieldType;
         this.notNull = notNull;
+        this.fieldName = fieldName;
 
         Class<?> fieldClassType = getClassFromFieldType(fieldType);
 

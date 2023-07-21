@@ -79,6 +79,17 @@ class TestMySQLSGBD {
     }
 
     @Test
+    void testSelectByQuery() {
+        String tableName = personEntity.tableName();
+        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);
+
+        String expected = "SELECT * FROM eternia_person WHERE firstName = ?;";
+        String result = mySQLSGBD.selectBy(tableName, entityDataDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
     void testInsertQuery() {
         String tableName = personEntity.tableName();
 
@@ -87,6 +98,14 @@ class TestMySQLSGBD {
 
         String expected = "INSERT INTO eternia_person (id, firstName, birthdate) VALUES (?, ?, ?);";
         String result = mySQLSGBD.insert(tableName, entityDataDTOS, primaryKeyDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testBuildDataColumnWithReference() {
+        List<String> expected = List.of("firstPersonId BIGINT NOT NULL", "secondPersonId BIGINT NOT NULL");
+        List<String> result = personLinkEntity.getEntityDataDTOList().stream().map(mySQLSGBD::buildDataColumn).toList();
 
         Assertions.assertEquals(expected, result);
     }

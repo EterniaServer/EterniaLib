@@ -43,6 +43,11 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
+    public String selectBy(String tableName, EntityDataDTO<?> entityDataDTO) {
+        return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, entityDataDTO.getColumnName());
+    }
+
+    @Override
     public String selectAll(String tableName) {
         return "SELECT * FROM %s;".formatted(tableName);
     }

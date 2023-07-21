@@ -18,6 +18,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +51,8 @@ public class EterniaLib extends JavaPlugin {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
+    private BukkitTask commandTimer;
+
     @Override
     public void onEnable() {
         this.loadCommandManager();
@@ -60,6 +63,9 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (!getServer().getScheduler().isCurrentlyRunning(this.commandTimer.getTaskId())) {
+            getServer().getScheduler().cancelTask(this.commandTimer.getTaskId());
+        }
         EterniaLib.getDatabase().closeAllConnections();
     }
 
@@ -168,8 +174,12 @@ public class EterniaLib extends JavaPlugin {
     }
 
     private void loadAdvancedCommandManager() {
-        int ticksPerSecond = this.getInteger(Integers.COMMANDS_TICKS_PER_SECOND);
-        AdvancedCommandManager impl = new AdvancedCommandManagerImpl(this, ticksPerSecond);
+        int tickDelay = this.getInteger(Integers.COMMANDS_TICK_DELAY);
+
+        AdvancedCommandManager impl = new AdvancedCommandManagerImpl(this, tickDelay);
+        // One-minute delay before task starts
+        this.commandTimer = getServer().getScheduler().runTaskTimer(this, impl, 20L * 60, tickDelay);
+
         setAdvancedCommandManagerInterface(impl);
     }
 

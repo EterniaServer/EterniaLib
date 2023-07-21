@@ -66,6 +66,13 @@ public class Entity<T> {
         return table.tableName();
     }
 
+    public EntityDataDTO<T> getDataDTO(String fieldName) {
+        return entityDataDTOList.stream()
+                                .filter(dataDTO -> dataDTO.getFieldName().equals(fieldName))
+                                .findFirst()
+                                .orElse(null);
+    }
+
     public EntityPrimaryKeyDTO<T> getEntityPrimaryKeyDTO() {
         return entityPrimaryKeyDTO;
     }

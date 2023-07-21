@@ -121,6 +121,20 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
+    public <T> T findBy(Class<T> objectClass, String fieldName, Object value) {
+        return findAllBy(objectClass, fieldName, value).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
+
+        String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTO);
+        return getByQuery(entity, objectClass, query);
+    }
+
+    @Override
     public <T> T getEntity(Class<T> objectClass, Object primaryKey) {
         Entity<?> entity = entityMap.get(objectClass);
         if (entity == null) {
@@ -137,32 +151,10 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> List<T> listAll(Class<T> objectClass) {
-        List<T> entities = new ArrayList<>();
         Entity<?> entity = entityMap.get(objectClass);
 
         String query = sgbdInterface.selectAll(entity.tableName());
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery()
-        ) {
-            EntityPrimaryKeyDTO<?> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
-
-            while (resultSet.next()) {
-                T instance = objectClass.getConstructor().newInstance();
-                populateObject(entity, instance, resultSet);
-                entity.addEntity(getValueFromPrimary(entityPrimaryKeyDTO.getGetterMethod(), instance), instance);
-                entities.add(instance);
-            }
-        }
-        catch (SQLException ignored) {
-            loggerSQLError(query);
-        }
-        catch (Throwable ignored) {
-            loggerEntityError(objectClass.getName());
-        }
-
-        return entities;
+        return getByQuery(entity, objectClass, query);
     }
 
     @Override
@@ -344,6 +336,33 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         entityMap.put(entityClass, entity);
+    }
+
+    private <T> List<T> getByQuery(Entity<?> entity, Class<T> objectClass, String query) {
+        List<T> entities = new ArrayList<>();
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            EntityPrimaryKeyDTO<?> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+
+            while (resultSet.next()) {
+                T instance = objectClass.getConstructor().newInstance();
+                populateObject(entity, instance, resultSet);
+                entity.addEntity(getValueFromPrimary(entityPrimaryKeyDTO.getGetterMethod(), instance), instance);
+                entities.add(instance);
+            }
+
+        }
+        catch (SQLException ignored) {
+            loggerSQLError(query);
+        }
+        catch (Throwable ignored) {
+            loggerEntityError(objectClass.getName());
+        }
+
+        return entities;
     }
 
     private <T> void insertAndGetKey(Entity<T> entity, Object instance) {
