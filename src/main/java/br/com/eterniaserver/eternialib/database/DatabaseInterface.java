@@ -14,6 +14,8 @@ public interface DatabaseInterface {
 
     <T> T findBy(Class<T> objectClass, String fieldName, Object value);
 
+    <T> List<T> findLike(Class<T> objectClass, String fieldName, Object value);
+
     <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value);
 
     <T> T getEntity(Class<T> objectClass, Object primaryKey);

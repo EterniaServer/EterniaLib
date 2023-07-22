@@ -6,17 +6,30 @@ A base library to agile plugin development. **([Wiki](https://github.com/Eternia
 
 ## How to use (Plugin Developers)
 
-**Gradle:**
-```groovy
+**Gradle (Kotlin):**
+```kotlin
 repositories {
     maven {
         name = "eternialib"
-        url = "https://maven.pkg.github.com/eterniaserver/eternialib"
+        url = uri("https://maven.pkg.github.com/eterniaserver/eternialib")
     }
 }
 
 dependencies {
-    compileOnly("br.com.eterniaserver:eternialib:4.0-ALPHA")
+    compileOnly("br.com.eterniaserver:eternialib:4.0.0")
+}
+```
+**Gradle (Groovy):**
+```groovy
+repositories {
+    maven {
+        name "eternialib"
+        url "https://maven.pkg.github.com/eterniaserver/eternialib"
+    }
+}
+
+dependencies {
+    compileOnly "br.com.eterniaserver:eternialib:4.0.0"
 }
 ```
 **Maven:**
@@ -33,7 +46,7 @@ dependencies {
         <dependency>
             <groupId>br.com.eterniaserver</groupId>
             <artifactId>eternialib</artifactId>
-            <version>4.0-ALPHA</version>
+            <version>4.0.0</version>
         </dependency>
     </dependencies>
 </project>

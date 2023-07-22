@@ -12,6 +12,8 @@ public interface SGBDInterface {
 
     String selectBy(String tableName, EntityDataDTO<?> entityDataDTO);
 
+    String selectLike(String tableName, EntityDataDTO<?> entityDataDTO);
+
     String selectAll(String tableName);
 
     String selectByPrimary(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO);

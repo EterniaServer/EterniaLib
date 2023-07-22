@@ -46,6 +46,17 @@ class TestMariaDBSGBD {
     }
 
     @Test
+    void testSelectLike() {
+        String tableName = personEntity.tableName();
+        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);
+
+        String expected = "SELECT * FROM eternia_person WHERE firstName LIKE ?;";
+        String result = mariaDBSGBD.selectLike(tableName, entityDataDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
     void testSelectByQuery() {
         String tableName = personEntity.tableName();
         EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);

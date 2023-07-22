@@ -126,6 +126,15 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
+    public <T> List<T> findLike(Class<T> objectClass, String fieldName, Object value) {
+        Entity<?> entity = entityMap.get(objectClass);
+        EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
+
+        String query = sgbdInterface.selectLike(entity.tableName(), fieldDataDTO);
+        return getByQuery(entity, objectClass, query);
+    }
+
+    @Override
     public <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value) {
         Entity<?> entity = entityMap.get(objectClass);
         EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);

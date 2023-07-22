@@ -78,6 +78,55 @@ class TestSQLDatabase {
     }
 
     @Test
+    void testGetBy() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        String queryBy = "SELECT * FROM eternia_person WHERE firstName = ?";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+        Mockito.when(sgbdInterface.selectBy(personEntity.tableName(), personEntity.getDataDTO("firstName"))).thenReturn(queryBy);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(queryBy)).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        Mockito.when(resultSet.next()).thenReturn(true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(1);
+        Mockito.when(resultSet.getString("firstName")).thenReturn("Junior John");
+        Mockito.when(resultSet.getDate("birthdate")).thenReturn(Date.valueOf("2000-01-01"));
+
+        Person person = database.findBy(Person.class, "firstName", "Junior John");
+
+        Assertions.assertEquals(1, person.getId());
+        Assertions.assertEquals("Junior John", person.getFirstName());
+        Assertions.assertEquals(Date.valueOf("2000-01-01"), person.getBirthdate());
+    }
+
+    @Test
+    void testGetLike() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        String queryLike = "SELECT * FROM eternia_person WHERE firstName LIKE ?";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+        Mockito.when(sgbdInterface.selectLike(personEntity.tableName(), personEntity.getDataDTO("firstName"))).thenReturn(queryLike);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(queryLike)).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        Mockito.when(resultSet.next()).thenReturn(true, true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(1, 2);
+        Mockito.when(resultSet.getString("firstName")).thenReturn("Junior John", "Junior Doe");
+        Mockito.when(resultSet.getDate("birthdate")).thenReturn(Date.valueOf("2000-01-01"), Date.valueOf("2000-01-02"));
+
+        Mockito.when(preparedStatement.executeUpdate()).thenReturn(1);
+
+        int expected = 2;
+        List<Person> personList = database.findLike(Person.class, "firstName", "Junior");
+
+        Assertions.assertEquals(expected, personList.size());
+    }
+
+    @Test
     void testListAllPerson() throws SQLException {
         Connection connection = Mockito.mock(Connection.class);
         String queryAll = "SELECT * FROM eternia_person";
@@ -189,6 +238,69 @@ class TestSQLDatabase {
         database.insert(Person.class, person);
 
         Mockito.verify(preparedStatement, Mockito.times(1)).execute();
+    }
+
+    @Test
+    void testSaveWillInsert() throws SQLException {
+        Person person = new Person();
+        person.setFirstName("John");
+        person.setBirthdate(Date.valueOf("2000-01-01"));
+
+        Connection connection = Mockito.mock(Connection.class);
+        String insertWithoutKey = "INSERT INTO eternia_person (firstName, birthdate) VALUES (?, ?)";
+        String getLastId = "SELECT LAST_INSERT_ID()";
+        Integer personId = 1;
+        PreparedStatement insertStatement = Mockito.mock(PreparedStatement.class);
+        PreparedStatement getStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+        ResultSetMetaData resultSetMetaData = Mockito.mock(ResultSetMetaData.class);
+
+        Mockito.when(sgbdInterface.insertWithoutKey(
+                personEntity.tableName(),
+                personEntity.getEntityDataDTOList()
+        )).thenReturn(insertWithoutKey);
+        Mockito.when(sgbdInterface.getLastInsertId(personEntity.tableName())).thenReturn(getLastId);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(insertWithoutKey)).thenReturn(insertStatement);
+        Mockito.when(connection.prepareStatement(getLastId)).thenReturn(getStatement);
+        Mockito.when(getStatement.executeQuery()).thenReturn(resultSet);
+        Mockito.when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
+        Mockito.when(resultSetMetaData.getColumnName(1)).thenReturn("id");
+        Mockito.when(resultSet.next()).thenReturn(true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(personId);
+
+        boolean saved = database.save(Person.class, person);
+
+        Mockito.verify(insertStatement, Mockito.times(1)).execute();
+        Mockito.verify(getStatement, Mockito.times(1)).executeQuery();
+
+        Assertions.assertEquals(personId, person.getId());
+        Assertions.assertTrue(saved);
+    }
+
+    @Test
+    void testSaveWillUpdate() throws SQLException {
+        Person person = new Person();
+        person.setId(1);
+        person.setFirstName("John");
+        person.setBirthdate(Date.valueOf("2000-01-01"));
+
+        Connection connection = Mockito.mock(Connection.class);
+        String updateQuery = "UPDATE eternia_person SET firstName = ?, birthdate = ? WHERE id = ?";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+
+        Mockito.when(sgbdInterface.update(
+                personEntity.tableName(),
+                personEntity.getEntityDataDTOList(),
+                personEntity.getEntityPrimaryKeyDTO()
+        )).thenReturn(updateQuery);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(updateQuery)).thenReturn(preparedStatement);
+
+        boolean saved = database.save(Person.class, person);
+
+        Mockito.verify(preparedStatement, Mockito.times(1)).execute();
+        Assertions.assertFalse(saved);
     }
 
     @Test
