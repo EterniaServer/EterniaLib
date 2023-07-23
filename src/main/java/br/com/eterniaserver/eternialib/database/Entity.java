@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Entity<T> {
 
+    private String tableName;
     private final Class<T> entityClass;
     private final EntityPrimaryKeyDTO<T> entityPrimaryKeyDTO;
     private final List<EntityDataDTO<T>> entityDataDTOList;
@@ -43,6 +44,11 @@ public class Entity<T> {
         this.entityPrimaryKeyDTO = getPrimaryKey(primaryKeyField);
         this.entityDataDTOList = getDataColumns(dataFields);
         this.referenceFields = getFieldsByAnnotation(fields, ReferenceField.class);
+        this.tableName = entityClass.getAnnotation(Table.class).tableName();
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public Object getEntity(Object primaryKey) {
@@ -62,8 +68,7 @@ public class Entity<T> {
     }
 
     public String tableName() {
-        Table table = entityClass.getAnnotation(Table.class);
-        return table.tableName();
+        return tableName;
     }
 
     public EntityDataDTO<T> getDataDTO(String fieldName) {

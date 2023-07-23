@@ -17,7 +17,7 @@ public class SynchronizePlayerUUID implements Runnable {
 
     @Override
     public void run() {
-        PlayerUUID playerUUID = EterniaLib.getDatabase().getEntity(PlayerUUID.class, uuid);
+        PlayerUUID playerUUID = EterniaLib.getDatabase().get(PlayerUUID.class, uuid);
 
         if (playerUUID == null) {
             playerUUID = new PlayerUUID(uuid, playerName);

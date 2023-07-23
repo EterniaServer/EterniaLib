@@ -22,7 +22,7 @@ class TestSynchronizePlayerUUID {
         playerUUID.setPlayerName(playerName);
         playerUUID.setUuid(uuid);
 
-        Mockito.when(databaseInterface.getEntity(PlayerUUID.class, uuid)).thenReturn(playerUUID);
+        Mockito.when(databaseInterface.get(PlayerUUID.class, uuid)).thenReturn(playerUUID);
 
         SynchronizePlayerUUID synchronizePlayerUUID = new SynchronizePlayerUUID(uuid, playerName);
 
@@ -47,7 +47,7 @@ class TestSynchronizePlayerUUID {
         final UUID uuid = UUID.randomUUID();
         final String playerName = "yurinogueira";
 
-        Mockito.when(databaseInterface.getEntity(PlayerUUID.class, uuid)).thenReturn(null);
+        Mockito.when(databaseInterface.get(PlayerUUID.class, uuid)).thenReturn(null);
 
         SynchronizePlayerUUID synchronizePlayerUUID = new SynchronizePlayerUUID(uuid, playerName);
 

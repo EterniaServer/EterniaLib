@@ -18,8 +18,6 @@ public interface DatabaseInterface {
 
     <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value);
 
-    <T> T getEntity(Class<T> objectClass, Object primaryKey);
-
     <T> List<T> listAll(Class<T> objectClass);
 
     <T> T get(Class<T> objectClass, Object primaryKey);

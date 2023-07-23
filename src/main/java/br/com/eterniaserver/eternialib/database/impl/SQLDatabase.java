@@ -94,7 +94,6 @@ public class SQLDatabase implements DatabaseInterface {
             hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
             hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
 
-
             this.dataSource = new HikariDataSource(hikariConfig);
         }
     }
@@ -141,21 +140,6 @@ public class SQLDatabase implements DatabaseInterface {
 
         String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTO);
         return getByQuery(entity, objectClass, query);
-    }
-
-    @Override
-    public <T> T getEntity(Class<T> objectClass, Object primaryKey) {
-        Entity<?> entity = entityMap.get(objectClass);
-        if (entity == null) {
-            return null;
-        }
-
-        Object object = entity.getEntity(primaryKey);
-        if (object == null) {
-            return null;
-        }
-
-        return objectClass.cast(object);
     }
 
     @Override
@@ -344,7 +328,25 @@ public class SQLDatabase implements DatabaseInterface {
             throw new DatabaseException("Error when creating " + entity.tableName() + " table.");
         }
 
+        if (entity.tableName().startsWith("%") && entity.tableName().endsWith("%")) {
+            entity.setTableName(EterniaLib.getTableName(entity.tableName()));
+        }
+
         entityMap.put(entityClass, entity);
+    }
+
+    private <T> T getEntity(Class<T> objectClass, Object primaryKey) {
+        Entity<?> entity = entityMap.get(objectClass);
+        if (entity == null) {
+            return null;
+        }
+
+        Object object = entity.getEntity(primaryKey);
+        if (object == null) {
+            return null;
+        }
+
+        return objectClass.cast(object);
     }
 
     private <T> List<T> getByQuery(Entity<?> entity, Class<T> objectClass, String query) {

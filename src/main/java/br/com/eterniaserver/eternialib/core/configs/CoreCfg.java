@@ -92,7 +92,7 @@ public class CoreCfg implements ReloadableConfiguration {
         strings[Strings.DATABASE_DATABASE.ordinal()] = inConfig.getString("database.database", "");
         strings[Strings.DATABASE_USER.ordinal()] = inConfig.getString("database.user", "");
         strings[Strings.DATABASE_PASSWORD.ordinal()] = inConfig.getString("database.password", "");
-        strings[Strings.DATABASE_TABLE.ordinal()] = inConfig.getString("database.table-cache", "el_cache");
+        strings[Strings.PLAYER_UUID_TABLE_NAME.ordinal()] = inConfig.getString("database.player-uuid.tableName", "el_cache_uuid");
         integers[Integers.HIKARI_MIN_POOL_SIZE.ordinal()] = inConfig.getInt("database.hikari.pool.min-size", 10);
         integers[Integers.HIKARI_MAX_POOL_SIZE.ordinal()] = inConfig.getInt("database.hikari.pool.max-size", 10);
         integers[Integers.HIKARI_MAX_LIFE_TIME.ordinal()] = inConfig.getInt("database.hikari.max-life-time", 850000);
@@ -198,7 +198,7 @@ public class CoreCfg implements ReloadableConfiguration {
         outConfig.set("database.database", strings[Strings.DATABASE_DATABASE.ordinal()]);
         outConfig.set("database.user", strings[Strings.DATABASE_USER.ordinal()]);
         outConfig.set("database.password", strings[Strings.DATABASE_PASSWORD.ordinal()]);
-        outConfig.set("database.table-cache", strings[Strings.DATABASE_TABLE.ordinal()]);
+        outConfig.set("database.player-uuid.tableName", strings[Strings.PLAYER_UUID_TABLE_NAME.ordinal()]);
         outConfig.set("database.hikari.pool.min-size", integers[Integers.HIKARI_MIN_POOL_SIZE.ordinal()]);
         outConfig.set("database.hikari.pool.max-size", integers[Integers.HIKARI_MAX_POOL_SIZE.ordinal()]);
         outConfig.set("database.hikari.max-life-time", integers[Integers.HIKARI_MAX_LIFE_TIME.ordinal()]);

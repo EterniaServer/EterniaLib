@@ -17,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(tableName = "eternia_player_uuid")
+@Table(tableName = "%eternia_lib_player_uuid%")
 public class PlayerUUID {
 
     @PrimaryKeyField(columnName = "uuid", type = FieldType.UUID, autoIncrement = false)

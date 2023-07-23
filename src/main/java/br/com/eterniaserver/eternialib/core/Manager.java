@@ -4,6 +4,7 @@ import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
 import br.com.eterniaserver.eternialib.core.commands.EterniaLogs;
 import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
+import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.core.handlers.PlayerHandler;
 import br.com.eterniaserver.eternialib.database.Entity;
 
@@ -24,6 +25,7 @@ public class Manager {
     private void registerEntities() {
         try{
             Entity<PlayerUUID> entity = new Entity<>(PlayerUUID.class);
+            EterniaLib.addTableName("%eternia_lib_player_uuid%", plugin.getString(Strings.PLAYER_UUID_TABLE_NAME));
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
         catch (Exception exception) {

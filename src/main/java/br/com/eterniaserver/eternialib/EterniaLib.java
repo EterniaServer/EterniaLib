@@ -34,6 +34,7 @@ import java.util.logging.Level;
 public class EterniaLib extends JavaPlugin {
 
     private static final String VERSION = "4.0.8";
+    private static final Map<String, String> tableNames = new HashMap<>();
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> configurationsList = new ArrayList<>();
     private static final List<String> errorsCode = new LinkedList<>();
@@ -71,6 +72,14 @@ public class EterniaLib extends JavaPlugin {
 
     public static UUID getUUIDOf(String playerName) {
         return fetchByNameMap.get(playerName);
+    }
+
+    public static String getTableName(String label) {
+        return tableNames.get(label);
+    }
+
+    public static void addTableName(String label, String tableName) {
+        tableNames.put(label, tableName);
     }
 
     public static void registerNewUUID(String playerName, UUID uuid) {
@@ -203,10 +212,6 @@ public class EterniaLib extends JavaPlugin {
         }
 
         return message;
-    }
-
-    public Component parseColor(String string) {
-        return miniMessage.deserialize(string);
     }
 
 }
