@@ -71,6 +71,9 @@ tasks.shadowJar {
     relocate("com.zaxxer.hikari", "br.com.eterniaserver.hikari")
     relocate("co.aikar.commands", "br.com.eterniaserver.acf")
     relocate("co.aikar.locales", "br.com.eterniaserver.locales")
+    archiveBaseName.set(project.name)
+    archiveClassifier.set("")
+    archiveVersion.set("${project.version}")
 }
 
 tasks.test {
@@ -120,7 +123,7 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
-            from(components["java"])
+            project.shadow.component(this)
         }
     }
 }
