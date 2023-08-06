@@ -58,6 +58,11 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
+    public String selectByPrimaryInList(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO) {
+        return "SELECT * FROM %s WHERE %s IN (?);".formatted(tableName, primaryKeyDTO.getColumnName());
+    }
+
+    @Override
     public String selectByPrimary(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO) {
         return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, primaryKeyDTO.getColumnName());
     }

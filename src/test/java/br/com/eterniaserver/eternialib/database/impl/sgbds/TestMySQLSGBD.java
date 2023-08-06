@@ -56,6 +56,16 @@ class TestMySQLSGBD {
     }
 
     @Test
+    void testSelectByPrimaryInList() {
+        EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
+
+        String expected = "SELECT * FROM eternia_person WHERE id IN (?);";
+        String result = mySQLSGBD.selectByPrimaryInList(personEntity.tableName(), primaryKeyDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
     void testSelectByPrimary() {
         EntityPrimaryKeyDTO<Person> primaryKeyDTO = personEntity.getEntityPrimaryKeyDTO();
 

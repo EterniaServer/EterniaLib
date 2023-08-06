@@ -16,6 +16,8 @@ public interface SGBDInterface {
 
     String selectAll(String tableName);
 
+    String selectByPrimaryInList(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO);
+
     String selectByPrimary(String tableName, EntityPrimaryKeyDTO<?> primaryKeyDTO);
 
     String update(String tableName, List<? extends EntityDataDTO<?>> entityDataDTOS, EntityPrimaryKeyDTO<?> primaryKeyDTO);

@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class SQLDatabase implements DatabaseInterface {
 
@@ -151,13 +152,65 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
-    public <T> T get(Class<T> objectClass, Object primaryKey) {
+    public <T> List<T> getAllInPrimaryList(Class<T> objectClass, List<Object> values) {
+        List<Object> notFound = new ArrayList<>();
+        List<T> entities = new ArrayList<>();
+
+        for (Object value : values) {
+            T instance = getEntity(objectClass, value);
+            if (instance != null) {
+                entities.add(instance);
+            }
+            else {
+                notFound.add(value);
+            }
+        }
+
+        if (notFound.isEmpty()) {
+            return entities;
+        }
+
         Entity<?> entity = entityMap.get(objectClass);
+        EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
+        String query = sgbdInterface.selectByPrimaryInList(entity.tableName(), primaryKeyDTO);
+        String idListString = notFound.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            setValueInStatement(FieldType.STRING, 1, idListString, statement);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                T instance = objectClass.getConstructor().newInstance();
+                populateObject(entity, instance, resultSet);
+                entities.add(instance);
+
+                Object primaryKey = getValueFromPrimary(primaryKeyDTO.getGetterMethod(), instance);
+                entity.addEntity(primaryKey, instance);
+            }
+
+            resultSet.close();
+
+        }
+        catch (SQLException ignored) {
+            loggerSQLError(query);
+        }
+        catch (Throwable ignored) {
+            loggerEntityError(objectClass.getName());
+        }
+
+        return entities;
+    }
+
+    @Override
+    public <T> T get(Class<T> objectClass, Object primaryKey) {
         T instance = getEntity(objectClass, primaryKey);
         if (instance != null) {
             return instance;
         }
 
+        Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO);
 

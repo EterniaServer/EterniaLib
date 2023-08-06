@@ -20,6 +20,8 @@ public interface DatabaseInterface {
 
     <T> List<T> listAll(Class<T> objectClass);
 
+    <T> List<T> getAllInPrimaryList(Class<T> objectClass, List<Object> values);
+
     <T> T get(Class<T> objectClass, Object primaryKey);
 
     <T> boolean save(Class<T> objectClass, T instance);

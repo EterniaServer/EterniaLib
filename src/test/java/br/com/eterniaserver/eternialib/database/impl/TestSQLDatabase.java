@@ -152,6 +152,41 @@ class TestSQLDatabase {
     }
 
     @Test
+    void testGetByPrimaryList() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        String queryGet = "SELECT * FROM eternia_person WHERE id IN (?)";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+        Integer id1 = 4;
+        String firstName1 = "John";
+        Date birthdate1 = Date.valueOf("2000-01-01");
+
+        Integer id2 = 5;
+        String firstName2 = "Dere";
+        Date birthdate2 = Date.valueOf("2000-02-02");
+
+        Mockito.when(sgbdInterface.selectByPrimaryInList(
+                personEntity.tableName(),
+                personEntity.getEntityPrimaryKeyDTO()
+        )).thenReturn(queryGet);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(queryGet)).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        Mockito.when(resultSet.next()).thenReturn(true, true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(id1, id2);
+        Mockito.when(resultSet.getString("firstName")).thenReturn(firstName1, firstName2);
+        Mockito.when(resultSet.getDate("birthdate")).thenReturn(birthdate1, birthdate2);
+
+        List<Object> ids = List.of(4, 5);
+        List<Person> result = database.getAllInPrimaryList(Person.class, ids);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+    }
+
+    @Test
     void testGetPerson() throws SQLException {
         Connection connection = Mockito.mock(Connection.class);
         String queryGet = "SELECT * FROM eternia_person WHERE id = ?";
