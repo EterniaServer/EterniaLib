@@ -358,6 +358,10 @@ public class SQLDatabase implements DatabaseInterface {
         List<EntityDataDTO<T>> dataDTOS = entity.getEntityDataDTOList();
         List<EntityReferenceDTO> referenceDTOS = entity.getReferenceColumns();
 
+        if (entity.tableName().startsWith("%") && entity.tableName().endsWith("%")) {
+            entity.setTableName(EterniaLib.getTableName(entity.tableName()));
+        }
+
         StringBuilder builder = new StringBuilder();
         buildCreateTable(builder, entity);
         buildPrimaryKeyColumn(builder, primaryKeyDTO);
@@ -379,10 +383,6 @@ public class SQLDatabase implements DatabaseInterface {
             preparedStatement.execute();
         } catch (SQLException ignored) {
             throw new DatabaseException("Error when creating " + entity.tableName() + " table.");
-        }
-
-        if (entity.tableName().startsWith("%") && entity.tableName().endsWith("%")) {
-            entity.setTableName(EterniaLib.getTableName(entity.tableName()));
         }
 
         entityMap.put(entityClass, entity);
