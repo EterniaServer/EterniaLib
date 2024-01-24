@@ -102,33 +102,27 @@ public class CoreCfg implements ReloadableConfiguration {
 
         addMessage(
                 Messages.MOVED,
-                "<color:#aaaaaa>Você se moveu, por isso seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Você se moveu, por isso seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.BLOCK_BRAKED,
-                "<color:#aaaaaa>Você quebrou um bloco, por isso seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Você quebrou um bloco, por isso seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.JUMPED,
-                "<color:#aaaaaa>Você pulou, por isso seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Você pulou, por isso seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.SNEAKED,
-                "<color:#aaaaaa>Você se agachou, por isso seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Você se agachou, por isso seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.ATTACKED,
-                "<color:#aaaaaa>Você atacou, por isso seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Você atacou, por isso seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.COMMAND_CANCELLED,
-                "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>."
         );
         addMessage(
                 Messages.CONFIG_RELOADED,
@@ -147,13 +141,15 @@ public class CoreCfg implements ReloadableConfiguration {
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
-                "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>."
         );
         addMessage(
                 Messages.LOG_EMPTY,
-                "<color:#aaaaaa>Nenhum código de log encontrada no plugin EterniaLib<color:#555555>.",
-                EMPTY_NOTE
+                "<color:#aaaaaa>Nenhum código de log encontrada no plugin EterniaLib<color:#555555>."
+        );
+        addMessage(
+                Messages.LOG_LIST_OF_LOGS,
+                "<color:#aaaaaa>Os seguintes códigos de log foram encontrados<color:#555555>: <color:#aaaaaa>{0}<color:#555555>."
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
