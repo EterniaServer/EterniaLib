@@ -3,7 +3,7 @@ plugins {
     id("jacoco")
     id("maven-publish")
     id("org.sonarqube") version "3.3"
-    id("io.freefair.lombok") version "6.6.1"
+    id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.0.3"
+version = "4.0.4"
 
 repositories {
     mavenCentral()
@@ -59,11 +59,11 @@ java {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:5.0.1") { exclude("org.slf4j", "slf4j-api") }
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    implementation("com.zaxxer:HikariCP:5.1.0") { exclude("org.slf4j", "slf4j-api") }
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 

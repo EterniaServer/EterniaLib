@@ -19,6 +19,7 @@ import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.lang.invoke.MethodHandle;
@@ -44,12 +45,9 @@ public class SQLDatabase implements DatabaseInterface {
 
     public static class HikariConnection {
 
+        @Getter
         private final HikariDataSource dataSource;
         private final SGBDInterface sgbdInterface;
-
-        public HikariDataSource getDataSource() {
-            return dataSource;
-        }
 
         public SGBDInterface getSGBDInterface() {
             return sgbdInterface;
@@ -373,6 +371,7 @@ public class SQLDatabase implements DatabaseInterface {
             builder.append(", ");
             buildReferenceColumns(builder, referenceDTOS);
         }
+
         builder.append(");");
         String query = builder.toString();
 
@@ -590,6 +589,10 @@ public class SQLDatabase implements DatabaseInterface {
     private void buildReferenceColumns(StringBuilder builder, List<EntityReferenceDTO> referenceDTOS) {
         for (int i = 0; i < referenceDTOS.size(); i++) {
             EntityReferenceDTO referenceDTO = referenceDTOS.get(i);
+            if (referenceDTO.getReferenceTableName().startsWith("%") && referenceDTO.getReferenceTableName().endsWith("%")) {
+                referenceDTO.setReferenceTableName(EterniaLib.getTableName(referenceDTO.getReferenceTableName()));
+            }
+
             builder.append(sgbdInterface.buildReferenceColumn(referenceDTO));
             if (i + 1 != referenceDTOS.size()) {
                 builder.append(", ");

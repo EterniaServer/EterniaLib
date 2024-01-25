@@ -178,10 +178,10 @@ public class MySQLSGBD implements SGBDInterface {
     @Override
     public String buildReferenceColumn(EntityReferenceDTO referenceDTO) {
         return "FOREIGN KEY (%s) REFERENCES %s (%s)%s".formatted(
-                referenceDTO.columnName(),
-                referenceDTO.referenceTableName(),
-                referenceDTO.referenceColumnName(),
-                referenceMap.get(referenceDTO.mode())
+                referenceDTO.getColumnName(),
+                referenceDTO.getReferenceTableName(),
+                referenceDTO.getReferenceColumnName(),
+                referenceMap.get(referenceDTO.getMode())
         );
     }
 }
