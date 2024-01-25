@@ -43,8 +43,14 @@ public class MySQLSGBD implements SGBDInterface {
     }
 
     @Override
-    public String selectBy(String tableName, EntityDataDTO<?> entityDataDTO) {
-        return "SELECT * FROM %s WHERE %s = ?;".formatted(tableName, entityDataDTO.getColumnName());
+    public String selectBy(String tableName, List<EntityDataDTO<?>> entityDataDTOs) {
+        return "SELECT * FROM %s WHERE %s;".formatted(
+                tableName,
+                String.join(
+                        " AND ",
+                        entityDataDTOs.stream().map((e -> "%s = ?".formatted(e.getColumnName()))).toList()
+                )
+        );
     }
 
     @Override

@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
 import br.com.eterniaserver.eternialib.database.Entity;
+import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.SearchField;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -85,7 +87,10 @@ class TestSQLDatabase {
         PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
         ResultSet resultSet = Mockito.mock(ResultSet.class);
 
-        Mockito.when(sgbdInterface.selectBy(personEntity.tableName(), personEntity.getDataDTO("firstName"))).thenReturn(queryBy);
+        List<EntityDataDTO<?>> entityDataDTOS = new ArrayList<>();
+        entityDataDTOS.add(personEntity.getDataDTO("firstName"));
+
+        Mockito.when(sgbdInterface.selectBy(personEntity.tableName(), entityDataDTOS)).thenReturn(queryBy);
         Mockito.when(dataSource.getConnection()).thenReturn(connection);
         Mockito.when(connection.prepareStatement(queryBy)).thenReturn(preparedStatement);
         Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
@@ -109,10 +114,13 @@ class TestSQLDatabase {
         PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
         ResultSet resultSet = Mockito.mock(ResultSet.class);
 
+        List<EntityDataDTO<?>> entityDataDTOS = new ArrayList<>();
+        entityDataDTOS.add(personEntity.getDataDTO("firstName"));
+        entityDataDTOS.add(personEntity.getDataDTO("birthdate"));
+
         Mockito.when(sgbdInterface.selectBy(
                 personEntity.tableName(),
-                personEntity.getDataDTO("firstName"),
-                personEntity.getDataDTO("birthdate")
+                entityDataDTOS
         )).thenReturn(queryBy);
         Mockito.when(dataSource.getConnection()).thenReturn(connection);
         Mockito.when(connection.prepareStatement(queryBy)).thenReturn(preparedStatement);
@@ -132,6 +140,42 @@ class TestSQLDatabase {
         Assertions.assertEquals(1, person.getId());
         Assertions.assertEquals("Junior John", person.getFirstName());
         Assertions.assertEquals(Date.valueOf("2000-01-01"), person.getBirthdate());
+    }
+
+    @Test
+    void testFindAllByMultipleFields() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        String queryBy = "SELECT * FROM eternia_person WHERE firstName = ? AND birthdate = ?";
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+        List<EntityDataDTO<?>> entityDataDTOS = new ArrayList<>();
+        entityDataDTOS.add(personEntity.getDataDTO("firstName"));
+        entityDataDTOS.add(personEntity.getDataDTO("birthdate"));
+
+        Mockito.when(sgbdInterface.selectBy(
+                personEntity.tableName(),
+                entityDataDTOS
+        )).thenReturn(queryBy);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        Mockito.when(connection.prepareStatement(queryBy)).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        Mockito.when(resultSet.next()).thenReturn(true, false);
+        Mockito.when(resultSet.getInt("id")).thenReturn(1);
+        Mockito.when(resultSet.getString("firstName")).thenReturn("Junior John");
+        Mockito.when(resultSet.getDate("birthdate")).thenReturn(Date.valueOf("2000-01-01"));
+
+        List<Person> persons = database.findAllBy(
+                Person.class,
+                new SearchField("firstName", "Junior John"),
+                new SearchField("birthdate", Date.valueOf("2000-01-01"))
+        );
+
+        Assertions.assertEquals(1, persons.size());
+        Assertions.assertEquals(1, persons.get(0).getId());
+        Assertions.assertEquals("Junior John", persons.get(0).getFirstName());
+        Assertions.assertEquals(Date.valueOf("2000-01-01"), persons.get(0).getBirthdate());
     }
 
     @Test

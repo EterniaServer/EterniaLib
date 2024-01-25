@@ -1,5 +1,6 @@
 package br.com.eterniaserver.eternialib.database;
 
+import br.com.eterniaserver.eternialib.database.dtos.SearchField;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 
 import java.sql.Connection;
@@ -14,9 +15,13 @@ public interface DatabaseInterface {
 
     <T> T findBy(Class<T> objectClass, String fieldName, Object value);
 
+    <T> T findBy(Class<T> objectClass, SearchField... searchFields);
+
     <T> List<T> findLike(Class<T> objectClass, String fieldName, Object value);
 
     <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value);
+
+    <T> List<T> findAllBy(Class<T> objectClass, SearchField... searchFields);
 
     <T> List<T> listAll(Class<T> objectClass);
 

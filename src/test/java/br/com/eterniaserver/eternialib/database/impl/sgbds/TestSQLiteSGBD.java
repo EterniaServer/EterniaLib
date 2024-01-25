@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class TestSQLiteSGBD  {
@@ -59,10 +60,27 @@ class TestSQLiteSGBD  {
     @Test
     void testSelectByQuery() {
         String tableName = personEntity.tableName();
+        List<EntityDataDTO<?>> entityDataDTOs = new ArrayList<>();
         EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);
+        entityDataDTOs.add(entityDataDTO);
 
         String expected = "SELECT * FROM eternia_person WHERE firstName = ?;";
-        String result = sqLiteSGBD.selectBy(tableName, entityDataDTO);
+        String result = sqLiteSGBD.selectBy(tableName, entityDataDTOs);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testSelectByMultipleQuery() {
+        String tableName = personEntity.tableName();
+        List<EntityDataDTO<?>> entityDataDTOs = new ArrayList<>();
+        EntityDataDTO<Person> firstName = personEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Person> birthdate = personEntity.getEntityDataDTOList().get(1);
+        entityDataDTOs.add(firstName);
+        entityDataDTOs.add(birthdate);
+
+        String expected = "SELECT * FROM eternia_person WHERE firstName = ? AND birthdate = ?;";
+        String result = sqLiteSGBD.selectBy(tableName, entityDataDTOs);
 
         Assertions.assertEquals(expected, result);
     }

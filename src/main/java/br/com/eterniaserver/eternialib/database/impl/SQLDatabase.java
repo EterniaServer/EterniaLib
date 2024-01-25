@@ -9,6 +9,7 @@ import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
 import br.com.eterniaserver.eternialib.database.Entity;
+import br.com.eterniaserver.eternialib.database.dtos.SearchField;
 import br.com.eterniaserver.eternialib.database.enums.DatabaseType;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
@@ -124,6 +125,11 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
+    public <T> T findBy(Class<T> objectClass, SearchField... searchFields) {
+        return findAllBy(objectClass, searchFields).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public <T> List<T> findLike(Class<T> objectClass, String fieldName, Object value) {
         Entity<?> entity = entityMap.get(objectClass);
         EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
@@ -134,10 +140,21 @@ public class SQLDatabase implements DatabaseInterface {
 
     @Override
     public <T> List<T> findAllBy(Class<T> objectClass, String fieldName, Object value) {
-        Entity<?> entity = entityMap.get(objectClass);
-        EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
+        SearchField searchField = new SearchField(fieldName, value);
 
-        String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTO);
+        return findAllBy(objectClass, searchField);
+    }
+
+    @Override
+    public <T> List<T> findAllBy(Class<T> objectClass, SearchField... searchFields) {
+        Entity<?> entity = entityMap.get(objectClass);
+        List<EntityDataDTO<?>> fieldDataDTOs = new ArrayList<>();
+
+        for (SearchField searchField : searchFields) {
+            fieldDataDTOs.add(entity.getDataDTO(searchField.field()));
+        }
+
+        String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTOs);
         return getByQuery(entity, objectClass, query);
     }
 
