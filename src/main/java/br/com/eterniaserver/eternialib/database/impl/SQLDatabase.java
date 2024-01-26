@@ -135,7 +135,7 @@ public class SQLDatabase implements DatabaseInterface {
         EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
 
         String query = sgbdInterface.selectLike(entity.tableName(), fieldDataDTO);
-        return getByQuery(entity, objectClass, query);
+        return getByQuery(entity, objectClass, query, List.of(fieldDataDTO), new SearchField(fieldName, value));
     }
 
     @Override
@@ -155,7 +155,7 @@ public class SQLDatabase implements DatabaseInterface {
         }
 
         String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTOs);
-        return getByQuery(entity, objectClass, query);
+        return getByQuery(entity, objectClass, query, fieldDataDTOs, searchFields);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class SQLDatabase implements DatabaseInterface {
         Entity<?> entity = entityMap.get(objectClass);
 
         String query = sgbdInterface.selectAll(entity.tableName());
-        return getByQuery(entity, objectClass, query);
+        return getByQuery(entity, objectClass, query, new ArrayList<>());
     }
 
     @Override
@@ -418,12 +418,19 @@ public class SQLDatabase implements DatabaseInterface {
         return objectClass.cast(object);
     }
 
-    private <T> List<T> getByQuery(Entity<?> entity, Class<T> objectClass, String query) {
+    private <T> List<T> getByQuery(Entity<?> entity,
+                                   Class<T> objectClass,
+                                   String query,
+                                   List<EntityDataDTO<?>> fieldDataDTOs,
+                                   SearchField... searchFields) {
+
         List<T> entities = new ArrayList<>();
 
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            fillStatement(statement, fieldDataDTOs, searchFields);
+
+            ResultSet resultSet = statement.executeQuery();
 
             EntityPrimaryKeyDTO<?> entityPrimaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
@@ -434,8 +441,9 @@ public class SQLDatabase implements DatabaseInterface {
                 entities.add(instance);
             }
 
+            resultSet.close();
         }
-        catch (SQLException ignored) {
+        catch (SQLException exception) {
             loggerSQLError(query);
         }
         catch (Throwable ignored) {
@@ -564,6 +572,17 @@ public class SQLDatabase implements DatabaseInterface {
             MethodHandle getter = entityDataDTO.getGetterMethod();
 
             setValueInStatement(type, i, getter.invoke(instance), preparedStatement);
+        }
+    }
+
+    private void fillStatement(PreparedStatement preparedStatement,
+                               List<? extends EntityDataDTO<?>> entityDataDTOS,
+                               SearchField... searchFields) throws Throwable {
+        for (int i = 1; i < entityDataDTOS.size() + 1; i++) {
+            EntityDataDTO<?> entityDataDTO = entityDataDTOS.get(i - 1);
+            FieldType type = entityDataDTO.getFieldType();
+
+            setValueInStatement(type, i, searchFields[i - 1].value(), preparedStatement);
         }
     }
 
