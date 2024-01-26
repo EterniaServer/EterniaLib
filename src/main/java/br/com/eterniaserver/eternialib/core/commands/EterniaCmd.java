@@ -1,6 +1,7 @@
 package br.com.eterniaserver.eternialib.core.commands;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.commands.AdvancedCommand;
 import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
@@ -20,6 +21,7 @@ import co.aikar.commands.annotation.Syntax;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 
 @CommandAlias("%eternia")
@@ -39,6 +41,41 @@ public class EterniaCmd extends BaseCommand {
     @Description("%eternia_description")
     public void onHelp(CommandHelp help) {
         help.showHelp();
+    }
+
+    @CommandAlias("%accept")
+    @Syntax("%accept_syntax")
+    @CommandPermission("%accept_perm")
+    @Description("%accept_description")
+    public void onAccept(Player player) {
+        AdvancedCommand advancedCommand = EterniaLib.getAdvancedCmdManager().getAndRemoveCommand(player.getUniqueId());
+        if (advancedCommand == null) {
+            Component message = plugin.getComponentMessage(Messages.ACCEPT_NO_COMMAND, true);
+            player.sendMessage(message);
+            return;
+        }
+
+        advancedCommand.execute();
+        advancedCommand.executeAsynchronously();
+
+        Component message = plugin.getComponentMessage(Messages.ACCEPTED_COMMAND, true);
+        player.sendMessage(message);
+    }
+
+    @CommandAlias("%deny")
+    @Syntax("%deny_syntax")
+    @CommandPermission("%deny_perm")
+    @Description("%deny_description")
+    public void onDeny(Player player) {
+        AdvancedCommand advancedCommand = EterniaLib.getAdvancedCmdManager().getAndRemoveCommand(player.getUniqueId());
+        if (advancedCommand == null) {
+            Component message = plugin.getComponentMessage(Messages.DENY_NO_COMMAND, true);
+            player.sendMessage(message);
+            return;
+        }
+
+        Component message = plugin.getComponentMessage(Messages.DENIED_COMMAND, true);
+        player.sendMessage(message);
     }
 
     @Subcommand("%eternia_reload")

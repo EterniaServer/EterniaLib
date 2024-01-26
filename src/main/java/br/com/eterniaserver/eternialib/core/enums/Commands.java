@@ -4,4 +4,6 @@ public enum Commands {
     ETERNIA_RELOAD,
     ETERNIA,
     ETERNIA_LOGS,
+    ACCEPT,
+    DENY,
 }

@@ -156,6 +156,30 @@ public class CoreCfg implements ReloadableConfiguration {
                 "<color:#aaaaaa>Os seguintes códigos de log foram encontrados: <color:#00aaaa>{0}<color:#555555>.",
                 ERROR_LIST_NOTE
         );
+        addMessage(
+                Messages.TIME_MESSAGE,
+                "<color:#aaaaaa>{0}<color:#555555>. <color:#aaaaaa>Tempo de restante<color:#555555>: <color:#00aaaa>{1}<color:#555555>."
+        );
+        addMessage(
+                Messages.CONFIRMED_COMMAND_MESSAGE,
+                "<color:#aaaaaa>Aceite ou negue a execução do comando digitando <color:#ffaa00>/aceitar<color:#aaaaaa> ou <color:#ffaa00>/negar<color:#555555>."
+        );
+        addMessage(
+                Messages.ACCEPT_NO_COMMAND,
+                "<color:#aaaaaa>Nenhum comando para ser confirmado<color:#555555>."
+        );
+        addMessage(
+                Messages.DENY_NO_COMMAND,
+                "<color:#aaaaaa>Nenhum comando para ser negado<color:#555555>."
+        );
+        addMessage(
+                Messages.ACCEPTED_COMMAND,
+                "<color:#aaaaaa>Comando aceito<color:#555555>."
+        );
+        addMessage(
+                Messages.DENIED_COMMAND,
+                "<color:#aaaaaa>Comando negado<color:#555555>."
+        );
 
         addCommandLocale(Commands.ETERNIA, new CommandLocale(
                 "eternia",
@@ -178,6 +202,20 @@ public class CoreCfg implements ReloadableConfiguration {
                 "eternia.settings.logs",
                 null
 
+        ));
+        addCommandLocale(Commands.ACCEPT, new CommandLocale(
+                "accept|aceitar|confirmar",
+                null,
+                " Confirme a execução um comando",
+                "eternia.user",
+                null
+        ));
+        addCommandLocale(Commands.DENY, new CommandLocale(
+                "deny|negar",
+                null,
+                " Negue a execução um comando",
+                "eternia.user",
+                null
         ));
 
         outConfig.options().setHeader(List.of(

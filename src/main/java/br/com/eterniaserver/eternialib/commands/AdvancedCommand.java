@@ -1,7 +1,9 @@
 package br.com.eterniaserver.eternialib.commands;
 
+import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedCategory;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
+import br.com.eterniaserver.eternialib.core.enums.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -12,6 +14,8 @@ public abstract class AdvancedCommand {
     public abstract Player sender();
 
     public abstract void execute();
+
+    public abstract String getTimeMessage();
 
     public abstract void abort(Component message);
 
@@ -36,6 +40,15 @@ public abstract class AdvancedCommand {
             }
         }
         return false;
+    }
+
+    public void runTimeMessage(EterniaLib plugin) {
+        Player sender = sender();
+        String timeMessage = getTimeMessage();
+        String secondsLeft = (neededTimeInSeconds() - (getCommandTicks() / 20)) + "s";
+
+        Component message = plugin.getComponentMessage(Messages.TIME_MESSAGE, true, timeMessage, secondsLeft);
+        sender.sendMessage(message);
     }
 
     public boolean increaseCommandTicks(int ticks) {

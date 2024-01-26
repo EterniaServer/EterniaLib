@@ -62,6 +62,9 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         UUID uuid = command.sender().getUniqueId();
         String commandEntry = getCommandEntry(uuid, AdvancedCategory.CONFIRMATION);
 
+        Component confirmationCommand = plugin.getComponentMessage(Messages.CONFIRMED_COMMAND_MESSAGE, true);
+        command.sender().sendMessage(confirmationCommand);
+
         if (commandsMap.containsKey(commandEntry)) {
             return false;
         }
@@ -143,7 +146,10 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
                 command.execute();
                 i.remove();
             }
-            else if (!isTimed && finishedTicks) {
+            else if (isTimed) {
+                command.runTimeMessage(plugin);
+            }
+            else if (finishedTicks) {
                 Component message = plugin.getComponentMessage(Messages.COMMAND_CANCELLED, true);
                 command.abort(message);
                 i.remove();
