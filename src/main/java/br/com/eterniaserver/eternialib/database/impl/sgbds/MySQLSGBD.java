@@ -24,8 +24,8 @@ public class MySQLSGBD implements SGBDInterface {
         typeMap.put(FieldType.STRING, "VARCHAR(256)");
         typeMap.put(FieldType.TEXT, "TEXT");
         typeMap.put(FieldType.INTEGER, "BIGINT");
-        typeMap.put(FieldType.DOUBLE, "DOUBLE(64, 32)");
-        typeMap.put(FieldType.DECIMAL, "DECIMAL(32, 8)");
+        typeMap.put(FieldType.DOUBLE, "DOUBLE(22, 8)");
+        typeMap.put(FieldType.DECIMAL, "DECIMAL(22, 8)");
         typeMap.put(FieldType.DATE, "DATE");
         typeMap.put(FieldType.TIMESTAMP, "DATETIME");
 

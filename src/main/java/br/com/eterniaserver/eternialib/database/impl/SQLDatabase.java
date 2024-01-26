@@ -397,7 +397,7 @@ public class SQLDatabase implements DatabaseInterface {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
         ) {
             preparedStatement.execute();
-        } catch (SQLException ignored) {
+        } catch (SQLException exception) {
             throw new DatabaseException("Error when creating " + entity.tableName() + " table.");
         }
 
