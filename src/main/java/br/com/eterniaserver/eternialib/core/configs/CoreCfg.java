@@ -98,6 +98,7 @@ public class CoreCfg implements ReloadableConfiguration {
         integers[Integers.HIKARI_MAX_LIFE_TIME.ordinal()] = inConfig.getInt("database.hikari.max-life-time", 850000);
         integers[Integers.HIKARI_CONNECTION_TIME_OUT.ordinal()] = inConfig.getInt("database.hikari.connection-timeout", 300000);
         integers[Integers.HIKARI_LEAK_THRESHOLD.ordinal()] = inConfig.getInt("database.hikari.leak-threshold", 300000);
+        integers[Integers.COMMANDS_TICK_DELAY.ordinal()] = inConfig.getInt("commands.tick-delay", 20);
         booleans[Booleans.HIKARI_ALLOW_POOL_SUSPENSION.ordinal()] = inConfig.getBoolean("database.hikari.pool.allow-suspension", false);
 
         addMessage(
@@ -238,6 +239,7 @@ public class CoreCfg implements ReloadableConfiguration {
         outConfig.set("database.hikari.max-life-time", integers[Integers.HIKARI_MAX_LIFE_TIME.ordinal()]);
         outConfig.set("database.hikari.connection-timeout", integers[Integers.HIKARI_CONNECTION_TIME_OUT.ordinal()]);
         outConfig.set("database.hikari.leak-threshold", integers[Integers.HIKARI_LEAK_THRESHOLD.ordinal()]);
+        outConfig.set("commands.tick-delay", integers[Integers.COMMANDS_TICK_DELAY.ordinal()]);
         outConfig.set("database.hikari.pool.allow-suspension", booleans[Booleans.HIKARI_ALLOW_POOL_SUSPENSION.ordinal()]);
     }
 
