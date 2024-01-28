@@ -48,6 +48,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         };
 
         registeredCommand.abort(message);
+        commandsMap.remove(commandEntry);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
             return false;
         }
 
+        command.runTimeMessage(plugin);
         commandsMap.put(entry, command);
         return true;
     }

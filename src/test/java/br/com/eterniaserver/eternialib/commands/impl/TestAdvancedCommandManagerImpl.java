@@ -94,9 +94,13 @@ class TestAdvancedCommandManagerImpl {
 
         advancedCommandManager.addTimedCommand(advancedCommand);
         advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_ATTACK);
+        advancedCommandManager.addTimedCommand(advancedCommand);
         advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
+        advancedCommandManager.addTimedCommand(advancedCommand);
         advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
+        advancedCommandManager.addTimedCommand(advancedCommand);
         advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_SNEAK);
+        advancedCommandManager.addTimedCommand(advancedCommand);
         advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_MOVE);
 
         Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
