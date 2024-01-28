@@ -142,7 +142,10 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
                 i.remove();
             }
             else if (isTimed && finishedTicks) {
-                executingTasks.put(command.executeAsynchronously(), command.sender().getUniqueId());
+                BukkitTask task = command.executeAsynchronously();
+                if (task != null) {
+                    executingTasks.put(task, command.sender().getUniqueId());
+                }
                 command.execute();
                 i.remove();
             }
