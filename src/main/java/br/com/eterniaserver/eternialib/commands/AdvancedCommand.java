@@ -47,6 +47,9 @@ public abstract class AdvancedCommand {
         String timeMessage = getTimeMessage();
         String secondsLeft = (neededTimeInSeconds() - (getCommandTicks() / 20)) + "s";
 
+        System.out.println(neededTimeInSeconds());
+        System.out.println(getCommandTicks() / 20);
+
         Component message = plugin.getComponentMessage(Messages.TIME_MESSAGE, true, timeMessage, secondsLeft);
         sender.sendMessage(message);
     }
@@ -57,7 +60,7 @@ public abstract class AdvancedCommand {
             return true;
         }
 
-        addCommandTicks(commandTicks);
+        addCommandTicks(ticks);
         return false;
     }
 
