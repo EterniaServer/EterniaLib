@@ -6,7 +6,9 @@ import br.com.eterniaserver.eternialib.commands.enums.AdvancedCategory;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,20 @@ class TestAdvancedCommandManagerImpl {
 
     private static final int TICK_DELAY = 20;
 
+    private EterniaLib mockServer() {
+        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        Server server = Mockito.mock(Server.class);
+        BukkitScheduler bukkitScheduler = Mockito.mock(BukkitScheduler.class);
+        
+        Mockito.when(eterniaLib.getServer()).thenReturn(server);
+        Mockito.when(server.getScheduler()).thenReturn(bukkitScheduler);
+        
+        return eterniaLib;
+    }
+    
     @Test
     void testCheckHasBreakingRuleNoCommandNoRule() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
         advancedCommandManager.checkHasBreakingRule(UUID.randomUUID(), AdvancedRules.NOT_ATTACK);
@@ -32,7 +45,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testCheckHasBreakingRuleWithCommandNoRule() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
 
@@ -54,7 +67,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testCheckHasBreakingRuleWithCommandWithRule() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
 
@@ -76,7 +89,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testCheckHasBreakingRules() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
 
@@ -122,7 +135,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testGetAndRemoveCommandWithCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand expect = Mockito.mock(AdvancedCommand.class);
 
@@ -142,7 +155,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testGetAndRemoveCommandNoCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
 
@@ -162,7 +175,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRunTimedCommandAndAbort() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
 
@@ -183,7 +196,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRunTimedCommandNotFinished() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
 
@@ -204,7 +217,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRunTimedCommandFinished() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
@@ -227,7 +240,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRunConfirmationCommandNotFinished() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
@@ -250,7 +263,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRunConfirmationCommandFinished() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);
@@ -275,7 +288,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRemoveCommandsFromPlayerWithConfirmationNoTimed() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
         Component message = Mockito.mock(Component.class);
@@ -296,7 +309,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRemoveCommandsFromPlayerNoConfirmationWithTimed() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
         Component message = Mockito.mock(Component.class);
@@ -317,7 +330,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testRemoveCommandsFromPlayerWithConfirmationWithTimed() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand commandTimed = Mockito.mock(AdvancedCommand.class);
         AdvancedCommand commandConfirmation = Mockito.mock(AdvancedCommand.class);
@@ -343,7 +356,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAddConfirmationCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
 
@@ -361,7 +374,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAddConfirmationCommandDuplicated() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
 
@@ -380,7 +393,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAddTimedCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
 
@@ -398,7 +411,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAddTimedCommandDuplicated() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
 
@@ -417,7 +430,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAbortTimedCommandWithCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         AdvancedCommand command = Mockito.mock(AdvancedCommand.class);
         Component component = Mockito.mock(Component.class);
@@ -440,7 +453,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testAbortTimedCommandNoCommand() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
 
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
@@ -454,7 +467,7 @@ class TestAdvancedCommandManagerImpl {
 
     @Test
     void testGetAndRemoveTasks() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
+        EterniaLib eterniaLib = mockServer();
         Player player = Mockito.mock(Player.class);
         BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
         AdvancedCommand advancedCommand = Mockito.mock(AdvancedCommand.class);

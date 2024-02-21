@@ -64,7 +64,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         String commandEntry = getCommandEntry(uuid, AdvancedCategory.CONFIRMATION);
 
         Component confirmationCommand = plugin.getComponentMessage(Messages.CONFIRMED_COMMAND_MESSAGE, true);
-        command.sender().sendMessage(confirmationCommand);
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> command.sender().sendMessage(confirmationCommand));
 
         if (commandsMap.containsKey(commandEntry)) {
             return false;
@@ -109,7 +109,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
             return false;
         }
 
-        command.runTimeMessage(plugin);
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> command.runTimeMessage(plugin));
         commandsMap.put(entry, command);
         return true;
     }
