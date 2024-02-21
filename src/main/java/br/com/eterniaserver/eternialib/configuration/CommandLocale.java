@@ -12,7 +12,7 @@ public record CommandLocale(String name, String syntax, String description, Stri
         if (description == null) {
             description = "";
         }
-        if (perm == null || perm.equals("")) {
+        if (perm == null || perm.isEmpty()) {
             perm = "eternia.command";
         }
         if (aliases == null) {

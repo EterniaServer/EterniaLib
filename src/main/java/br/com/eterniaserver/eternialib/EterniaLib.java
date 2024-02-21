@@ -13,6 +13,7 @@ import br.com.eterniaserver.eternialib.core.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.DatabaseInterface;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -33,7 +34,7 @@ import java.util.logging.Level;
 
 public class EterniaLib extends JavaPlugin {
 
-    private static final String VERSION = "4.0.8";
+    private static final String VERSION = "4.1.1";
     private static final Map<String, String> tableNames = new HashMap<>();
     private static final Map<String, ReloadableConfiguration> configurations = new HashMap<>();
     private static final List<String> configurationsList = new ArrayList<>();
@@ -41,6 +42,7 @@ public class EterniaLib extends JavaPlugin {
     private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
     private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
 
+    @Getter
     private static DatabaseInterface database;
     private static CommandManager commandManager;
     private static AdvancedCommandManager advancedCommandManager;
@@ -102,10 +104,6 @@ public class EterniaLib extends JavaPlugin {
 
     public static AdvancedCommandManager getAdvancedCmdManager() {
         return advancedCommandManager;
-    }
-
-    public static DatabaseInterface getDatabase() {
-        return database;
     }
 
     public static String getVersion() {
@@ -186,8 +184,7 @@ public class EterniaLib extends JavaPlugin {
         int tickDelay = this.getInteger(Integers.COMMANDS_TICK_DELAY);
 
         AdvancedCommandManager impl = new AdvancedCommandManagerImpl(this, tickDelay);
-        // One-minute delay before task starts
-        this.commandTimer = getServer().getScheduler().runTaskTimer(this, impl, 20L * 60, tickDelay);
+        this.commandTimer = getServer().getScheduler().runTaskTimer(this, impl, 20L, tickDelay);
 
         setAdvancedCommandManagerInterface(impl);
     }
