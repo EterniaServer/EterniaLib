@@ -28,6 +28,7 @@ public class MySQLSGBD implements SGBDInterface {
         typeMap.put(FieldType.DECIMAL, "DECIMAL(22, 8)");
         typeMap.put(FieldType.DATE, "DATE");
         typeMap.put(FieldType.TIMESTAMP, "DATETIME");
+        typeMap.put(FieldType.BLOB, "BLOB");
 
         referenceMap.put(ReferenceMode.RESTRICT, "");
         referenceMap.put(ReferenceMode.CASCADE, " ON DELETE CASCADE");
