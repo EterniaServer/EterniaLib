@@ -16,6 +16,6 @@ public class Item {
     private Integer id;
 
     @DataField(columnName = "blob", type = FieldType.BLOB, notNull = true)
-    private String blob;
+    private byte[] blob;
 
 }

@@ -558,6 +558,7 @@ public class SQLDatabase implements DatabaseInterface {
             case DATE -> setter.invoke(instance, resultSet.getDate(columnName));
             case TIMESTAMP -> setter.invoke(instance, resultSet.getTimestamp(columnName));
             case DECIMAL -> setter.invoke(instance, resultSet.getBigDecimal(columnName));
+            case BLOB -> setter.invoke(instance, resultSet.getBytes(columnName));
             default -> setter.invoke(instance, resultSet.getObject(columnName));
         }
     }
@@ -600,6 +601,7 @@ public class SQLDatabase implements DatabaseInterface {
             case DATE -> statement.setDate(position, (Date) value);
             case TIMESTAMP -> statement.setTimestamp(position, (Timestamp) value);
             case DECIMAL -> statement.setBigDecimal(position, (BigDecimal) value);
+            case BLOB -> statement.setBytes(position, (byte[]) value);
             default -> statement.setObject(position, value);
         }
     }

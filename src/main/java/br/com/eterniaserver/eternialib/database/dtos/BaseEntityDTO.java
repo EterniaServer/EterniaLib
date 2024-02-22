@@ -25,6 +25,7 @@ public abstract class BaseEntityDTO {
             case INTEGER -> Integer.class;
             case DATE -> Date.class;
             case TIMESTAMP -> Timestamp.class;
+            case BLOB -> byte[].class;
             default -> String.class;
         };
     }
