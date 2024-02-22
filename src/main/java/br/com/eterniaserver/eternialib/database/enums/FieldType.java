@@ -9,6 +9,7 @@ public enum FieldType {
     DOUBLE,
     DATE,
     TIMESTAMP,
-    DECIMAL
+    DECIMAL,
+    BLOB,
 
 }

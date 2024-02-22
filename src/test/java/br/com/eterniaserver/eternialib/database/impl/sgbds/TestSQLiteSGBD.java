@@ -5,6 +5,7 @@ import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.utils.EmptyTable;
+import br.com.eterniaserver.eternialib.utils.Item;
 import br.com.eterniaserver.eternialib.utils.Person;
 import br.com.eterniaserver.eternialib.utils.PersonLink;
 import br.com.eterniaserver.eternialib.utils.PersonNotNull;
@@ -22,6 +23,7 @@ class TestSQLiteSGBD  {
     private static Entity<PersonLink> personLinkEntity;
     private static Entity<EmptyTable> emptyTableEntity;
     private static Entity<PersonNotNull> personNotNullEntity;
+    private static Entity<Item> itemEntity;
 
     @BeforeAll
     public static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
@@ -30,6 +32,7 @@ class TestSQLiteSGBD  {
         personLinkEntity = new Entity<>(PersonLink.class);
         emptyTableEntity = new Entity<>(EmptyTable.class);
         personNotNullEntity = new Entity<>(PersonNotNull.class);
+        itemEntity = new Entity<>(Item.class);
     }
 
     @Test
@@ -230,6 +233,16 @@ class TestSQLiteSGBD  {
         EntityDataDTO<PersonNotNull> dataDTO = personNotNullEntity.getEntityDataDTOList().get(0);
 
         String expected = "firstName VARCHAR(256) NOT NULL";
+        String result = sqLiteSGBD.buildDataColumn(dataDTO);
+
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testBuildDataColumnBlob() {
+        EntityDataDTO<Item> dataDTO = itemEntity.getEntityDataDTOList().get(0);
+
+        String expected = "blob BLOB NOT NULL";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);
 
         Assertions.assertEquals(expected, result);
