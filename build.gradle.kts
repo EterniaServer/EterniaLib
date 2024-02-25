@@ -15,11 +15,12 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
         property("sonar.junit.reportPaths", "build/test-results/test")
+        property("sonar.gradle.skipCompile", true)
     }
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.7"
+version = "4.2.8"
 
 repositories {
     mavenCentral()
