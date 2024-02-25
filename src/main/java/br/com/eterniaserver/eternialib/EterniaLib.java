@@ -14,21 +14,19 @@ import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.database.Database;
 
+import br.com.eterniaserver.eternialib.uuidfetcher.UUIDFetcher;
+import br.com.eterniaserver.eternialib.uuidfetcher.impl.UUIDFetcherImpl;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.http.HttpClient;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
+@Getter
 public class EterniaLib extends JavaPlugin {
 
     @Getter
@@ -51,16 +49,12 @@ public class EterniaLib extends JavaPlugin {
     @Setter(value = AccessLevel.PRIVATE)
     private static Database database;
 
-    private static final Map<String, String> tableNames = new HashMap<>();
-    private static final List<String> errorsCode = new LinkedList<>();
-    private static final ConcurrentMap<String, UUID> fetchByNameMap = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<UUID, String> fetchByUUIDMap = new ConcurrentHashMap<>();
+    @Getter
+    @Setter(value = AccessLevel.PRIVATE)
+    private static UUIDFetcher uuidFetcher;
 
-    @Getter
     private final EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
-    @Getter
     private final EnumMap<Integers, Integer> integers = new EnumMap<>(Integers.class);
-    @Getter
     private final EnumMap<Booleans, Boolean> booleans = new EnumMap<>(Booleans.class);
 
     @Override
@@ -79,6 +73,7 @@ public class EterniaLib extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, impl, 20L, integers.get(Integers.TICK_DELAY));
 
         EterniaLib.setAdvancedCmdManager(impl);
+        EterniaLib.setUuidFetcher(new UUIDFetcherImpl(HttpClient.newHttpClient()));
 
         new Manager(this);
     }
@@ -87,37 +82,6 @@ public class EterniaLib extends JavaPlugin {
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
         EterniaLib.getDatabase().closeAllConnections();
-    }
-
-    public static UUID getUUIDOf(String playerName) {
-        return fetchByNameMap.get(playerName);
-    }
-
-    public static String getTableName(String label) {
-        return tableNames.get(label);
-    }
-
-    public static void addTableName(String label, String tableName) {
-        tableNames.put(label, tableName);
-    }
-
-    public static void registerNewUUID(String playerName, UUID uuid) {
-        String possibleOldName = fetchByUUIDMap.get(uuid);
-        if (possibleOldName != null) {
-            fetchByNameMap.remove(possibleOldName);
-        }
-
-        fetchByNameMap.put(playerName, uuid);
-        fetchByUUIDMap.put(uuid, playerName);
-    }
-
-    public static void registerLog(String error) {
-        errorsCode.add(error);
-    }
-
-
-    public List<String> getErrors() {
-        return errorsCode;
     }
 
 }

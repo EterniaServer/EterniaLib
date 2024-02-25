@@ -2,7 +2,6 @@ package br.com.eterniaserver.eternialib.core;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.commands.EterniaCmd;
-import br.com.eterniaserver.eternialib.core.commands.EterniaLogs;
 import br.com.eterniaserver.eternialib.core.entities.PlayerUUID;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 import br.com.eterniaserver.eternialib.core.handlers.PlayerHandler;
@@ -25,16 +24,17 @@ public class Manager {
     private void registerEntities() {
         try {
             Entity<PlayerUUID> entity = new Entity<>(PlayerUUID.class);
-            EterniaLib.addTableName("%eternia_lib_player_uuid%", plugin.getStrings().get(Strings.PLAYER_UUID_TABLE_NAME));
+            EterniaLib.getDatabase().addTableName("%eternia_lib_player_uuid%", plugin.getStrings().get(Strings.PLAYER_UUID_TABLE_NAME));
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
         catch (Exception exception) {
-            EterniaLib.registerLog("EE-301-Manager.java");
             plugin.getLogger().severe("Error while registering entities: " + exception.getMessage());
         }
 
         List<PlayerUUID> playerUUIDList = EterniaLib.getDatabase().listAll(PlayerUUID.class);
-        playerUUIDList.forEach(playerUUID -> EterniaLib.registerNewUUID(playerUUID.getPlayerName(), playerUUID.getUuid()));
+        playerUUIDList.forEach(playerUUID -> EterniaLib.getUuidFetcher().cacheUUID(
+                playerUUID.getPlayerName(), playerUUID.getUuid())
+        );
 
         plugin.getServer().getPluginManager().registerEvents(new PlayerHandler(plugin), plugin);
     }
@@ -45,7 +45,6 @@ public class Manager {
 
     private void registerCommands() {
         EterniaLib.getCmdManager().registerCommand(new EterniaCmd());
-        EterniaLib.getCmdManager().registerCommand(new EterniaLogs(plugin));
     }
 
 }

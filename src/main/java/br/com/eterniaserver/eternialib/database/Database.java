@@ -13,6 +13,8 @@ public interface Database {
 
     void closeAllConnections();
 
+    void addTableName(String key, String value);
+
     <T> T findBy(Class<T> objectClass, String fieldName, Object value);
 
     <T> T findBy(Class<T> objectClass, SearchField... searchFields);

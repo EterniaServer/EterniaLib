@@ -155,14 +155,6 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
                 "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>."
         );
         addMessage(
-                Messages.LOG_EMPTY,
-                "<color:#aaaaaa>Nenhum código de log encontrada no plugin EterniaLib<color:#555555>."
-        );
-        addMessage(
-                Messages.LOG_LIST_OF_LOGS,
-                "<color:#aaaaaa>Os seguintes códigos de log foram encontrados<color:#555555>: <color:#aaaaaa>{0}<color:#555555>."
-        );
-        addMessage(
                 Messages.CONFIG_ADVICE,
                 "<color:#aaaaaa>Os seguintes códigos de log foram encontrados: <color:#00aaaa>{0}<color:#555555>.",
                 ERROR_LIST_NOTE

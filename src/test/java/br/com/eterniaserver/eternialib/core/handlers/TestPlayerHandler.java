@@ -3,8 +3,12 @@ package br.com.eterniaserver.eternialib.core.handlers;
 import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.commands.AdvancedCommandManager;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
+import br.com.eterniaserver.eternialib.uuidfetcher.UUIDFetcher;
+
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -13,18 +17,22 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitScheduler;
+
 import org.junit.jupiter.api.Test;
+
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.UUID;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class TestPlayerHandler {
 
     @Test
     void testOnAsyncPlayerPreLogin() {
         AsyncPlayerPreLoginEvent event = Mockito.mock(AsyncPlayerPreLoginEvent.class);
         BukkitScheduler bukkitScheduler = Mockito.mock(BukkitScheduler.class);
+        UUIDFetcher uuidFetcher = Mockito.mock(UUIDFetcher.class);
         EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
 
         final UUID uuid = UUID.randomUUID();
@@ -37,14 +45,13 @@ class TestPlayerHandler {
 
         try (MockedStatic<EterniaLib> eterniaLibMockedStatic = Mockito.mockStatic(EterniaLib.class);
              MockedStatic<Bukkit> bukkitMockedStatic = Mockito.mockStatic(Bukkit.class)) {
+            eterniaLibMockedStatic.when(EterniaLib::getUuidFetcher).thenReturn(uuidFetcher);
             bukkitMockedStatic.when(Bukkit::getScheduler).thenReturn(bukkitScheduler);
 
             playerHandler.onAsyncPlayerPreLogin(event);
 
-            eterniaLibMockedStatic.verify(
-                    () -> EterniaLib.registerNewUUID(playerName, uuid),
-                    Mockito.times(1)
-            );
+            Mockito.verify(uuidFetcher, Mockito.times(1)).cacheUUID(playerName, uuid);
+
             bukkitMockedStatic.verify(
                     Bukkit::getScheduler,
                     Mockito.times(1)

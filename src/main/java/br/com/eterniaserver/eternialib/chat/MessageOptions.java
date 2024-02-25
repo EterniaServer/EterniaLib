@@ -2,6 +2,8 @@ package br.com.eterniaserver.eternialib.chat;
 
 import javax.annotation.Nonnull;
 
+import java.util.Arrays;
+
 public record MessageOptions(boolean prefix, @Nonnull String... args) {
 
     private static final MessageOptions EMPTY = new MessageOptions();
@@ -15,26 +17,27 @@ public record MessageOptions(boolean prefix, @Nonnull String... args) {
     }
 
     @Override
+    public String toString() {
+        return "{'prefix': %s, 'args': %s}".formatted(prefix, args);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
 
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
+        if (obj instanceof MessageOptions messageOptions) {
+            return hashCode() == messageOptions.hashCode();
         }
 
-        MessageOptions that = (MessageOptions) obj;
-        if (prefix != that.prefix || args.length != that.args.length) {
-            return false;
-        }
+        return false;
+    }
 
-        for (int i = 0; i < args.length; i++) {
-            if (!args[i].equals(that.args[i])) {
-                return false;
-            }
-        }
-
-        return true;
+    @Override
+    public int hashCode() {
+        int result = Boolean.hashCode(prefix);
+        result = 31 * result + Arrays.hashCode(args);
+        return result;
     }
 }

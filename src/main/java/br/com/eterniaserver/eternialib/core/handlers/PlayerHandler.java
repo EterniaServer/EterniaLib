@@ -33,7 +33,7 @@ public class PlayerHandler implements Listener {
         final String playerName = event.getName();
         final UUID uuid = event.getUniqueId();
 
-        EterniaLib.registerNewUUID(playerName, uuid);
+        EterniaLib.getUuidFetcher().cacheUUID(playerName, uuid);
 
         SynchronizePlayerUUID synchronizePlayerUUID = new SynchronizePlayerUUID(uuid, playerName);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, synchronizePlayerUUID);

@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.0-BETA"
+version = "4.2.0"
 
 repositories {
     mavenCentral()
@@ -67,6 +67,7 @@ dependencies {
     testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.2.0")
 }
 
 tasks.shadowJar {

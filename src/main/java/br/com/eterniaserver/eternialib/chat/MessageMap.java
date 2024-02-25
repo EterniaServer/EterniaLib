@@ -18,4 +18,26 @@ public class MessageMap<E extends Enum<E>, V> extends EnumMap<E, V> {
         this.prefixKey = prefixKey;
     }
 
+    @Override
+    public String toString() {
+        return "{'keyType': %s, 'prefixKey': %s}".formatted(keyType, prefixKey);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return obj.hashCode() == hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * keyType.hashCode() + prefixKey.hashCode();
+    }
 }

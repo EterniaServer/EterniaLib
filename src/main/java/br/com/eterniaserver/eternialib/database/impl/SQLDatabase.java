@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.database.Database;
 import br.com.eterniaserver.eternialib.database.HikariSourceConfiguration;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 public class SQLDatabase implements Database {
 
     private final Map<Class<?>, Entity<?>> entityMap = new ConcurrentHashMap<>();
+    private final Map<String, String> tableNames = new ConcurrentHashMap<>();
 
     private final HikariSourceConfiguration hikariCfg;
 
@@ -52,6 +52,11 @@ public class SQLDatabase implements Database {
         if (!hikariCfg.getDataSource().isClosed()) {
             hikariCfg.getDataSource().close();
         }
+    }
+
+    @Override
+    public void addTableName(String key, String value) {
+        tableNames.put(key, value);
     }
 
     @Override
@@ -310,7 +315,7 @@ public class SQLDatabase implements Database {
         List<EntityReferenceDTO> referenceDTOS = entity.getReferenceColumns();
 
         if (entity.tableName().startsWith("%") && entity.tableName().endsWith("%")) {
-            entity.setTableName(EterniaLib.getTableName(entity.tableName()));
+            entity.setTableName(tableNames.get(entity.tableName()));
         }
 
         StringBuilder builder = new StringBuilder();
@@ -564,7 +569,7 @@ public class SQLDatabase implements Database {
         for (int i = 0; i < referenceDTOS.size(); i++) {
             EntityReferenceDTO referenceDTO = referenceDTOS.get(i);
             if (referenceDTO.getReferenceTableName().startsWith("%") && referenceDTO.getReferenceTableName().endsWith("%")) {
-                referenceDTO.setReferenceTableName(EterniaLib.getTableName(referenceDTO.getReferenceTableName()));
+                referenceDTO.setReferenceTableName(tableNames.get(referenceDTO.getReferenceTableName()));
             }
 
             builder.append(hikariCfg.getSgbdInterface().buildReferenceColumn(referenceDTO));

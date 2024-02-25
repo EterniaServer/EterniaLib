@@ -10,6 +10,8 @@ import br.com.eterniaserver.eternialib.database.annotations.ReferenceField;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.enums.ReferenceMode;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -21,10 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Entity<T> {
 
-    private String tableName;
     private final Class<T> entityClass;
+
+    @Setter
+    private String tableName;
+
+    @Getter
     private final EntityPrimaryKeyDTO<T> entityPrimaryKeyDTO;
+    @Getter
     private final List<EntityDataDTO<T>> entityDataDTOList;
+
     private final List<Field> referenceFields;
     private final Map<Object, Object> entitiesCache = new ConcurrentHashMap<>();
 
@@ -45,10 +53,6 @@ public class Entity<T> {
         this.entityDataDTOList = getDataColumns(dataFields);
         this.referenceFields = getFieldsByAnnotation(fields, ReferenceField.class);
         this.tableName = entityClass.getAnnotation(Table.class).tableName();
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 
     public Object getEntity(Object primaryKey) {
@@ -76,14 +80,6 @@ public class Entity<T> {
                                 .filter(dataDTO -> dataDTO.getFieldName().equals(fieldName))
                                 .findFirst()
                                 .orElse(null);
-    }
-
-    public EntityPrimaryKeyDTO<T> getEntityPrimaryKeyDTO() {
-        return entityPrimaryKeyDTO;
-    }
-
-    public List<EntityDataDTO<T>> getEntityDataDTOList() {
-        return entityDataDTOList;
     }
 
     private EntityPrimaryKeyDTO<T> getPrimaryKey(Field primaryKeyField) throws NoSuchMethodException, IllegalAccessException {
