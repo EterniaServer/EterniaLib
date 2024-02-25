@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("jacoco")
     id("maven-publish")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "4.4.1.3373"
     id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
@@ -11,7 +11,7 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
-sonarqube  {
+sonar  {
     properties {
         property("sonar.projectName", project.name)
         property("sonar.projectKey", "EterniaServer_EterniaLib")
@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.2"
+version = "4.2.3"
 
 repositories {
     mavenCentral()
