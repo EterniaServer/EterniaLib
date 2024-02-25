@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -91,7 +92,10 @@ public class UUIDFetcherImpl implements UUIDFetcher {
 
             consumer.accept(Optional.of(getFromResponse(response)));
             return;
-        } catch (URISyntaxException | InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
+            Logger.getGlobal().log(Level.SEVERE, e.getMessage());
+            return;
+        } catch (URISyntaxException | IOException e) {
             Logger.getGlobal().info(e.getMessage());
         }
 
