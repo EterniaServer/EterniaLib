@@ -8,7 +8,7 @@ plugins {
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.11"
 }
 
 sonar  {
@@ -23,6 +23,7 @@ sonar  {
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
         property("sonar.java.coveragePlugin", "jacoco")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/*.xml")
         property("sonar.verbose", "true")
     }
 }
@@ -92,6 +93,7 @@ tasks.test {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
+        csv.required.set(false)
     }
 }
 
