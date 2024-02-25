@@ -1,14 +1,9 @@
 plugins {
     id("java")
-    id("jacoco")
     id("maven-publish")
     id("org.sonarqube") version "4.4.1.3373"
     id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
-}
-
-jacoco {
-    toolVersion = "0.8.11"
 }
 
 sonar  {
@@ -22,8 +17,6 @@ sonar  {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
-        property("sonar.java.coveragePlugin", "jacoco")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/*.xml")
         property("sonar.verbose", "true")
     }
 }
@@ -87,14 +80,6 @@ tasks.test {
         events("passed", "skipped", "failed")
     }
 
-    finalizedBy("jacocoTestReport")
-}
-
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
-    }
 }
 
 tasks.named("sonarqube").configure {
