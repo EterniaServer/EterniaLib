@@ -1,36 +1,22 @@
 plugins {
     id("java")
-    id("jacoco")
     id("maven-publish")
-    id("org.sonarqube") version "3.5.0.2730"
+    id("org.sonarqube") version "4.4.1.3373"
     id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
-jacoco {
-    toolVersion = "0.8.8"
-}
-
-sonarqube  {
+sonar {
     properties {
-        property("sonar.projectName", project.name)
         property("sonar.projectKey", "EterniaServer_EterniaLib")
-        property("sonar.organization", "eterniaserver")
         property("sonar.projectVersion", "${project.version}")
-        property("sonar.sources", "src/main/java")
-        property("sonar.tests", "src/test/java")
+        property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.java.binaries", "build/classes")
-        property("sonar.java.libraries", "build/libs")
-        property("sonar.java.coveragePlugin", "jacoco")
-        property("sonar.verbose", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.junit.reportsPath", "build/test-results/test")
     }
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.5"
+version = "4.2.6"
 
 repositories {
     mavenCentral()
@@ -86,14 +72,6 @@ tasks.test {
 
     testLogging {
         events("passed", "skipped", "failed")
-    }
-
-    finalizedBy("jacocoTestReport")
-}
-
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
     }
 }
 
