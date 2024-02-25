@@ -15,7 +15,9 @@ sonar {
         property("sonar.projectVersion", "${project.version}")
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.java.coveragePlugin", "jacoco")
         property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.junit.reportPaths", "build/test-results/test")
     }
 }
 
