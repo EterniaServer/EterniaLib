@@ -17,6 +17,7 @@ sonar  {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
+        property("sonar.junit.reportsPath", "build/test-results/test")
         property("sonar.verbose", "true")
     }
 }
