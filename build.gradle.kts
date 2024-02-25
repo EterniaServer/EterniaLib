@@ -13,11 +13,13 @@ sonar {
         property("sonar.projectVersion", "${project.version}")
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.junit.reportPaths", "build/test-results/test")
     }
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.6"
+version = "4.2.7"
 
 repositories {
     mavenCentral()
