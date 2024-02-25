@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.1.3"
+version = "4.2.0"
 
 repositories {
     mavenCentral()
@@ -59,8 +59,10 @@ java {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:5.1.0") { exclude("org.slf4j", "slf4j-api") }
+    compileOnly("io.papermc.paper", "paper-api", "1.20.4-R0.1-SNAPSHOT")
+    implementation("com.zaxxer", "HikariCP", "5.1.0") {
+        exclude("org.slf4j", "slf4j-api")
+    }
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
