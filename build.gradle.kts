@@ -7,6 +7,8 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
+System.setProperty("sonar.gradle.skipCompile", "false")
+
 sonar {
     properties {
         property("sonar.projectKey", "EterniaServer_EterniaLib")
@@ -14,7 +16,6 @@ sonar {
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.gradle.skipCompile", true)
     }
 }
 
