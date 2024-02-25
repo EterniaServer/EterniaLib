@@ -1,8 +1,19 @@
-# EterniaLib ![EterniaLib Build Status](https://github.com/EterniaServer/EterniaLib/actions/workflows/build.yml/badge.svg) ![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=vulnerabilities) ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=coverage)
+# EterniaLib
+
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=code_smells)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=sqale_index)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=EterniaServer_EterniaLib&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=EterniaServer_EterniaLib)
 
 A base library to agile plugin development. **([Wiki](https://github.com/EterniaServer/EterniaLib/wiki))**
 
 **Only works with Paper or Paper forks**
+
+## How to use (Server Owners)
+
+Access the [package repository](https://github.com/EterniaServer/EterniaLib/packages/1892414) and download the latest version of the plugin.
 
 ## How to use (Plugin Developers)
 
