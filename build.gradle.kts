@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("maven-publish")
+    id("jacoco")
     id("org.sonarqube") version "4.4.1.3373"
     id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
@@ -65,22 +66,28 @@ tasks.shadowJar {
     archiveVersion.set("${project.version}")
 }
 
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
-
-    dependsOn("cleanTest")
 
     testLogging {
         events("passed", "skipped", "failed")
     }
+
+    finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.named("sonarqube").configure {
-    dependsOn("test")
-}
-
-tasks.named("build").configure {
-    dependsOn("shadowJar")
+tasks.sonar {
+    dependsOn(tasks.test)
 }
 
 tasks.processResources {
