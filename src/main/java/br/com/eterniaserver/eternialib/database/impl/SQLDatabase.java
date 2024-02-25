@@ -1,26 +1,16 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.core.enums.Booleans;
-import br.com.eterniaserver.eternialib.core.enums.Integers;
-import br.com.eterniaserver.eternialib.core.enums.Strings;
-import br.com.eterniaserver.eternialib.database.DatabaseInterface;
+import br.com.eterniaserver.eternialib.database.Database;
+import br.com.eterniaserver.eternialib.database.HikariSourceConfiguration;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityPrimaryKeyDTO;
 import br.com.eterniaserver.eternialib.database.dtos.EntityReferenceDTO;
 import br.com.eterniaserver.eternialib.database.Entity;
 import br.com.eterniaserver.eternialib.database.dtos.SearchField;
-import br.com.eterniaserver.eternialib.database.enums.DatabaseType;
 import br.com.eterniaserver.eternialib.database.enums.FieldType;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
-import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
-import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
-import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.lang.invoke.MethodHandle;
@@ -42,80 +32,25 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class SQLDatabase implements DatabaseInterface {
+public class SQLDatabase implements Database {
 
-    public static class HikariConnection {
-
-        @Getter
-        private final HikariDataSource dataSource;
-        private final SGBDInterface sgbdInterface;
-
-        public SGBDInterface getSGBDInterface() {
-            return sgbdInterface;
-        }
-
-        public HikariConnection(EterniaLib plugin) {
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setPoolName("EterniaLib HikariPool");
-
-            String databaseType = plugin.getString(Strings.DATABASE_TYPE);
-            DatabaseType type = DatabaseType.valueOf(databaseType);
-
-            this.sgbdInterface = switch (type) {
-                case MYSQL -> new MySQLSGBD();
-                case MARIADB -> new MariaDBSGBD();
-                case SQLITE -> new SQLiteSGBD();
-            };
-
-            if (type == DatabaseType.SQLITE) {
-                hikariConfig.setDriverClassName("org.sqlite.JDBC");
-            }
-            else {
-                hikariConfig.setUsername(plugin.getString(Strings.DATABASE_USER));
-                hikariConfig.setPassword(plugin.getString(Strings.DATABASE_PASSWORD));
-            }
-
-            hikariConfig.setJdbcUrl(sgbdInterface.jdbcStr(
-                    plugin.getString(Strings.DATABASE_HOST),
-                    plugin.getString(Strings.DATABASE_PORT),
-                    plugin.getString(Strings.DATABASE_DATABASE)
-            ));
-
-            // MySQL specific configurations
-            hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
-            // Pool configurations
-            hikariConfig.setMaxLifetime(plugin.getInteger(Integers.HIKARI_MAX_LIFE_TIME));
-            hikariConfig.setConnectionTimeout(plugin.getInteger(Integers.HIKARI_CONNECTION_TIME_OUT));
-            hikariConfig.setLeakDetectionThreshold(plugin.getInteger(Integers.HIKARI_LEAK_THRESHOLD));
-            hikariConfig.setMinimumIdle(plugin.getInteger(Integers.HIKARI_MIN_POOL_SIZE));
-            hikariConfig.setMaximumPoolSize(plugin.getInteger(Integers.HIKARI_MAX_POOL_SIZE));
-            hikariConfig.setAllowPoolSuspension(plugin.getBoolean(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
-
-            this.dataSource = new HikariDataSource(hikariConfig);
-        }
-    }
-
-    private final HikariDataSource dataSource;
-    private final SGBDInterface sgbdInterface;
     private final Map<Class<?>, Entity<?>> entityMap = new ConcurrentHashMap<>();
 
-    public SQLDatabase(HikariDataSource dataSource, SGBDInterface sgbdInterface) {
-        this.dataSource = dataSource;
-        this.sgbdInterface = sgbdInterface;
+    private final HikariSourceConfiguration hikariCfg;
+
+    public SQLDatabase(HikariSourceConfiguration hikariSourceConfiguration) {
+        this.hikariCfg = hikariSourceConfiguration;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+        return hikariCfg.getDataSource().getConnection();
     }
 
     @Override
     public void closeAllConnections() {
-        if (!dataSource.isClosed()) {
-            dataSource.close();
+        if (!hikariCfg.getDataSource().isClosed()) {
+            hikariCfg.getDataSource().close();
         }
     }
 
@@ -134,7 +69,7 @@ public class SQLDatabase implements DatabaseInterface {
         Entity<?> entity = entityMap.get(objectClass);
         EntityDataDTO<?> fieldDataDTO = entity.getDataDTO(fieldName);
 
-        String query = sgbdInterface.selectLike(entity.tableName(), fieldDataDTO);
+        String query = hikariCfg.getSgbdInterface().selectLike(entity.tableName(), fieldDataDTO);
         return getByQuery(entity, objectClass, query, List.of(fieldDataDTO), new SearchField(fieldName, value));
     }
 
@@ -154,7 +89,7 @@ public class SQLDatabase implements DatabaseInterface {
             fieldDataDTOs.add(entity.getDataDTO(searchField.field()));
         }
 
-        String query = sgbdInterface.selectBy(entity.tableName(), fieldDataDTOs);
+        String query = hikariCfg.getSgbdInterface().selectBy(entity.tableName(), fieldDataDTOs);
         return getByQuery(entity, objectClass, query, fieldDataDTOs, searchFields);
     }
 
@@ -162,7 +97,7 @@ public class SQLDatabase implements DatabaseInterface {
     public <T> List<T> listAll(Class<T> objectClass) {
         Entity<?> entity = entityMap.get(objectClass);
 
-        String query = sgbdInterface.selectAll(entity.tableName());
+        String query = hikariCfg.getSgbdInterface().selectAll(entity.tableName());
         return getByQuery(entity, objectClass, query, new ArrayList<>());
     }
 
@@ -187,7 +122,7 @@ public class SQLDatabase implements DatabaseInterface {
 
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
-        String query = sgbdInterface.selectByPrimaryInList(entity.tableName(), primaryKeyDTO);
+        String query = hikariCfg.getSgbdInterface().selectByPrimaryInList(entity.tableName(), primaryKeyDTO);
         String idListString = notFound.stream().map(String::valueOf).collect(Collectors.joining(", "));
 
         try (Connection connection = getConnection();
@@ -227,7 +162,7 @@ public class SQLDatabase implements DatabaseInterface {
 
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
-        String query = sgbdInterface.selectByPrimary(entity.tableName(), primaryKeyDTO);
+        String query = hikariCfg.getSgbdInterface().selectByPrimary(entity.tableName(), primaryKeyDTO);
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -326,7 +261,7 @@ public class SQLDatabase implements DatabaseInterface {
 
         String tableName = entity.tableName();
         List<? extends EntityDataDTO<?>> entityDataDTOS = entity.getEntityDataDTOList();
-        String updateQuery = sgbdInterface.update(tableName, entityDataDTOS, primaryKeyDTO);
+        String updateQuery = hikariCfg.getSgbdInterface().update(tableName, entityDataDTOS, primaryKeyDTO);
         try (
                 Connection connection = getConnection();
                 PreparedStatement updateStatement = connection.prepareStatement(updateQuery)
@@ -353,7 +288,7 @@ public class SQLDatabase implements DatabaseInterface {
         Entity<?> entity = entityMap.get(objectClass);
         EntityPrimaryKeyDTO<?> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
 
-        String query = sgbdInterface.delete(entity.tableName(), primaryKeyDTO);
+        String query = hikariCfg.getSgbdInterface().delete(entity.tableName(), primaryKeyDTO);
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -368,6 +303,7 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     @Override
+    @SuppressWarnings("SqlSourceToSinkFlow") // This is a false positive
     public <T> void register(Class<T> entityClass, Entity<T> entity) throws DatabaseException {
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         List<EntityDataDTO<T>> dataDTOS = entity.getEntityDataDTOList();
@@ -458,8 +394,8 @@ public class SQLDatabase implements DatabaseInterface {
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
 
-        String insertQuery = sgbdInterface.insertWithoutKey(tableName, entityDataDTOS);
-        String getIdQuery = sgbdInterface.getLastInsertId(tableName);
+        String insertQuery = hikariCfg.getSgbdInterface().insertWithoutKey(tableName, entityDataDTOS);
+        String getIdQuery = hikariCfg.getSgbdInterface().getLastInsertId(tableName);
 
         try (
                 Connection connection = getConnection();
@@ -498,7 +434,7 @@ public class SQLDatabase implements DatabaseInterface {
         EntityPrimaryKeyDTO<T> primaryKeyDTO = entity.getEntityPrimaryKeyDTO();
         List<EntityDataDTO<T>> entityDataDTOS = entity.getEntityDataDTOList();
 
-        String insertQuery = sgbdInterface.insert(tableName, entityDataDTOS, primaryKeyDTO);
+        String insertQuery = hikariCfg.getSgbdInterface().insert(tableName, entityDataDTOS, primaryKeyDTO);
 
         try (
                 Connection connection = getConnection();
@@ -611,13 +547,13 @@ public class SQLDatabase implements DatabaseInterface {
     }
 
     private void buildPrimaryKeyColumn(StringBuilder builder, EntityPrimaryKeyDTO<?> primaryKeyDTO) {
-        builder.append(sgbdInterface.buildPrimaryColumn(primaryKeyDTO));
+        builder.append(hikariCfg.getSgbdInterface().buildPrimaryColumn(primaryKeyDTO));
     }
 
     private void buildDataColumns(StringBuilder builder, List<? extends EntityDataDTO<?>> dataDTOS) {
         for (int i = 0; i < dataDTOS.size(); i++) {
             EntityDataDTO<?> dataDTO = dataDTOS.get(i);
-            builder.append(sgbdInterface.buildDataColumn(dataDTO));
+            builder.append(hikariCfg.getSgbdInterface().buildDataColumn(dataDTO));
             if (i + 1 != dataDTOS.size()) {
                 builder.append(", ");
             }
@@ -631,7 +567,7 @@ public class SQLDatabase implements DatabaseInterface {
                 referenceDTO.setReferenceTableName(EterniaLib.getTableName(referenceDTO.getReferenceTableName()));
             }
 
-            builder.append(sgbdInterface.buildReferenceColumn(referenceDTO));
+            builder.append(hikariCfg.getSgbdInterface().buildReferenceColumn(referenceDTO));
             if (i + 1 != referenceDTOS.size()) {
                 builder.append(", ");
             }

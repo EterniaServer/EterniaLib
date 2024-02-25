@@ -2,6 +2,7 @@ package br.com.eterniaserver.eternialib.core.enums;
 
 public enum Messages {
 
+    SERVER_PREFIX,
     MOVED,
     BLOCK_BRAKED,
     JUMPED,

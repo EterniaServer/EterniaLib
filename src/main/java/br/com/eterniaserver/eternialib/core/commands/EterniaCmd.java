@@ -1,8 +1,9 @@
 package br.com.eterniaserver.eternialib.core.commands;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
+import br.com.eterniaserver.eternialib.chat.MessageOptions;
 import br.com.eterniaserver.eternialib.commands.AdvancedCommand;
-import br.com.eterniaserver.eternialib.configuration.ReloadableConfiguration;
+import br.com.eterniaserver.eternialib.configuration.interfaces.ReloadableConfiguration;
 import br.com.eterniaserver.eternialib.configuration.enums.ConfigurationCategory;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 
@@ -18,20 +19,12 @@ import co.aikar.commands.annotation.HelpCommand;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 
-import net.kyori.adventure.text.Component;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
 @CommandAlias("%eternia")
 public class EterniaCmd extends BaseCommand {
-
-    private final EterniaLib plugin;
-
-    public EterniaCmd(EterniaLib plugin) {
-        this.plugin = plugin;
-    }
 
     @Default
     @CatchUnknown
@@ -50,16 +43,14 @@ public class EterniaCmd extends BaseCommand {
     public void onAccept(Player player) {
         AdvancedCommand advancedCommand = EterniaLib.getAdvancedCmdManager().getAndRemoveCommand(player.getUniqueId());
         if (advancedCommand == null) {
-            Component message = plugin.getComponentMessage(Messages.ACCEPT_NO_COMMAND, true);
-            player.sendMessage(message);
+            EterniaLib.getChatCommons().sendMessage(player, Messages.ACCEPT_NO_COMMAND);
             return;
         }
 
         advancedCommand.execute();
         advancedCommand.executeAsynchronously();
 
-        Component message = plugin.getComponentMessage(Messages.ACCEPTED_COMMAND, true);
-        player.sendMessage(message);
+        EterniaLib.getChatCommons().sendMessage(player, Messages.ACCEPTED_COMMAND);
     }
 
     @CommandAlias("%deny")
@@ -69,13 +60,11 @@ public class EterniaCmd extends BaseCommand {
     public void onDeny(Player player) {
         AdvancedCommand advancedCommand = EterniaLib.getAdvancedCmdManager().getAndRemoveCommand(player.getUniqueId());
         if (advancedCommand == null) {
-            Component message = plugin.getComponentMessage(Messages.DENY_NO_COMMAND, true);
-            player.sendMessage(message);
+            EterniaLib.getChatCommons().sendMessage(player, Messages.DENY_NO_COMMAND);
             return;
         }
 
-        Component message = plugin.getComponentMessage(Messages.DENIED_COMMAND, true);
-        player.sendMessage(message);
+        EterniaLib.getChatCommons().sendMessage(player, Messages.DENIED_COMMAND);
     }
 
     @Subcommand("%eternia_reload")
@@ -88,31 +77,27 @@ public class EterniaCmd extends BaseCommand {
         String commandEntry = sep[0];
         String commandCheck = sep.length > 1 ? sep[1] : "";
 
-        ReloadableConfiguration reloadableConfiguration = plugin.getConfiguration(commandEntry);
+        ReloadableConfiguration reloadableConfiguration = EterniaLib.getCfgManager().getConfiguration(commandEntry);
 
         if (reloadableConfiguration == null) {
-            Component message = plugin.getComponentMessage(Messages.CONFIG_INVALID, true, commandEntry);
-            sender.sendMessage(message);
+            EterniaLib.getChatCommons().sendMessage(sender, Messages.CONFIG_INVALID);
             return;
         }
 
         if (reloadableConfiguration.category() == ConfigurationCategory.BLOCKED) {
-            Component message = plugin.getComponentMessage(Messages.CONFIG_BLOCKED, true, commandEntry);
-            sender.sendMessage(message);
+            EterniaLib.getChatCommons().sendMessage(sender, Messages.CONFIG_BLOCKED, new MessageOptions(commandEntry));
             return;
         }
 
         if (reloadableConfiguration.category() == ConfigurationCategory.WARNING_ADVICE && !commandCheck.equals("t")) {
-            Component message = plugin.getComponentMessage(Messages.CONFIG_ADVICE, true, commandEntry);
-            sender.sendMessage(message);
+            EterniaLib.getChatCommons().sendMessage(sender, Messages.CONFIG_ADVICE, new MessageOptions(commandEntry));
             return;
         }
 
         reloadableConfiguration.executeConfig();
         reloadableConfiguration.executeCritical();
 
-        Component message = plugin.getComponentMessage(Messages.CONFIG_RELOADED, true, commandEntry);
-        sender.sendMessage(message);
+        EterniaLib.getChatCommons().sendMessage(sender, Messages.CONFIG_RELOADED, new MessageOptions(commandEntry));
     }
 
 }

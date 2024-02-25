@@ -23,9 +23,9 @@ public class Manager {
     }
 
     private void registerEntities() {
-        try{
+        try {
             Entity<PlayerUUID> entity = new Entity<>(PlayerUUID.class);
-            EterniaLib.addTableName("%eternia_lib_player_uuid%", plugin.getString(Strings.PLAYER_UUID_TABLE_NAME));
+            EterniaLib.addTableName("%eternia_lib_player_uuid%", plugin.getStrings().get(Strings.PLAYER_UUID_TABLE_NAME));
             EterniaLib.getDatabase().register(PlayerUUID.class, entity);
         }
         catch (Exception exception) {
@@ -40,11 +40,11 @@ public class Manager {
     }
 
     private void loadCompletions() {
-        EterniaLib.getCmdManager().getCommandCompletions().registerCompletion("eternia_cmds", completionContext -> plugin.getConfigurations());
+        EterniaLib.getCmdManager().getCommandCompletions().registerCompletion("eternia_cmds", completionContext -> EterniaLib.getCfgManager().getConfigurations());
     }
 
     private void registerCommands() {
-        EterniaLib.getCmdManager().registerCommand(new EterniaCmd(plugin));
+        EterniaLib.getCmdManager().registerCommand(new EterniaCmd());
         EterniaLib.getCmdManager().registerCommand(new EterniaLogs(plugin));
     }
 

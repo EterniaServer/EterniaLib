@@ -1,9 +1,10 @@
-package br.com.eterniaserver.eternialib.commands.impl;
+package br.com.eterniaserver.eternialib.commands;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.commands.AdvancedCommand;
+import br.com.eterniaserver.eternialib.chat.ChatCommons;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedCategory;
 import br.com.eterniaserver.eternialib.commands.enums.AdvancedRules;
+import br.com.eterniaserver.eternialib.commands.impl.AdvancedCommandManagerImpl;
 import br.com.eterniaserver.eternialib.core.enums.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
@@ -12,11 +13,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.UUID;
 
-class TestAdvancedCommandManagerImpl {
+@SuppressWarnings("ResultOfMethodCallIgnored")
+class TestAdvancedCommandManager {
 
     private static final int TICK_DELAY = 20;
 
@@ -36,11 +39,14 @@ class TestAdvancedCommandManagerImpl {
         EterniaLib eterniaLib = mockServer();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        advancedCommandManager.checkHasBreakingRule(UUID.randomUUID(), AdvancedRules.NOT_ATTACK);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Mockito.verify(eterniaLib, Mockito.times(0)).getComponentMessage(
-                Messages.ATTACKED, true
-        );
+            advancedCommandManager.checkHasBreakingRule(UUID.randomUUID(), AdvancedRules.NOT_ATTACK);
+
+            Mockito.verify(chatCommons, Mockito.times(0)).parseMessage(Messages.ATTACKED);
+        }
     }
 
     @Test
@@ -57,12 +63,15 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
         Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_BREAK_BLOCK)).thenReturn(false);
 
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Mockito.verify(eterniaLib, Mockito.times(0)).getComponentMessage(
-                Messages.BLOCK_BRAKED, true
-        );
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
+
+            Mockito.verify(chatCommons, Mockito.times(0)).parseMessage(Messages.BLOCK_BRAKED);
+        }
     }
 
     @Test
@@ -79,12 +88,15 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
         Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_JUMP)).thenReturn(true);
 
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.JUMPED, true
-        );
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
+
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.JUMPED);
+        }
     }
 
     @Test
@@ -105,32 +117,27 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_SNEAK)).thenReturn(true);
         Mockito.when(advancedCommand.hasRule(AdvancedRules.NOT_MOVE)).thenReturn(true);
 
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_ATTACK);
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_SNEAK);
-        advancedCommandManager.addTimedCommand(advancedCommand);
-        advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_MOVE);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.ATTACKED, true
-        );
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.BLOCK_BRAKED, true
-        );
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.JUMPED, true
-        );
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.SNEAKED, true
-        );
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.MOVED, true
-        );
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_ATTACK);
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_BREAK_BLOCK);
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_JUMP);
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_SNEAK);
+            advancedCommandManager.addTimedCommand(advancedCommand);
+            advancedCommandManager.checkHasBreakingRule(uuid, AdvancedRules.NOT_MOVE);
+
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.ATTACKED);
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.BLOCK_BRAKED);
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.JUMPED);
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.SNEAKED);
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.MOVED);
+        }
     }
 
     @Test
@@ -146,11 +153,16 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(expect.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addConfirmationCommand(expect);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        AdvancedCommand result = advancedCommandManager.getAndRemoveCommand(uuid);
+            advancedCommandManager.addConfirmationCommand(expect);
 
-        Assertions.assertEquals(expect, result);
+            AdvancedCommand result = advancedCommandManager.getAndRemoveCommand(uuid);
+
+            Assertions.assertEquals(expect, result);
+        }
     }
 
     @Test
@@ -255,10 +267,15 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(advancedCommand.increaseCommandTicks(TICK_DELAY)).thenReturn(false);
         Mockito.when(advancedCommand.isAborted()).thenReturn(false);
 
-        advancedCommandManager.addConfirmationCommand(advancedCommand);
-        advancedCommandManager.run();
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Mockito.verify(advancedCommand, Mockito.times(0)).execute();
+            advancedCommandManager.addConfirmationCommand(advancedCommand);
+            advancedCommandManager.run();
+
+            Mockito.verify(advancedCommand, Mockito.times(0)).execute();
+        }
     }
 
     @Test
@@ -272,7 +289,6 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        Mockito.when(eterniaLib.getComponentMessage(Messages.COMMAND_CANCELLED, true)).thenReturn(message);
         Mockito.when(advancedCommand.getCategory()).thenReturn(AdvancedCategory.CONFIRMATION);
         Mockito.when(advancedCommand.sender()).thenReturn(player);
         Mockito.when(advancedCommand.executeAsynchronously()).thenReturn(bukkitTask);
@@ -280,10 +296,18 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(advancedCommand.increaseCommandTicks(TICK_DELAY)).thenReturn(true);
         Mockito.when(advancedCommand.isAborted()).thenReturn(false);
 
-        advancedCommandManager.addConfirmationCommand(advancedCommand);
-        advancedCommandManager.run();
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(advancedCommand, Mockito.times(1)).abort(message);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            Mockito.when(chatCommons.parseMessage(Messages.COMMAND_CANCELLED)).thenReturn(message);
+
+            advancedCommandManager.addConfirmationCommand(advancedCommand);
+            advancedCommandManager.run();
+
+            Mockito.verify(advancedCommand, Mockito.times(1)).abort(message);
+        }
     }
 
     @Test
@@ -296,15 +320,22 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        Mockito.when(eterniaLib.getComponentMessage(Messages.COMMAND_CANCELLED, true)).thenReturn(message);
         Mockito.when(command.getCategory()).thenReturn(AdvancedCategory.CONFIRMATION);
         Mockito.when(command.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addConfirmationCommand(command);
-        advancedCommandManager.removeCommandsFromPlayer(uuid);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(command, Mockito.times(1)).abort(message);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            Mockito.when(chatCommons.parseMessage(Messages.COMMAND_CANCELLED)).thenReturn(message);
+
+            advancedCommandManager.addConfirmationCommand(command);
+            advancedCommandManager.removeCommandsFromPlayer(uuid);
+
+            Mockito.verify(command, Mockito.times(1)).abort(message);
+        }
     }
 
     @Test
@@ -317,15 +348,22 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        Mockito.when(eterniaLib.getComponentMessage(Messages.COMMAND_CANCELLED, true)).thenReturn(message);
         Mockito.when(command.getCategory()).thenReturn(AdvancedCategory.TIMED);
         Mockito.when(command.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addTimedCommand(command);
-        advancedCommandManager.removeCommandsFromPlayer(uuid);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(command, Mockito.times(1)).abort(message);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            Mockito.when(chatCommons.parseMessage(Messages.COMMAND_CANCELLED)).thenReturn(message);
+
+            advancedCommandManager.addTimedCommand(command);
+            advancedCommandManager.removeCommandsFromPlayer(uuid);
+
+            Mockito.verify(command, Mockito.times(1)).abort(message);
+        }
     }
 
     @Test
@@ -339,19 +377,26 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        Mockito.when(eterniaLib.getComponentMessage(Messages.COMMAND_CANCELLED, true)).thenReturn(message);
         Mockito.when(commandTimed.getCategory()).thenReturn(AdvancedCategory.TIMED);
         Mockito.when(commandTimed.sender()).thenReturn(player);
         Mockito.when(commandConfirmation.getCategory()).thenReturn(AdvancedCategory.CONFIRMATION);
         Mockito.when(commandConfirmation.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addTimedCommand(commandTimed);
-        advancedCommandManager.addConfirmationCommand(commandConfirmation);
-        advancedCommandManager.removeCommandsFromPlayer(uuid);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(commandTimed, Mockito.times(1)).abort(message);
-        Mockito.verify(commandConfirmation, Mockito.times(1)).abort(message);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            Mockito.when(chatCommons.parseMessage(Messages.COMMAND_CANCELLED)).thenReturn(message);
+
+            advancedCommandManager.addTimedCommand(commandTimed);
+            advancedCommandManager.addConfirmationCommand(commandConfirmation);
+            advancedCommandManager.removeCommandsFromPlayer(uuid);
+
+            Mockito.verify(commandTimed, Mockito.times(1)).abort(message);
+            Mockito.verify(commandConfirmation, Mockito.times(1)).abort(message);
+        }
     }
 
     @Test
@@ -367,9 +412,14 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(command.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        boolean result = advancedCommandManager.addConfirmationCommand(command);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Assertions.assertTrue(result);
+            boolean result = advancedCommandManager.addConfirmationCommand(command);
+
+            Assertions.assertTrue(result);
+        }
     }
 
     @Test
@@ -385,10 +435,15 @@ class TestAdvancedCommandManagerImpl {
         Mockito.when(command.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addConfirmationCommand(command);
-        boolean result = advancedCommandManager.addConfirmationCommand(command);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
 
-        Assertions.assertFalse(result);
+            advancedCommandManager.addConfirmationCommand(command);
+            boolean result = advancedCommandManager.addConfirmationCommand(command);
+
+            Assertions.assertFalse(result);
+        }
     }
 
     @Test
@@ -438,17 +493,22 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        Mockito.when(eterniaLib.getComponentMessage(Messages.COMMAND_CANCELLED, true)).thenReturn(component);
         Mockito.when(command.getCategory()).thenReturn(AdvancedCategory.TIMED);
         Mockito.when(command.sender()).thenReturn(player);
         Mockito.when(player.getUniqueId()).thenReturn(uuid);
 
-        advancedCommandManager.addTimedCommand(command);
-        advancedCommandManager.abortTimedCommand(uuid);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(eterniaLib, Mockito.times(1)).getComponentMessage(
-                Messages.COMMAND_CANCELLED, true
-        );
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            Mockito.when(chatCommons.parseMessage(Messages.COMMAND_CANCELLED)).thenReturn(component);
+
+            advancedCommandManager.addTimedCommand(command);
+            advancedCommandManager.abortTimedCommand(uuid);
+
+            Mockito.verify(chatCommons, Mockito.times(1)).parseMessage(Messages.COMMAND_CANCELLED);
+        }
     }
 
     @Test
@@ -458,11 +518,15 @@ class TestAdvancedCommandManagerImpl {
         UUID uuid = UUID.randomUUID();
         AdvancedCommandManagerImpl advancedCommandManager = new AdvancedCommandManagerImpl(eterniaLib, TICK_DELAY);
 
-        advancedCommandManager.abortTimedCommand(uuid);
+        try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {
+            ChatCommons chatCommons = Mockito.mock(ChatCommons.class);
 
-        Mockito.verify(eterniaLib, Mockito.times(0)).getComponentMessage(
-                Messages.COMMAND_CANCELLED, true
-        );
+            pluginStatic.when(EterniaLib::getChatCommons).thenReturn(chatCommons);
+
+            advancedCommandManager.abortTimedCommand(uuid);
+
+            Mockito.verify(chatCommons, Mockito.times(0)).parseMessage(Messages.COMMAND_CANCELLED);
+        }
     }
 
     @Test

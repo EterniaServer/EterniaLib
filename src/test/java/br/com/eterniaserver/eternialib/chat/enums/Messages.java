@@ -1,4 +1,4 @@
-package br.com.eterniaserver.eternialib.utils;
+package br.com.eterniaserver.eternialib.chat.enums;
 
 public enum Messages {
     SERVER_PREFIX,

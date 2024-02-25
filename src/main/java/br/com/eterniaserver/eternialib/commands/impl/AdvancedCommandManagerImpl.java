@@ -40,11 +40,11 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         }
 
         Component message = switch (rule) {
-            case NOT_ATTACK -> plugin.getComponentMessage(Messages.ATTACKED, true);
-            case NOT_BREAK_BLOCK -> plugin.getComponentMessage(Messages.BLOCK_BRAKED, true);
-            case NOT_JUMP -> plugin.getComponentMessage(Messages.JUMPED, true);
-            case NOT_SNEAK -> plugin.getComponentMessage(Messages.SNEAKED, true);
-            default -> plugin.getComponentMessage(Messages.MOVED, true);
+            case NOT_ATTACK -> EterniaLib.getChatCommons().parseMessage(Messages.ATTACKED);
+            case NOT_BREAK_BLOCK -> EterniaLib.getChatCommons().parseMessage(Messages.BLOCK_BRAKED);
+            case NOT_JUMP -> EterniaLib.getChatCommons().parseMessage(Messages.JUMPED);
+            case NOT_SNEAK -> EterniaLib.getChatCommons().parseMessage(Messages.SNEAKED);
+            default -> EterniaLib.getChatCommons().parseMessage(Messages.MOVED);
         };
 
         registeredCommand.abort(message);
@@ -63,8 +63,8 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         UUID uuid = command.sender().getUniqueId();
         String commandEntry = getCommandEntry(uuid, AdvancedCategory.CONFIRMATION);
 
-        Component confirmationCommand = plugin.getComponentMessage(Messages.CONFIRMED_COMMAND_MESSAGE, true);
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> command.sender().sendMessage(confirmationCommand));
+        Component msg = EterniaLib.getChatCommons().parseMessage(Messages.CONFIRMED_COMMAND_MESSAGE);
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> command.sender().sendMessage(msg));
 
         if (commandsMap.containsKey(commandEntry)) {
             return false;
@@ -95,8 +95,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         AdvancedCommand command = commandsMap.get(entry);
 
         if (command != null) {
-            Component message = plugin.getComponentMessage(Messages.COMMAND_CANCELLED, true);
-            command.abort(message);
+            command.abort(EterniaLib.getChatCommons().parseMessage(Messages.COMMAND_CANCELLED));
         }
     }
 
@@ -109,7 +108,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
             return false;
         }
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> command.runTimeMessage(plugin));
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, command::runTimeMessage);
         commandsMap.put(entry, command);
         return true;
     }
@@ -122,7 +121,7 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
         AdvancedCommand confirmationCommand = commandsMap.get(confirmationEntry);
         AdvancedCommand timedCommand = commandsMap.get(timedEntry);
 
-        Component message = plugin.getComponentMessage(Messages.COMMAND_CANCELLED, true);
+        Component message = EterniaLib.getChatCommons().parseMessage(Messages.COMMAND_CANCELLED);
         if (confirmationCommand != null) {
             confirmationCommand.abort(message);
         }
@@ -152,11 +151,10 @@ public class AdvancedCommandManagerImpl implements AdvancedCommandManager {
                 i.remove();
             }
             else if (isTimed) {
-                command.runTimeMessage(plugin);
+                command.runTimeMessage();
             }
             else if (finishedTicks) {
-                Component message = plugin.getComponentMessage(Messages.COMMAND_CANCELLED, true);
-                command.abort(message);
+                command.abort(EterniaLib.getChatCommons().parseMessage(Messages.COMMAND_CANCELLED));
                 i.remove();
             }
         }

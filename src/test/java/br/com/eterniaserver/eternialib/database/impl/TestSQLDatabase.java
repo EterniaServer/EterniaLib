@@ -1,16 +1,20 @@
 package br.com.eterniaserver.eternialib.database.impl;
 
 import br.com.eterniaserver.eternialib.database.Entity;
+import br.com.eterniaserver.eternialib.database.HikariSourceConfiguration;
 import br.com.eterniaserver.eternialib.database.dtos.EntityDataDTO;
 import br.com.eterniaserver.eternialib.database.dtos.SearchField;
 import br.com.eterniaserver.eternialib.database.exceptions.DatabaseException;
 import br.com.eterniaserver.eternialib.database.exceptions.EntityException;
 import br.com.eterniaserver.eternialib.utils.Company;
 import br.com.eterniaserver.eternialib.utils.Person;
+
 import com.zaxxer.hikari.HikariDataSource;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.mockito.Mockito;
 
 import java.sql.Connection;
@@ -33,14 +37,19 @@ class TestSQLDatabase {
 
     @BeforeAll
     public static void loadAndTestRegisterEntity() throws EntityException, DatabaseException, SQLException, NoSuchMethodException, IllegalAccessException {
+        HikariSourceConfiguration hikariSourceConfiguration = Mockito.mock(HikariSourceConfiguration.class);
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        Connection connection = Mockito.mock(Connection.class);
+
         personEntity = new Entity<>(Person.class);
         sgbdInterface = Mockito.mock(SGBDInterface.class);
         dataSource = Mockito.mock(HikariDataSource.class);
-        database = new SQLDatabase(dataSource, sgbdInterface);
+        database = new SQLDatabase(hikariSourceConfiguration);
 
-        Connection connection = Mockito.mock(Connection.class);
-        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
 
+
+        Mockito.when(hikariSourceConfiguration.getDataSource()).thenReturn(dataSource);
+        Mockito.when(hikariSourceConfiguration.getSgbdInterface()).thenReturn(sgbdInterface);
         Mockito.when(dataSource.getConnection()).thenReturn(connection);
         Mockito.when(connection.prepareStatement(any())).thenReturn(preparedStatement);
         Mockito.when(preparedStatement.executeUpdate()).thenReturn(1);

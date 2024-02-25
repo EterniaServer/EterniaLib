@@ -2,7 +2,6 @@ package br.com.eterniaserver.eternialib.core.enums;
 
 public enum Strings {
 
-    PLUGIN_PREFIX,
     DATABASE_TYPE,
     DATABASE_HOST,
     DATABASE_PORT,
@@ -10,5 +9,7 @@ public enum Strings {
     DATABASE_USER,
     DATABASE_PASSWORD,
     PLAYER_UUID_TABLE_NAME,
+    CONST_LINK_COLOR,
+    CONST_COLOR_PATTERN,
 
 }

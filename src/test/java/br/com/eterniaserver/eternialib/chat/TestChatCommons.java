@@ -1,10 +1,8 @@
-package br.com.eterniaserver.eternialib.chat.impl;
+package br.com.eterniaserver.eternialib.chat;
 
 import br.com.eterniaserver.eternialib.EterniaLib;
-import br.com.eterniaserver.eternialib.chat.ChatCommons;
-import br.com.eterniaserver.eternialib.chat.MessageMap;
-import br.com.eterniaserver.eternialib.chat.MessageOptions;
-import br.com.eterniaserver.eternialib.utils.Messages;
+import br.com.eterniaserver.eternialib.chat.impl.ChatCommonsImpl;
+import br.com.eterniaserver.eternialib.chat.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
 
 import net.kyori.adventure.text.Component;
@@ -19,7 +17,9 @@ import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
 
-class TestChatCommonsImpl {
+import java.util.EnumMap;
+
+class TestChatCommons {
 
     private ChatCommons chatCommons;
 
@@ -27,10 +27,11 @@ class TestChatCommonsImpl {
     void setup() {
         EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
 
-        Mockito.when(eterniaLib.getString(Strings.CONST_COLOR_PATTERN))
-                .thenReturn("#[a-fA-F\\d]{6}|&[a-fk-or\\d]");
-        Mockito.when(eterniaLib.getString(Strings.CONST_LINK_COLOR))
-                .thenReturn("#00ff00");
+        EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
+        strings.put(Strings.CONST_COLOR_PATTERN, "#[a-fA-F\\d]{6}|&[a-fk-or\\d]");
+        strings.put(Strings.CONST_LINK_COLOR, "#00ff00");
+
+        Mockito.when(eterniaLib.getStrings()).thenReturn(strings);
 
         MessageMap<Messages, String> messages = new MessageMap<>(Messages.class, Messages.SERVER_PREFIX);
         messages.put(Messages.SERVER_PREFIX, "<black>[</black><red>Lib</red><black>]</black><grey> </grey>");

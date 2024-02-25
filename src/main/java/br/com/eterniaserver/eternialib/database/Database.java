@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DatabaseInterface {
+public interface Database {
 
     Connection getConnection() throws SQLException;
 

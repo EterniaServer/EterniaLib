@@ -30,15 +30,15 @@ public class ChatCommonsImpl implements ChatCommons {
     private final Map<String, MessageMap<?, String>> messagesMaps = new HashMap<>();
 
     public ChatCommonsImpl(EterniaLib plugin) {
-        this.pattern = Pattern.compile(plugin.getString(Strings.CONST_COLOR_PATTERN));
+        this.pattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
         this.miniMessage = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
                         .resolver(TagResolver.resolver("a", (args, context) -> {
                             String link = args.popOr("Invalid").value();
-                            TextColor hoverColor = TextColor.fromHexString(plugin.getString(Strings.CONST_LINK_COLOR));
-                            Component hoverText = Component.text(link).color(hoverColor);
-                            return Tag.styling(ClickEvent.openUrl(link), HoverEvent.showText(hoverText));
+                            TextColor color = TextColor.fromHexString(plugin.getStrings().get(Strings.CONST_LINK_COLOR));
+                            Component text = Component.text(link).color(color);
+                            return Tag.styling(ClickEvent.openUrl(link), HoverEvent.showText(text));
                         }))
                         .build())
                 .build();

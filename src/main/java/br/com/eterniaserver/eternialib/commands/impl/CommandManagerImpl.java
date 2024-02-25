@@ -17,6 +17,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
 
 public class CommandManagerImpl implements CommandManager {
 
@@ -24,18 +25,24 @@ public class CommandManagerImpl implements CommandManager {
 
     private final PaperCommandManager manager;
 
-    public CommandManagerImpl(final EterniaLib plugin) throws IOException, InvalidConfigurationException {
-        this.manager = new PaperCommandManager(plugin);
-        this.manager.enableUnstableAPI("help");
+    public CommandManagerImpl(EterniaLib plugin) {
+        manager = new PaperCommandManager(plugin);
+        manager.enableUnstableAPI("help");
 
-        File files = new File(plugin.getDataFolder(), ACF_MESSAGES);
+        try {
+            File files = new File(plugin.getDataFolder(), ACF_MESSAGES);
 
-        if (!files.exists()) {
-            plugin.saveResource(ACF_MESSAGES, false);
+            if (!files.exists()) {
+                plugin.saveResource(ACF_MESSAGES, false);
+            }
+
+            manager.getLocales().loadYamlLanguageFile(ACF_MESSAGES, Locale.ENGLISH);
+            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error when creating or loading YML configuration file.");
+        } catch (InvalidConfigurationException e) {
+            plugin.getLogger().log(Level.SEVERE, "YML configuration file is invalid.");
         }
-
-        this.manager.getLocales().loadYamlLanguageFile(ACF_MESSAGES, Locale.ENGLISH);
-        this.manager.getLocales().setDefaultLocale(Locale.ENGLISH);
     }
 
     @Override
