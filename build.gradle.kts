@@ -14,7 +14,6 @@ sonar {
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.junit.reportPaths", "build/test-results/test")
         property("sonar.gradle.skipCompile", true)
     }
 }
@@ -73,12 +72,6 @@ tasks.build {
     dependsOn(tasks.shadowJar)
 }
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
-    }
-}
-
 tasks.test {
     useJUnitPlatform()
 
@@ -87,8 +80,15 @@ tasks.test {
     }
 }
 
-tasks.sonar {
+tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+    }
+}
+
+tasks.sonar {
+    dependsOn(tasks.jacocoTestReport)
 }
 
 tasks.processResources {
