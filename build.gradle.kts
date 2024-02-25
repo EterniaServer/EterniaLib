@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("jacoco")
     id("maven-publish")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.5.0.2730"
     id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
@@ -30,7 +30,7 @@ sonarqube  {
 }
 
 group = "br.com.eterniaserver"
-version = "4.2.2"
+version = "4.2.5"
 
 repositories {
     mavenCentral()
