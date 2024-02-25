@@ -17,15 +17,13 @@ sonar  {
         property("sonar.projectKey", "EterniaServer_EterniaLib")
         property("sonar.organization", "eterniaserver")
         property("sonar.projectVersion", "${project.version}")
-        property("sonar.sources", "src/main/java")
-        property("sonar.tests", "src/test/java")
+        property("sonar.java.source", "src/main/java")
+        property("sonar.java.target", "src/test/java")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
         property("sonar.java.coveragePlugin", "jacoco")
         property("sonar.verbose", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.junit.reportsPath", "build/test-results/test")
     }
 }
 
