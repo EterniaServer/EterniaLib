@@ -109,79 +109,79 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
 
         addMessage(
                 Messages.SERVER_PREFIX,
-                "<color:#555555>[<color:#55ff55>E<color:#5555ff>L<color:#555555>]"
+                "#555555[#55ff55E#5555ffL#555555]"
         );
         addMessage(
                 Messages.MOVED,
-                "<color:#aaaaaa>Você se moveu, por isso seu comando foi cancelado<color:#555555>."
+                "#aaaaaaVocê se moveu, por isso seu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.BLOCK_BRAKED,
-                "<color:#aaaaaa>Você quebrou um bloco, por isso seu comando foi cancelado<color:#555555>."
+                "#aaaaaaVocê quebrou um bloco, por isso seu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.JUMPED,
-                "<color:#aaaaaa>Você pulou, por isso seu comando foi cancelado<color:#555555>."
+                "#aaaaaaVocê pulou, por isso seu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.SNEAKED,
-                "<color:#aaaaaa>Você se agachou, por isso seu comando foi cancelado<color:#555555>."
+                "#aaaaaaVocê se agachou, por isso seu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.ATTACKED,
-                "<color:#aaaaaa>Você atacou, por isso seu comando foi cancelado<color:#555555>."
+                "#aaaaaaVocê atacou, por isso seu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.COMMAND_CANCELLED,
-                "<color:#aaaaaa>Seu comando foi cancelado<color:#555555>."
+                "#aaaaaaSeu comando foi cancelado#555555."
         );
         addMessage(
                 Messages.CONFIG_RELOADED,
-                "<color:#aaaaaa>Configuração {0} recarregada<color:#555555>.",
+                "#aaaaaaConfiguração {0} recarregada#555555.",
                 CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_INVALID,
-                "<color:#aaaaaa>Não foi encontrado nenhuma configuração com o nome <color:#00aaaa>{0}<color:#555555>.",
+                "#aaaaaaNão foi encontrado nenhuma configuração com o nome #00aaaa{0}#555555.",
                 CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_BLOCKED,
-                "<color:#aaaaaa>A configuração <color:#00aaaa>{0}<color:#aaaaaa> não pode ser recarregada<color:#555555>.",
+                "#aaaaaaA configuração #00aaaa{0}#aaaaaa não pode ser recarregada#555555.",
                 CONFIG_NAME_NOTE
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
-                "<color:#aaaaaa>Essa é uma configuração crítica, para recarregar adicione <color:#00aaaa>:t<color:#aaaaaa> ao final do comando<color:#555555>."
+                "#aaaaaaEssa é uma configuração crítica, para recarregar adicione #00aaaa:t#aaaaaa ao final do comando#555555."
         );
         addMessage(
                 Messages.CONFIG_ADVICE,
-                "<color:#aaaaaa>Os seguintes códigos de log foram encontrados: <color:#00aaaa>{0}<color:#555555>.",
+                "#aaaaaaOs seguintes códigos de log foram encontrados: #00aaaa{0}#555555.",
                 ERROR_LIST_NOTE
         );
         addMessage(
                 Messages.TIME_MESSAGE,
-                "<color:#aaaaaa>{0}<color:#555555>. <color:#aaaaaa>Tempo de restante<color:#555555>: <color:#00aaaa>{1}<color:#555555>."
+                "#aaaaaa{0}#555555. #aaaaaaTempo de restante#555555: #00aaaa{1}#555555."
         );
         addMessage(
                 Messages.CONFIRMED_COMMAND_MESSAGE,
-                "<color:#aaaaaa>Aceite ou negue a execução do comando digitando <color:#ffaa00>/aceitar<color:#aaaaaa> ou <color:#ffaa00>/negar<color:#555555>."
+                "#aaaaaaAceite ou negue a execução do comando digitando #ffaa00/aceitar#aaaaaa ou #ffaa00/negar#555555."
         );
         addMessage(
                 Messages.ACCEPT_NO_COMMAND,
-                "<color:#aaaaaa>Nenhum comando para ser confirmado<color:#555555>."
+                "#aaaaaaNenhum comando para ser confirmado#555555."
         );
         addMessage(
                 Messages.DENY_NO_COMMAND,
-                "<color:#aaaaaa>Nenhum comando para ser negado<color:#555555>."
+                "#aaaaaaNenhum comando para ser negado#555555."
         );
         addMessage(
                 Messages.ACCEPTED_COMMAND,
-                "<color:#aaaaaa>Comando aceito<color:#555555>."
+                "#aaaaaaComando aceito#555555."
         );
         addMessage(
                 Messages.DENIED_COMMAND,
-                "<color:#aaaaaa>Comando negado<color:#555555>."
+                "#aaaaaaComando negado#555555."
         );
 
         addCommandLocale(Commands.ETERNIA, new CommandLocale(
