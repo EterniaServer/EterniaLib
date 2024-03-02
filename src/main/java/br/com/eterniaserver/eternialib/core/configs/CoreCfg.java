@@ -96,7 +96,7 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
         plugin.getStrings().put(Strings.DATABASE_PASSWORD, inConfig.getString("database.password", ""));
         plugin.getStrings().put(Strings.PLAYER_UUID_TABLE_NAME, inConfig.getString("database.player-uuid.tableName", "el_cache_uuid"));
         plugin.getStrings().put(Strings.CONST_LINK_COLOR, inConfig.getString("const.link-color", "#926CEB"));
-        plugin.getStrings().put(Strings.CONST_COLOR_PATTERN, inConfig.getString("const.color-pattern-regex", "#[a-fA-F\\d]{6}|&[a-f]"));
+        plugin.getStrings().put(Strings.CONST_COLOR_PATTERN, inConfig.getString("const.color-pattern-regex", "#[a-fA-F\\d]{6}|&[a-fk-or\\d]"));
         plugin.getStrings().put(Strings.CONST_IS_COLORED, inConfig.getString("const.is-colored-pattern-regex", "[<>]"));
 
         plugin.getIntegers().put(Integers.HIKARI_MIN_POOL_SIZE, inConfig.getInt("database.hikari.pool.min-size", 10));
