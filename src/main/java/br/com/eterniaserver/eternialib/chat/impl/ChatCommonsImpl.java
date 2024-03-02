@@ -24,13 +24,15 @@ import java.util.regex.Pattern;
 
 public class ChatCommonsImpl implements ChatCommons {
 
-    private final Pattern pattern;
+    private final Pattern colorredPattern;
+    private final Pattern colorPattern;
     private final MiniMessage miniMessage;
 
     private final Map<String, MessageMap<?, String>> messagesMaps = new HashMap<>();
 
     public ChatCommonsImpl(EterniaLib plugin) {
-        this.pattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
+        this.colorredPattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_IS_COLORED));
+        this.colorPattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
         this.miniMessage = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -51,7 +53,9 @@ public class ChatCommonsImpl implements ChatCommons {
 
         for (E messageEnum : keyType.getEnumConstants()) {
             String message = messagesMap.get(messageEnum);
-            messagesMap.put(messageEnum, getColor(message));
+            if (message != null) {
+                messagesMap.put(messageEnum, getColor(message));
+            }
         }
 
         messagesMaps.put(keyTypeName, messagesMap);
@@ -107,7 +111,11 @@ public class ChatCommonsImpl implements ChatCommons {
 
     @Override
     public String getColor(String message) {
-        Matcher matcher = pattern.matcher(message);
+        if (colorredPattern.matcher(message).find()) {
+            return message;
+        }
+
+        Matcher matcher = colorPattern.matcher(message);
         StringBuilder buffer = new StringBuilder();
 
         while (matcher.find()) {

@@ -29,6 +29,7 @@ class TestChatCommons {
 
         EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
         strings.put(Strings.CONST_COLOR_PATTERN, "#[a-fA-F\\d]{6}|&[a-fk-or\\d]");
+        strings.put(Strings.CONST_IS_COLORED, "[<>]");
         strings.put(Strings.CONST_LINK_COLOR, "#00ff00");
 
         Mockito.when(eterniaLib.getStrings()).thenReturn(strings);

@@ -11,5 +11,6 @@ public enum Strings {
     PLAYER_UUID_TABLE_NAME,
     CONST_LINK_COLOR,
     CONST_COLOR_PATTERN,
+    CONST_IS_COLORED,
 
 }

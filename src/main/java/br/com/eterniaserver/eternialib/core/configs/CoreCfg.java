@@ -97,6 +97,7 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
         plugin.getStrings().put(Strings.PLAYER_UUID_TABLE_NAME, inConfig.getString("database.player-uuid.tableName", "el_cache_uuid"));
         plugin.getStrings().put(Strings.CONST_LINK_COLOR, inConfig.getString("const.link-color", "#926CEB"));
         plugin.getStrings().put(Strings.CONST_COLOR_PATTERN, inConfig.getString("const.color-pattern-regex", "#[a-fA-F\\d]{6}|&[a-f]"));
+        plugin.getStrings().put(Strings.CONST_IS_COLORED, inConfig.getString("const.is-colored-pattern-regex", "[<>]"));
 
         plugin.getIntegers().put(Integers.HIKARI_MIN_POOL_SIZE, inConfig.getInt("database.hikari.pool.min-size", 10));
         plugin.getIntegers().put(Integers.HIKARI_MAX_POOL_SIZE, inConfig.getInt("database.hikari.pool.max-size", 10));
@@ -237,6 +238,7 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
         outConfig.set("database.player-uuid.tableName", plugin.getStrings().get(Strings.PLAYER_UUID_TABLE_NAME));
         outConfig.set("const.link-color", plugin.getStrings().get(Strings.CONST_LINK_COLOR));
         outConfig.set("const.color-pattern-regex", plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
+        outConfig.set("const.is-colored-pattern-regex", plugin.getStrings().get(Strings.CONST_IS_COLORED));
 
         outConfig.set("database.hikari.pool.min-size", plugin.getIntegers().get(Integers.HIKARI_MIN_POOL_SIZE));
         outConfig.set("database.hikari.pool.max-size", plugin.getIntegers().get(Integers.HIKARI_MAX_POOL_SIZE));
