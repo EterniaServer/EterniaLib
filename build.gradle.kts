@@ -22,7 +22,7 @@ sonar {
 }
 
 group = "br.com.eterniaserver"
-version = "4.3.2"
+version = "4.3.3"
 
 repositories {
     mavenCentral()

@@ -140,6 +140,26 @@ class TestChatCommons {
     }
 
     @Test
+    void testDeserializeMessage() {
+        String message = "<white>&aTest";
+
+        Component expect = Component.text("&aTest").color(TextColor.color(0xffffff));
+        Component result = chatCommons.deserialize(message);
+
+        Assertions.assertEquals(expect, result);
+    }
+
+    @Test
+    void testSerializerMessage() {
+        Component component = Component.text("&aTest").color(TextColor.color(0xffffff));
+
+        String expect = "<white>&aTest";
+        String result = chatCommons.serializer(component);
+
+        Assertions.assertEquals(expect, result);
+    }
+
+    @Test
     void testPlain() {
         Component component = Component.text("Test")
                 .color(TextColor.color(0x55ffff))

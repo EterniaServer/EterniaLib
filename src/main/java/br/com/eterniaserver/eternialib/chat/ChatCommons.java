@@ -18,6 +18,8 @@ public interface ChatCommons {
     Component parseColor(String message);
     String getColor(String message);
 
+    Component deserialize(String message);
+    String serializer(Component component);
     String plain(Component component);
 
 }

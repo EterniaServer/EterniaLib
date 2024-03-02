@@ -126,6 +126,16 @@ public class ChatCommonsImpl implements ChatCommons {
     }
 
     @Override
+    public Component deserialize(String message) {
+        return miniMessage.deserialize(message);
+    }
+
+    @Override
+    public String serializer(Component component) {
+        return miniMessage.serialize(component);
+    }
+
+    @Override
     public String plain(Component component) {
         return PlainTextComponentSerializer.plainText().serialize(component);
     }
