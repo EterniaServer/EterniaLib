@@ -25,7 +25,8 @@ sonar {
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
         property("sonar.java.coveragePlugin", "jacoco")
-        property("sonar.jacoco.reportPaths", "build/jacoco/test.exec")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.jacoco.reportPaths", "build/reports/jacoco/test")
     }
 }
 
@@ -95,8 +96,8 @@ tasks.test {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.required = false
-        csv.required = false
+        xml.required = true
+        csv.required = true
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
