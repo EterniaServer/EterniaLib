@@ -20,13 +20,11 @@ sonar {
         property("sonar.projectVersion", "${project.version}")
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src/main/java")
-        property("sonar.tests", "src/test/java")
         property("sonar.java.binaries", "build/classes")
         property("sonar.java.libraries", "build/libs")
         property("sonar.java.coveragePlugin", "jacoco")
         property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.jacoco.reportPaths", "build/reports/jacoco/test")
+        property("sonar.jacoco.reportPaths", "build/jacoco/test.exec")
     }
 }
 

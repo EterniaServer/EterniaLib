@@ -38,10 +38,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build Test and Validate
+      - name: Build
         run: ./gradlew clean build
 
-      - name: Build Test and Validate
+      - name: Test and Validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
