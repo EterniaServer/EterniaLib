@@ -3,11 +3,16 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("org.sonarqube") version "4.4.1.3373"
-    id("io.freefair.lombok") version "8.4"
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("io.freefair.lombok") version "8.6"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 System.setProperty("sonar.gradle.skipCompile", "false")
+
+jacoco {
+    toolVersion = "0.8.11"
+    reportsDirectory = layout.buildDirectory.dir("reports/jacoco")
+}
 
 sonar {
     properties {
@@ -15,14 +20,17 @@ sonar {
         property("sonar.projectVersion", "${project.version}")
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "src/main/java")
+        property("sonar.tests", "src/test/java")
+        property("sonar.java.binaries", "build/classes")
+        property("sonar.java.libraries", "build/libs")
         property("sonar.java.coveragePlugin", "jacoco")
-        property("sonar.coverage.jacoco.xmlReportPath", "build/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.junit.reportPaths", "build/test-results/test")
+        property("sonar.jacoco.reportPaths", "build/jacoco/test.exec")
     }
 }
 
 group = "br.com.eterniaserver"
-version = "4.3.4"
+version = "4.3.5"
 
 repositories {
     mavenCentral()
@@ -81,12 +89,15 @@ tasks.test {
     testLogging {
         events("passed", "skipped", "failed")
     }
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.required.set(true)
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
 
