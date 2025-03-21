@@ -1,14 +1,27 @@
+object Constants {
+    const val PROJECT_VERSION = "4.4.2"
+
+    const val JAVA_VERSION = "21"
+    const val JACOCO_VERSION = "0.8.12"
+
+    const val PAPER_VERSION = "1.21.4-R0.1-SNAPSHOT"
+    const val HIKARI_VERSION = "6.2.1"
+    const val ACF_VERSION = "0.5.1-SNAPSHOT"
+    const val JUPITER_VERSION = "5.11.4"
+    const val MOCKITO_VERSION = "5.16.1"
+}
+
 plugins {
     id("java")
     id("maven-publish")
     id("jacoco")
     id("org.sonarqube") version("6.0.1.5171")
     id("io.freefair.lombok") version("8.13")
-    id("com.gradleup.shadow") version "9.0.0-beta11"
+    id("com.gradleup.shadow") version("9.0.0-beta11")
 }
 
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = Constants.JACOCO_VERSION
 }
 
 sonar {
@@ -24,7 +37,7 @@ sonar {
 }
 
 group = "br.com.eterniaserver"
-version = "4.4.1"
+version = Constants.PROJECT_VERSION
 
 repositories {
     mavenCentral()
@@ -48,20 +61,20 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(Constants.JAVA_VERSION))
     }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper", "paper-api", "1.21.4-R0.1-SNAPSHOT")
-    implementation("com.zaxxer", "HikariCP", "6.2.1") {
+    compileOnly("io.papermc.paper", "paper-api", Constants.PAPER_VERSION)
+    implementation("com.zaxxer", "HikariCP", Constants.HIKARI_VERSION) {
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
-    testImplementation("org.mockito:mockito-core:5.16.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
+    implementation("co.aikar", "acf-paper", Constants.ACF_VERSION)
+    testImplementation("io.papermc.paper", "paper-api", Constants.PAPER_VERSION)
+    testImplementation("org.junit.jupiter", "junit-jupiter", Constants.JUPITER_VERSION)
+    testImplementation("org.mockito", "mockito-core", Constants.MOCKITO_VERSION)
+    testImplementation("org.mockito", "mockito-junit-jupiter", Constants.MOCKITO_VERSION)
 }
 
 tasks.shadowJar {
