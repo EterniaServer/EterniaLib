@@ -110,7 +110,7 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
 
         addMessage(
                 Messages.SERVER_PREFIX,
-                "#555555[#55ff55E#5555ffL#555555]"
+                "#555555[#55ff55E#5555ffL#555555] "
         );
         addMessage(
                 Messages.MOVED,

@@ -2,13 +2,13 @@ plugins {
     id("java")
     id("maven-publish")
     id("jacoco")
-    id("org.sonarqube") version("4.4.1.3373")
-    id("io.freefair.lombok") version("8.6")
-    id("com.github.johnrengelman.shadow") version("8.1.1")
+    id("org.sonarqube") version("6.0.1.5171")
+    id("io.freefair.lombok") version("8.13")
+    id("com.gradleup.shadow") version "9.0.0-beta11"
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.12"
 }
 
 sonar {
@@ -18,13 +18,13 @@ sonar {
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.scm.disabled", true)
-        property("sonar.junit.reportPaths", "${project.buildDir}/test-results/test")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.junit.reportPaths", "${project.layout.buildDirectory.get()}/test-results/test")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
 
 group = "br.com.eterniaserver"
-version = "4.3.7"
+version = "4.4.0"
 
 repositories {
     mavenCentral()
@@ -48,20 +48,20 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper", "paper-api", "1.20.4-R0.1-SNAPSHOT")
-    implementation("com.zaxxer", "HikariCP", "5.1.0") {
+    compileOnly("io.papermc.paper", "paper-api", "1.21.4-R0.1-SNAPSHOT")
+    implementation("com.zaxxer", "HikariCP", "6.2.1") {
         exclude("org.slf4j", "slf4j-api")
     }
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.2.0")
+    testImplementation("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.mockito:mockito-core:5.16.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
 }
 
 tasks.shadowJar {
@@ -78,6 +78,13 @@ tasks.build {
 }
 
 tasks.test {
+    val mockitoJar = configurations.testRuntimeClasspath
+        .get()
+        .filter { it.name.contains("mockito-core") }
+        .firstOrNull()
+
+    jvmArgs = listOf("-javaagent:$mockitoJar")
+
     useJUnitPlatform()
 
     testLogging {
@@ -100,7 +107,7 @@ tasks.sonar {
 }
 
 tasks.processResources {
-    filesMatching("plugin.yml") {
+    filesMatching("paper-plugin.yml") {
         expand(mapOf("version" to version))
         filteringCharset = "UTF-8"
     }
@@ -120,7 +127,7 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
-            project.shadow.component(this)
+            from(components["shadow"])
         }
     }
 }
