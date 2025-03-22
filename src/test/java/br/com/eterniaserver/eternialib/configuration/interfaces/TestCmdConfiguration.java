@@ -53,10 +53,9 @@ class TestCmdConfiguration {
             @Override
             public ConfigurationCategory category() {return null;}
             @Override
-            public void executeConfig() {
-            }
+            public void executeConfig() {inFile.saveToString();}
             @Override
-            public void executeCritical() {}
+            public void executeCritical() {this.executeConfig();}
         };
 
         try (MockedStatic<EterniaLib> pluginStatic = Mockito.mockStatic(EterniaLib.class)) {

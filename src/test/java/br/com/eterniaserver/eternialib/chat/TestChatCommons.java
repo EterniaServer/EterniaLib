@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.chat;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.chat.impl.ChatCommonsImpl;
 import br.com.eterniaserver.eternialib.chat.enums.Messages;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
@@ -25,21 +24,18 @@ class TestChatCommons {
 
     @BeforeEach
     void setup() {
-        EterniaLib eterniaLib = Mockito.mock(EterniaLib.class);
-
         EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
         strings.put(Strings.CONST_COLOR_PATTERN, "#[a-fA-F\\d]{6}|&[a-fk-or\\d]");
         strings.put(Strings.CONST_IS_COLORED, "[<>]");
         strings.put(Strings.CONST_LINK_COLOR, "#00ff00");
 
-        Mockito.when(eterniaLib.getStrings()).thenReturn(strings);
 
         MessageMap<Messages, String> messages = new MessageMap<>(Messages.class, Messages.SERVER_PREFIX);
         messages.put(Messages.SERVER_PREFIX, "<black>[</black><red>Lib</red><black>]</black><grey> </grey>");
         messages.put(Messages.GENERIC_MESSAGE, "<aqua>Generic</aqua><dark_grey>.</dark_grey>");
         messages.put(Messages.GENERIC_WITH_ARGS, "<aqua>Generic<dark_grey> {0}.");
 
-        chatCommons = new ChatCommonsImpl(eterniaLib);
+        chatCommons = new ChatCommonsImpl(strings);
         chatCommons.registerMessage(messages);
     }
 

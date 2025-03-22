@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.core.configs;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.chat.ChatCommons;
 import br.com.eterniaserver.eternialib.chat.MessageMap;
 import br.com.eterniaserver.eternialib.chat.impl.ChatCommonsImpl;
@@ -22,6 +21,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+
+import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -34,7 +35,9 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
     private static final String FOLDER_PATH = PLUGIN_PATH + File.separator + "config";
     private static final String FILE_PATH = FOLDER_PATH + File.separator + "core.yml";
 
-    private final EterniaLib plugin;
+    private final EnumMap<Strings, String> strings;
+    private final EnumMap<Integers, Integer> integers;
+    private final EnumMap<Booleans, Boolean> booleans;
 
     private final Consumer<ChatCommons> chatCommonsConsumer;
     private final Consumer<Database> databaseConsumer;
@@ -44,11 +47,17 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
     private final FileConfiguration inConfig;
     private final FileConfiguration outConfig;
 
-    public CoreCfg(Consumer<ChatCommons> chatConsumer, Consumer<Database> dbConsumer, EterniaLib plugin) {
+    public CoreCfg(Consumer<ChatCommons> chatConsumer,
+                   Consumer<Database> dbConsumer,
+                   EnumMap<Strings, String> strings,
+                   EnumMap<Integers, Integer> integers,
+                   EnumMap<Booleans, Boolean> booleans) {
         this.chatCommonsConsumer = chatConsumer;
         this.databaseConsumer = dbConsumer;
 
-        this.plugin = plugin;
+        this.strings = strings;
+        this.integers = integers;
+        this.booleans = booleans;
 
         this.messages = new MessageMap<>(Messages.class, Messages.SERVER_PREFIX);
 
@@ -88,25 +97,25 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
 
     @Override
     public void executeConfig() {
-        plugin.getStrings().put(Strings.DATABASE_TYPE, inConfig.getString("database.type", "SQLITE"));
-        plugin.getStrings().put(Strings.DATABASE_HOST, inConfig.getString("database.host", "sqlite.db"));
-        plugin.getStrings().put(Strings.DATABASE_PORT, inConfig.getString("database.port", ""));
-        plugin.getStrings().put(Strings.DATABASE_DATABASE, inConfig.getString("database.database", ""));
-        plugin.getStrings().put(Strings.DATABASE_USER, inConfig.getString("database.user", ""));
-        plugin.getStrings().put(Strings.DATABASE_PASSWORD, inConfig.getString("database.password", ""));
-        plugin.getStrings().put(Strings.PLAYER_UUID_TABLE_NAME, inConfig.getString("database.player-uuid.tableName", "el_cache_uuid"));
-        plugin.getStrings().put(Strings.CONST_LINK_COLOR, inConfig.getString("const.link-color", "#926CEB"));
-        plugin.getStrings().put(Strings.CONST_COLOR_PATTERN, inConfig.getString("const.color-pattern-regex", "#[a-fA-F\\d]{6}|&[a-fk-or\\d]"));
-        plugin.getStrings().put(Strings.CONST_IS_COLORED, inConfig.getString("const.is-colored-pattern-regex", "[<>]"));
+        strings.put(Strings.DATABASE_TYPE, inConfig.getString("database.type", "SQLITE"));
+        strings.put(Strings.DATABASE_HOST, inConfig.getString("database.host", "sqlite.db"));
+        strings.put(Strings.DATABASE_PORT, inConfig.getString("database.port", ""));
+        strings.put(Strings.DATABASE_DATABASE, inConfig.getString("database.database", ""));
+        strings.put(Strings.DATABASE_USER, inConfig.getString("database.user", ""));
+        strings.put(Strings.DATABASE_PASSWORD, inConfig.getString("database.password", ""));
+        strings.put(Strings.PLAYER_UUID_TABLE_NAME, inConfig.getString("database.player-uuid.tableName", "el_cache_uuid"));
+        strings.put(Strings.CONST_LINK_COLOR, inConfig.getString("const.link-color", "#926CEB"));
+        strings.put(Strings.CONST_COLOR_PATTERN, inConfig.getString("const.color-pattern-regex", "#[a-fA-F\\d]{6}|&[a-fk-or\\d]"));
+        strings.put(Strings.CONST_IS_COLORED, inConfig.getString("const.is-colored-pattern-regex", "[<>]"));
 
-        plugin.getIntegers().put(Integers.HIKARI_MIN_POOL_SIZE, inConfig.getInt("database.hikari.pool.min-size", 10));
-        plugin.getIntegers().put(Integers.HIKARI_MAX_POOL_SIZE, inConfig.getInt("database.hikari.pool.max-size", 10));
-        plugin.getIntegers().put(Integers.HIKARI_MAX_LIFE_TIME, inConfig.getInt("database.hikari.max-life-time", 850000));
-        plugin.getIntegers().put(Integers.HIKARI_CONNECTION_TIME_OUT, inConfig.getInt("database.hikari.connection-timeout", 300000));
-        plugin.getIntegers().put(Integers.HIKARI_LEAK_THRESHOLD, inConfig.getInt("database.hikari.leak-threshold", 300000));
-        plugin.getIntegers().put(Integers.TICK_DELAY, inConfig.getInt("commands.tick-delay", 20));
+        integers.put(Integers.HIKARI_MIN_POOL_SIZE, inConfig.getInt("database.hikari.pool.min-size", 10));
+        integers.put(Integers.HIKARI_MAX_POOL_SIZE, inConfig.getInt("database.hikari.pool.max-size", 10));
+        integers.put(Integers.HIKARI_MAX_LIFE_TIME, inConfig.getInt("database.hikari.max-life-time", 850000));
+        integers.put(Integers.HIKARI_CONNECTION_TIME_OUT, inConfig.getInt("database.hikari.connection-timeout", 300000));
+        integers.put(Integers.HIKARI_LEAK_THRESHOLD, inConfig.getInt("database.hikari.leak-threshold", 300000));
+        integers.put(Integers.TICK_DELAY, inConfig.getInt("commands.tick-delay", 20));
 
-        plugin.getBooleans().put(Booleans.HIKARI_ALLOW_POOL_SUSPENSION, inConfig.getBoolean("database.hikari.pool.allow-suspension", false));
+        booleans.put(Booleans.HIKARI_ALLOW_POOL_SUSPENSION, inConfig.getBoolean("database.hikari.pool.allow-suspension", false));
 
         addMessage(
                 Messages.SERVER_PREFIX,
@@ -229,32 +238,32 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
                 "WARNING: All hikari configurations are CRITICAL, don't change anything that you don't know!"
         ));
 
-        outConfig.set("database.type", plugin.getStrings().get(Strings.DATABASE_TYPE));
-        outConfig.set("database.host", plugin.getStrings().get(Strings.DATABASE_HOST));
-        outConfig.set("database.port", plugin.getStrings().get(Strings.DATABASE_PORT));
-        outConfig.set("database.database", plugin.getStrings().get(Strings.DATABASE_DATABASE));
-        outConfig.set("database.user", plugin.getStrings().get(Strings.DATABASE_USER));
-        outConfig.set("database.password", plugin.getStrings().get(Strings.DATABASE_PASSWORD));
-        outConfig.set("database.player-uuid.tableName", plugin.getStrings().get(Strings.PLAYER_UUID_TABLE_NAME));
-        outConfig.set("const.link-color", plugin.getStrings().get(Strings.CONST_LINK_COLOR));
-        outConfig.set("const.color-pattern-regex", plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
-        outConfig.set("const.is-colored-pattern-regex", plugin.getStrings().get(Strings.CONST_IS_COLORED));
+        outConfig.set("database.type", strings.get(Strings.DATABASE_TYPE));
+        outConfig.set("database.host", strings.get(Strings.DATABASE_HOST));
+        outConfig.set("database.port", strings.get(Strings.DATABASE_PORT));
+        outConfig.set("database.database", strings.get(Strings.DATABASE_DATABASE));
+        outConfig.set("database.user", strings.get(Strings.DATABASE_USER));
+        outConfig.set("database.password", strings.get(Strings.DATABASE_PASSWORD));
+        outConfig.set("database.player-uuid.tableName", strings.get(Strings.PLAYER_UUID_TABLE_NAME));
+        outConfig.set("const.link-color", strings.get(Strings.CONST_LINK_COLOR));
+        outConfig.set("const.color-pattern-regex", strings.get(Strings.CONST_COLOR_PATTERN));
+        outConfig.set("const.is-colored-pattern-regex", strings.get(Strings.CONST_IS_COLORED));
 
-        outConfig.set("database.hikari.pool.min-size", plugin.getIntegers().get(Integers.HIKARI_MIN_POOL_SIZE));
-        outConfig.set("database.hikari.pool.max-size", plugin.getIntegers().get(Integers.HIKARI_MAX_POOL_SIZE));
-        outConfig.set("database.hikari.max-life-time", plugin.getIntegers().get(Integers.HIKARI_MAX_LIFE_TIME));
-        outConfig.set("database.hikari.connection-timeout", plugin.getIntegers().get(Integers.HIKARI_CONNECTION_TIME_OUT));
-        outConfig.set("database.hikari.leak-threshold", plugin.getIntegers().get(Integers.HIKARI_LEAK_THRESHOLD));
-        outConfig.set("commands.tick-delay", plugin.getIntegers().get(Integers.TICK_DELAY));
+        outConfig.set("database.hikari.pool.min-size", integers.get(Integers.HIKARI_MIN_POOL_SIZE));
+        outConfig.set("database.hikari.pool.max-size", integers.get(Integers.HIKARI_MAX_POOL_SIZE));
+        outConfig.set("database.hikari.max-life-time", integers.get(Integers.HIKARI_MAX_LIFE_TIME));
+        outConfig.set("database.hikari.connection-timeout", integers.get(Integers.HIKARI_CONNECTION_TIME_OUT));
+        outConfig.set("database.hikari.leak-threshold", integers.get(Integers.HIKARI_LEAK_THRESHOLD));
+        outConfig.set("commands.tick-delay", integers.get(Integers.TICK_DELAY));
 
-        outConfig.set("database.hikari.pool.allow-suspension", plugin.getBooleans().get(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
+        outConfig.set("database.hikari.pool.allow-suspension", booleans.get(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
     }
 
     @Override
     public void executeCritical() {
-        chatCommonsConsumer.accept(new ChatCommonsImpl(plugin));
+        chatCommonsConsumer.accept(new ChatCommonsImpl(strings));
 
-        HikariSourceConfiguration hikariConfiguration = new HikariSourceConfiguration(plugin);
+        HikariSourceConfiguration hikariConfiguration = new HikariSourceConfiguration(strings, integers, booleans);
         SQLDatabase sqlDatabase = new SQLDatabase(hikariConfiguration);
 
         databaseConsumer.accept(sqlDatabase);

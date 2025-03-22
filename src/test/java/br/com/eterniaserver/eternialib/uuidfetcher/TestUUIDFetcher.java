@@ -56,7 +56,7 @@ class TestUUIDFetcher {
 
     @Test
     void testFetchUUIDCached() {
-        uuidFetcher.fetchUUID(playerName, (optionalResponse) -> {
+        uuidFetcher.fetchUUID(playerName, optionalResponse -> {
             Assertions.assertTrue(optionalResponse.isPresent());
             Assertions.assertEquals(playerUUID, optionalResponse.get().uuid());
         });
@@ -75,7 +75,7 @@ class TestUUIDFetcher {
         Mockito.when(response.statusCode()).thenReturn(UUIDResponseStatus.OK.code());
         Mockito.when(response.body()).thenReturn(responseBody);
 
-        uuidFetcher.fetchUUID(name, (optionalResponse) -> {
+        uuidFetcher.fetchUUID(name, optionalResponse -> {
             Assertions.assertTrue(optionalResponse.isPresent());
             Assertions.assertEquals(uuid, optionalResponse.get().uuid());
         });
@@ -83,7 +83,7 @@ class TestUUIDFetcher {
 
     @Test
     void testFetchNameCached() {
-        uuidFetcher.fetchName(playerUUID, (optionalResponse) -> {
+        uuidFetcher.fetchName(playerUUID, optionalResponse -> {
             Assertions.assertTrue(optionalResponse.isPresent());
             Assertions.assertEquals(playerName, optionalResponse.get().name());
         });
@@ -102,7 +102,7 @@ class TestUUIDFetcher {
         Mockito.when(response.statusCode()).thenReturn(UUIDResponseStatus.OK.code());
         Mockito.when(response.body()).thenReturn(responseBody);
 
-        uuidFetcher.fetchName(uuid, (optionalResponse) -> {
+        uuidFetcher.fetchName(uuid, optionalResponse -> {
             Assertions.assertTrue(optionalResponse.isPresent());
             Assertions.assertEquals(name, optionalResponse.get().name());
         });
@@ -113,6 +113,6 @@ class TestUUIDFetcher {
         Mockito.when(httpClient.send(Mockito.any(), Mockito.any())).thenReturn(response);
         Mockito.when(response.statusCode()).thenReturn(UUIDResponseStatus.NOT_FOUND.code());
 
-        uuidFetcher.fetchUUID("yurinogueira3", (optionalResponse) -> Assertions.assertTrue(optionalResponse.isEmpty()));
+        uuidFetcher.fetchUUID("yurinogueira3", optionalResponse -> Assertions.assertTrue(optionalResponse.isEmpty()));
     }
 }

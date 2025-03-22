@@ -66,7 +66,7 @@ public class EterniaLib extends JavaPlugin {
                 "eternialib",
                 "core",
                 true,
-                new CoreCfg(EterniaLib::setChatCommons, EterniaLib::setDatabase, this)
+                new CoreCfg(EterniaLib::setChatCommons, EterniaLib::setDatabase, strings, integers, booleans)
         );
 
         AdvancedCommandManager impl = new AdvancedCommandManagerImpl(this, integers.get(Integers.TICK_DELAY));

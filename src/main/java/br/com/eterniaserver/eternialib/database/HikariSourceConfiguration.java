@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.database;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.core.enums.Booleans;
 import br.com.eterniaserver.eternialib.core.enums.Integers;
 import br.com.eterniaserver.eternialib.core.enums.Strings;
@@ -9,9 +8,13 @@ import br.com.eterniaserver.eternialib.database.impl.SGBDInterface;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MariaDBSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.MySQLSGBD;
 import br.com.eterniaserver.eternialib.database.impl.sgbds.SQLiteSGBD;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import lombok.Getter;
+
+import java.util.EnumMap;
 
 @Getter
 public class HikariSourceConfiguration {
@@ -19,11 +22,13 @@ public class HikariSourceConfiguration {
     private final HikariDataSource dataSource;
     private final SGBDInterface sgbdInterface;
 
-    public HikariSourceConfiguration(EterniaLib plugin) {
+    public HikariSourceConfiguration(EnumMap<Strings, String> strings,
+                                     EnumMap<Integers, Integer> integers,
+                                     EnumMap<Booleans, Boolean> booleans) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setPoolName("EterniaLib HikariPool");
 
-        String databaseType = plugin.getStrings().get(Strings.DATABASE_TYPE);
+        String databaseType = strings.get(Strings.DATABASE_TYPE);
         DatabaseType type = DatabaseType.valueOf(databaseType);
 
         this.sgbdInterface = switch (type) {
@@ -35,14 +40,14 @@ public class HikariSourceConfiguration {
         if (type == DatabaseType.SQLITE) {
             hikariConfig.setDriverClassName("org.sqlite.JDBC");
         } else {
-            hikariConfig.setUsername(plugin.getStrings().get(Strings.DATABASE_USER));
-            hikariConfig.setPassword(plugin.getStrings().get(Strings.DATABASE_PASSWORD));
+            hikariConfig.setUsername(strings.get(Strings.DATABASE_USER));
+            hikariConfig.setPassword(strings.get(Strings.DATABASE_PASSWORD));
         }
 
         hikariConfig.setJdbcUrl(sgbdInterface.jdbcStr(
-                plugin.getStrings().get(Strings.DATABASE_HOST),
-                plugin.getStrings().get(Strings.DATABASE_PORT),
-                plugin.getStrings().get(Strings.DATABASE_DATABASE)
+                strings.get(Strings.DATABASE_HOST),
+                strings.get(Strings.DATABASE_PORT),
+                strings.get(Strings.DATABASE_DATABASE)
         ));
 
         // MySQL specific configurations
@@ -51,12 +56,12 @@ public class HikariSourceConfiguration {
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
         // Pool configurations
-        hikariConfig.setMaxLifetime(plugin.getIntegers().get(Integers.HIKARI_MAX_LIFE_TIME));
-        hikariConfig.setConnectionTimeout(plugin.getIntegers().get(Integers.HIKARI_CONNECTION_TIME_OUT));
-        hikariConfig.setLeakDetectionThreshold(plugin.getIntegers().get(Integers.HIKARI_LEAK_THRESHOLD));
-        hikariConfig.setMinimumIdle(plugin.getIntegers().get(Integers.HIKARI_MIN_POOL_SIZE));
-        hikariConfig.setMaximumPoolSize(plugin.getIntegers().get(Integers.HIKARI_MAX_POOL_SIZE));
-        hikariConfig.setAllowPoolSuspension(plugin.getBooleans().get(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
+        hikariConfig.setMaxLifetime(integers.get(Integers.HIKARI_MAX_LIFE_TIME));
+        hikariConfig.setConnectionTimeout(integers.get(Integers.HIKARI_CONNECTION_TIME_OUT));
+        hikariConfig.setLeakDetectionThreshold(integers.get(Integers.HIKARI_LEAK_THRESHOLD));
+        hikariConfig.setMinimumIdle(integers.get(Integers.HIKARI_MIN_POOL_SIZE));
+        hikariConfig.setMaximumPoolSize(integers.get(Integers.HIKARI_MAX_POOL_SIZE));
+        hikariConfig.setAllowPoolSuspension(booleans.get(Booleans.HIKARI_ALLOW_POOL_SUSPENSION));
 
         this.dataSource = new HikariDataSource(hikariConfig);
     }

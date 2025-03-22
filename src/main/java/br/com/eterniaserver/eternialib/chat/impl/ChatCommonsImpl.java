@@ -1,6 +1,5 @@
 package br.com.eterniaserver.eternialib.chat.impl;
 
-import br.com.eterniaserver.eternialib.EterniaLib;
 import br.com.eterniaserver.eternialib.chat.ChatCommons;
 import br.com.eterniaserver.eternialib.chat.MessageMap;
 import br.com.eterniaserver.eternialib.chat.MessageOptions;
@@ -15,8 +14,10 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+
 import org.bukkit.command.CommandSender;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,15 +31,15 @@ public class ChatCommonsImpl implements ChatCommons {
 
     private final Map<String, MessageMap<?, String>> messagesMaps = new HashMap<>();
 
-    public ChatCommonsImpl(EterniaLib plugin) {
-        this.colorredPattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_IS_COLORED));
-        this.colorPattern = Pattern.compile(plugin.getStrings().get(Strings.CONST_COLOR_PATTERN));
+    public ChatCommonsImpl(EnumMap<Strings, String> strings) {
+        this.colorredPattern = Pattern.compile(strings.get(Strings.CONST_IS_COLORED));
+        this.colorPattern = Pattern.compile(strings.get(Strings.CONST_COLOR_PATTERN));
         this.miniMessage = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
                         .resolver(TagResolver.resolver("a", (args, context) -> {
                             String link = args.popOr("Invalid").value();
-                            TextColor color = TextColor.fromHexString(plugin.getStrings().get(Strings.CONST_LINK_COLOR));
+                            TextColor color = TextColor.fromHexString(strings.get(Strings.CONST_LINK_COLOR));
                             Component text = Component.text(link).color(color);
                             return Tag.styling(ClickEvent.openUrl(link), HoverEvent.showText(text));
                         }))
