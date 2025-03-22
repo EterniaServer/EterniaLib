@@ -36,7 +36,7 @@ class TestSQLDatabase {
     private static HikariDataSource dataSource;
 
     @BeforeAll
-    public static void loadAndTestRegisterEntity() throws EntityException, DatabaseException, SQLException, NoSuchMethodException, IllegalAccessException {
+    static void loadAndTestRegisterEntity() throws EntityException, DatabaseException, SQLException, NoSuchMethodException, IllegalAccessException {
         HikariSourceConfiguration hikariSourceConfiguration = Mockito.mock(HikariSourceConfiguration.class);
         PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
         Connection connection = Mockito.mock(Connection.class);
@@ -182,9 +182,9 @@ class TestSQLDatabase {
         );
 
         Assertions.assertEquals(1, persons.size());
-        Assertions.assertEquals(1, persons.get(0).getId());
-        Assertions.assertEquals("Junior John", persons.get(0).getFirstName());
-        Assertions.assertEquals(Date.valueOf("2000-01-01"), persons.get(0).getBirthdate());
+        Assertions.assertEquals(1, persons.getFirst().getId());
+        Assertions.assertEquals("Junior John", persons.getFirst().getFirstName());
+        Assertions.assertEquals(Date.valueOf("2000-01-01"), persons.getFirst().getBirthdate());
     }
 
     @Test

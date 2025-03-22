@@ -25,7 +25,7 @@ class TestEntityDataDTO {
     private static EntityDataDTO<Complete> endDataData;
 
     @BeforeAll
-    public static void init() throws NoSuchMethodException, IllegalAccessException {
+    static void init() throws NoSuchMethodException, IllegalAccessException {
         idData = new EntityDataDTO<>(Complete.class, "id", "id", FieldType.INTEGER, false);
         firstNameData = new EntityDataDTO<>(Complete.class, "firstName", "first_name", FieldType.STRING, false);
         uuidData = new EntityDataDTO<>(Complete.class, "uuid", "uuid", FieldType.UUID, false);

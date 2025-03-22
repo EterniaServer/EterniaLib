@@ -12,7 +12,7 @@ class TestEntity {
     private static Entity<Person> personEntity;
 
     @BeforeAll
-    public static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
+    static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
         personEntity = new Entity<>(Person.class);
     }
 
@@ -43,7 +43,7 @@ class TestEntity {
     void testGetDataDTOFromFieldName() {
         String fieldName = "firstName";
 
-        EntityDataDTO<Person> expected = personEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Person> expected = personEntity.getEntityDataDTOList().getFirst();
         EntityDataDTO<Person> result = personEntity.getDataDTO(fieldName);
 
         Assertions.assertEquals(expected, result);

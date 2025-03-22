@@ -25,7 +25,7 @@ class TestEntityPrimaryKeyDTO {
     private static EntityPrimaryKeyDTO<Complete> endDataKey;
 
     @BeforeAll
-    public static void init() throws NoSuchMethodException, IllegalAccessException {
+    static void init() throws NoSuchMethodException, IllegalAccessException {
         idKey = new EntityPrimaryKeyDTO<>(Complete.class, "id", "id", FieldType.INTEGER, true);
         firstNameKey = new EntityPrimaryKeyDTO<>(Complete.class, "firstName", "first_name", FieldType.STRING, false);
         uuidKey = new EntityPrimaryKeyDTO<>(Complete.class, "uuid", "uuid", FieldType.UUID, false);

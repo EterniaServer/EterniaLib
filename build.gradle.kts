@@ -33,6 +33,7 @@ sonar {
         property("sonar.scm.disabled", true)
         property("sonar.junit.reportPaths", "${project.layout.buildDirectory.get()}/test-results/test")
         property("sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.exclude", "**src/test/**")
     }
 }
 

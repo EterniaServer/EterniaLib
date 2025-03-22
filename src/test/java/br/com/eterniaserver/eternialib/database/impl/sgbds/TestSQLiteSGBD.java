@@ -26,7 +26,7 @@ class TestSQLiteSGBD  {
     private static Entity<Item> itemEntity;
 
     @BeforeAll
-    public static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
+    static void init() throws EntityException, NoSuchMethodException, IllegalAccessException {
         sqLiteSGBD = new SQLiteSGBD();
         personEntity = new Entity<>(Person.class);
         personLinkEntity = new Entity<>(PersonLink.class);
@@ -52,7 +52,7 @@ class TestSQLiteSGBD  {
     @Test
     void testSelectLike() {
         String tableName = personEntity.tableName();
-        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().getFirst();
 
         String expected = "SELECT * FROM eternia_person WHERE firstName LIKE ?;";
         String result = sqLiteSGBD.selectLike(tableName, entityDataDTO);
@@ -64,7 +64,7 @@ class TestSQLiteSGBD  {
     void testSelectByQuery() {
         String tableName = personEntity.tableName();
         List<EntityDataDTO<?>> entityDataDTOs = new ArrayList<>();
-        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Person> entityDataDTO = personEntity.getEntityDataDTOList().getFirst();
         entityDataDTOs.add(entityDataDTO);
 
         String expected = "SELECT * FROM eternia_person WHERE firstName = ?;";
@@ -147,7 +147,7 @@ class TestSQLiteSGBD  {
     @Test
     void testBuildReferenceColumn() {
         String expected = "FOREIGN KEY (firstPersonId) REFERENCES eternia_person (id) ON DELETE CASCADE";
-        String result = sqLiteSGBD.buildReferenceColumn(personLinkEntity.getReferenceColumns().get(0));
+        String result = sqLiteSGBD.buildReferenceColumn(personLinkEntity.getReferenceColumns().getFirst());
 
         Assertions.assertEquals(expected, result);
     }
@@ -220,7 +220,7 @@ class TestSQLiteSGBD  {
 
     @Test
     void testBuildDataColumn() {
-        EntityDataDTO<Person> dataDTO = personEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Person> dataDTO = personEntity.getEntityDataDTOList().getFirst();
 
         String expected = "firstName VARCHAR(256)";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);
@@ -230,7 +230,7 @@ class TestSQLiteSGBD  {
 
     @Test
     void testBuildDataColumnNotNull() {
-        EntityDataDTO<PersonNotNull> dataDTO = personNotNullEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<PersonNotNull> dataDTO = personNotNullEntity.getEntityDataDTOList().getFirst();
 
         String expected = "firstName VARCHAR(256) NOT NULL";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);
@@ -240,7 +240,7 @@ class TestSQLiteSGBD  {
 
     @Test
     void testBuildDataColumnBlob() {
-        EntityDataDTO<Item> dataDTO = itemEntity.getEntityDataDTOList().get(0);
+        EntityDataDTO<Item> dataDTO = itemEntity.getEntityDataDTOList().getFirst();
 
         String expected = "blob BLOB NOT NULL";
         String result = sqLiteSGBD.buildDataColumn(dataDTO);

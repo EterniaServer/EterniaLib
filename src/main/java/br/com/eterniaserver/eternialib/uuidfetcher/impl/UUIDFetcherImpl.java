@@ -94,6 +94,7 @@ public class UUIDFetcherImpl implements UUIDFetcher {
             return;
         } catch (InterruptedException e) {
             Logger.getGlobal().log(Level.SEVERE, e.getMessage());
+            Thread.currentThread().interrupt();
             return;
         } catch (URISyntaxException | IOException e) {
             Logger.getGlobal().info(e.getMessage());
