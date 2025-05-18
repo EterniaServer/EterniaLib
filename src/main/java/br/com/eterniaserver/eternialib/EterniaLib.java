@@ -60,6 +60,8 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveResource("command_messages_pt.yml", false);
+
         EterniaLib.setCfgManager(new ConfigurationManagerImpl());
         EterniaLib.setCmdManager(new CommandManagerImpl(this));
 
