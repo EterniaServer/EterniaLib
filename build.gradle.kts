@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.4.6"
+    const val PROJECT_VERSION = "4.5.0"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -9,6 +9,7 @@ object Constants {
     const val ACF_VERSION = "0.5.1-SNAPSHOT"
     const val JUPITER_VERSION = "5.11.4"
     const val MOCKITO_VERSION = "5.16.1"
+    const val BSTATS_VERSION = "3.1.0"
 }
 
 plugins {
@@ -71,6 +72,7 @@ dependencies {
     implementation("com.zaxxer", "HikariCP", Constants.HIKARI_VERSION) {
         exclude("org.slf4j", "slf4j-api")
     }
+    implementation("org.bstats", "bstats-bukkit", Constants.BSTATS_VERSION)
     implementation("co.aikar", "acf-paper", Constants.ACF_VERSION)
     testImplementation("io.papermc.paper", "paper-api", Constants.PAPER_VERSION)
     testImplementation("org.junit.jupiter", "junit-jupiter", Constants.JUPITER_VERSION)
@@ -82,6 +84,7 @@ tasks.shadowJar {
     relocate("com.zaxxer.hikari", "br.com.eterniaserver.hikari")
     relocate("co.aikar.commands", "br.com.eterniaserver.acf")
     relocate("co.aikar.locales", "br.com.eterniaserver.locales")
+    relocate("org.bstats", "br.com.eterniaserver.bstats")
     archiveBaseName.set(project.name)
     archiveClassifier.set("")
     archiveVersion.set("${project.version}")
@@ -141,6 +144,9 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
+            from(components["shadow"])
+        }
+        create<MavenPublication>("mavenJava") {
             from(components["shadow"])
         }
     }

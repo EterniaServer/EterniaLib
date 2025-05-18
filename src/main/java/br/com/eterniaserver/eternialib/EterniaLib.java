@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.http.HttpClient;
@@ -60,6 +61,8 @@ public class EterniaLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        new Metrics(this, 8442);
+
         saveResource("command_messages_pt.yml", false);
 
         EterniaLib.setCfgManager(new ConfigurationManagerImpl());
