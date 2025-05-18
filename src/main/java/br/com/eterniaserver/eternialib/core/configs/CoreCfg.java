@@ -196,14 +196,14 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
 
         addCommandLocale(Commands.ETERNIA, new CommandLocale(
                 "eternia",
-                " <página>",
+                "<página>",
                 " Receba ajuda para as configurações internas dos plugins 'Eternia'",
                 "eternia.settings",
                 "eternialib"
         ));
         addCommandLocale(Commands.ETERNIA_RELOAD, new CommandLocale(
                 "reload",
-                " <configuração>",
+                "<configuração>",
                 " Reinicie algum módulo de algum plugin",
                 "eternia.settings.reload",
                 null
