@@ -22,8 +22,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messages>, CmdConfiguration<Commands> {
@@ -35,9 +35,9 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
     private static final String FOLDER_PATH = PLUGIN_PATH + File.separator + "config";
     private static final String FILE_PATH = FOLDER_PATH + File.separator + "core.yml";
 
-    private final EnumMap<Strings, String> strings;
-    private final EnumMap<Integers, Integer> integers;
-    private final EnumMap<Booleans, Boolean> booleans;
+    private final Map<Strings, String> strings;
+    private final Map<Integers, Integer> integers;
+    private final Map<Booleans, Boolean> booleans;
 
     private final Consumer<ChatCommons> chatCommonsConsumer;
     private final Consumer<Database> databaseConsumer;
@@ -49,9 +49,9 @@ public class CoreCfg implements ReloadableConfiguration, MsgConfiguration<Messag
 
     public CoreCfg(Consumer<ChatCommons> chatConsumer,
                    Consumer<Database> dbConsumer,
-                   EnumMap<Strings, String> strings,
-                   EnumMap<Integers, Integer> integers,
-                   EnumMap<Booleans, Boolean> booleans) {
+                   Map<Strings, String> strings,
+                   Map<Integers, Integer> integers,
+                   Map<Booleans, Boolean> booleans) {
         this.chatCommonsConsumer = chatConsumer;
         this.databaseConsumer = dbConsumer;
 

@@ -17,7 +17,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -31,7 +30,7 @@ public class ChatCommonsImpl implements ChatCommons {
 
     private final Map<String, MessageMap<?, String>> messagesMaps = new HashMap<>();
 
-    public ChatCommonsImpl(EnumMap<Strings, String> strings) {
+    public ChatCommonsImpl(Map<Strings, String> strings) {
         this.colorredPattern = Pattern.compile(strings.get(Strings.CONST_IS_COLORED));
         this.colorPattern = Pattern.compile(strings.get(Strings.CONST_COLOR_PATTERN));
         this.miniMessage = MiniMessage.builder()

@@ -14,7 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import lombok.Getter;
 
-import java.util.EnumMap;
+import java.util.Map;
 
 @Getter
 public class HikariSourceConfiguration {
@@ -22,9 +22,9 @@ public class HikariSourceConfiguration {
     private final HikariDataSource dataSource;
     private final SGBDInterface sgbdInterface;
 
-    public HikariSourceConfiguration(EnumMap<Strings, String> strings,
-                                     EnumMap<Integers, Integer> integers,
-                                     EnumMap<Booleans, Boolean> booleans) {
+    public HikariSourceConfiguration(Map<Strings, String> strings,
+                                     Map<Integers, Integer> integers,
+                                     Map<Booleans, Boolean> booleans) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setPoolName("EterniaLib HikariPool");
 

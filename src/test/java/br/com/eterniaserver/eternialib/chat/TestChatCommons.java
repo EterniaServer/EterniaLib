@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 class TestChatCommons {
 
@@ -24,7 +25,7 @@ class TestChatCommons {
 
     @BeforeEach
     void setup() {
-        EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
+        Map<Strings, String> strings = new EnumMap<>(Strings.class);
         strings.put(Strings.CONST_COLOR_PATTERN, "#[a-fA-F\\d]{6}|&[a-fk-or\\d]");
         strings.put(Strings.CONST_IS_COLORED, "[<>]");
         strings.put(Strings.CONST_LINK_COLOR, "#00ff00");

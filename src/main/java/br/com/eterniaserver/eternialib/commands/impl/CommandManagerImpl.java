@@ -16,12 +16,13 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.logging.Level;
 
 public class CommandManagerImpl implements CommandManager {
-
-    private static final String ACF_MESSAGES = "command_messages.yml";
 
     private final PaperCommandManager manager;
 
@@ -29,20 +30,29 @@ public class CommandManagerImpl implements CommandManager {
         manager = new PaperCommandManager(plugin);
         manager.enableUnstableAPI("help");
 
-        try {
-            File files = new File(plugin.getDataFolder(), ACF_MESSAGES);
+        Path pluginFolder = plugin.getDataFolder().toPath();
 
-            if (!files.exists()) {
-                plugin.saveResource(ACF_MESSAGES, false);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(pluginFolder, "command_messages_*.yml")) {
+            for (Path entry : stream) {
+                String fileName = entry.getFileName().toString();
+                String locale = fileName
+                        .replace("command_messages_", "")
+                        .replace(".yml", "");
+
+                File localeFile = entry.toFile();
+                if (!localeFile.exists()) {
+                    plugin.saveResource(localeFile.getName(), false);
+                }
+
+                manager.getLocales().loadYamlLanguageFile(localeFile.getName(), Locale.forLanguageTag(locale));
             }
-
-            manager.getLocales().loadYamlLanguageFile(ACF_MESSAGES, Locale.ENGLISH);
-            manager.getLocales().setDefaultLocale(Locale.ENGLISH);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Error when creating or loading YML configuration file.");
         } catch (InvalidConfigurationException e) {
             plugin.getLogger().log(Level.SEVERE, "YML configuration file is invalid.");
         }
+
+        manager.getLocales().setDefaultLocale(Locale.forLanguageTag("pt"));
     }
 
     @Override

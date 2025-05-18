@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.http.HttpClient;
 import java.util.EnumMap;
+import java.util.Map;
 
 @Getter
 public class EterniaLib extends JavaPlugin {
@@ -53,9 +54,9 @@ public class EterniaLib extends JavaPlugin {
     @Setter(value = AccessLevel.PRIVATE)
     private static UUIDFetcher uuidFetcher;
 
-    private final EnumMap<Strings, String> strings = new EnumMap<>(Strings.class);
-    private final EnumMap<Integers, Integer> integers = new EnumMap<>(Integers.class);
-    private final EnumMap<Booleans, Boolean> booleans = new EnumMap<>(Booleans.class);
+    private final Map<Strings, String> strings = new EnumMap<>(Strings.class);
+    private final Map<Integers, Integer> integers = new EnumMap<>(Integers.class);
+    private final Map<Booleans, Boolean> booleans = new EnumMap<>(Booleans.class);
 
     @Override
     public void onEnable() {
