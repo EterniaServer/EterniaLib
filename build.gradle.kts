@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.0"
+    const val PROJECT_VERSION = "4.5.1"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -130,6 +130,11 @@ tasks.processResources {
     }
 }
 
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
 publishing {
     repositories {
         maven {
@@ -145,9 +150,11 @@ publishing {
     publications {
         register<MavenPublication>("gpr") {
             from(components["shadow"])
+            artifact(sourcesJar.get())
         }
         create<MavenPublication>("mavenJava") {
             from(components["shadow"])
+            artifact(sourcesJar.get())
         }
     }
 }
