@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.1"
+    const val PROJECT_VERSION = "4.5.2"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -149,10 +149,6 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
-            from(components["shadow"])
-            artifact(sourcesJar.get())
-        }
-        create<MavenPublication>("mavenJava") {
             from(components["shadow"])
             artifact(sourcesJar.get())
         }
