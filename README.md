@@ -21,26 +21,26 @@ Access the [package repository](https://github.com/EterniaServer/EterniaLib/pack
 ```kotlin
 repositories {
     maven {
-        name = "eternialib"
-        url = uri("https://maven.pkg.github.com/eterniaserver/eternialib")
+        name = "jitpack"
+        url = uri("https://jitpack.io")
     }
 }
 
 dependencies {
-    compileOnly("br.com.eterniaserver:eternialib:4.0.0")
+    compileOnly("com.github.EterniaServer", "EterniaLib", "4.5.5")
 }
 ```
 **Gradle (Groovy):**
 ```groovy
 repositories {
     maven {
-        name "eternialib"
-        url "https://maven.pkg.github.com/eterniaserver/eternialib"
+        name "jitpack"
+        url "https://jitpack.io"
     }
 }
 
 dependencies {
-    compileOnly "br.com.eterniaserver:eternialib:4.0.0"
+    compileOnly "com.github.EterniaServer:EterniaLib:4.5.5"
 }
 ```
 **Maven:**
@@ -48,16 +48,16 @@ dependencies {
 <project>
     <repositories>
         <repository>
-            <id>eternialib</id>
-            <url>https://maven.pkg.github.com/eterniaserver/eternialib</url>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     
     <dependencies>
         <dependency>
-            <groupId>br.com.eterniaserver</groupId>
-            <artifactId>eternialib</artifactId>
-            <version>4.0.0</version>
+            <groupId>com.github.EterniaServer</groupId>
+            <artifactId>EterniaLib</artifactId>
+            <version>4.5.5</version>
         </dependency>
     </dependencies>
 </project>
