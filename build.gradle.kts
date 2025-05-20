@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.4"
+    const val PROJECT_VERSION = "4.5.5"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -137,6 +137,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 afterEvaluate {
     tasks.named("generateMetadataFileForGprPublication") {
+        dependsOn(tasks.named("jar"))
         dependsOn(tasks.named("shadowJar"))
     }
 }
