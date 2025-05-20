@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.3"
+    const val PROJECT_VERSION = "4.5.4"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -133,6 +133,12 @@ tasks.processResources {
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
+}
+
+afterEvaluate {
+    tasks.named("generateMetadataFileForGprPublication") {
+        dependsOn(tasks.named("shadowJar"))
+    }
 }
 
 publishing {
