@@ -81,10 +81,10 @@ dependencies {
 }
 
 tasks.shadowJar {
+    relocate("org.bstats", "br.com.eterniaserver.bstats")
     relocate("com.zaxxer.hikari", "br.com.eterniaserver.hikari")
     relocate("co.aikar.commands", "br.com.eterniaserver.acf")
     relocate("co.aikar.locales", "br.com.eterniaserver.locales")
-    relocate("org.bstats", "br.com.eterniaserver.bstats")
     archiveBaseName.set(project.name)
     archiveClassifier.set("")
     archiveVersion.set("${project.version}")
