@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.5"
+    const val PROJECT_VERSION = "4.5.6"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
@@ -8,7 +8,7 @@ object Constants {
     const val HIKARI_VERSION = "6.2.1"
     const val ACF_VERSION = "0.5.1-SNAPSHOT"
     const val JUPITER_VERSION = "5.11.4"
-    const val MOCKITO_VERSION = "5.16.1"
+    const val MOCKITO_VERSION = "5.14.2"
     const val BSTATS_VERSION = "3.1.0"
 }
 
@@ -18,7 +18,7 @@ plugins {
     id("jacoco")
     id("org.sonarqube") version("6.0.1.5171")
     id("io.freefair.lombok") version("8.13")
-    id("com.gradleup.shadow") version("9.0.0-beta11")
+    id("com.gradleup.shadow") version("9.0.0-beta12")
 }
 
 jacoco {
@@ -31,10 +31,10 @@ sonar {
         property("sonar.projectVersion", "${project.version}")
         property("sonar.organization", "eterniaserver")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.scm.disabled", true)
-        property("sonar.junit.reportPaths", "${project.layout.buildDirectory.get()}/test-results/test")
+        property("sonar.test.inclusions", "**/*Test.java,**/Test*.java")
         property("sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
-        property("sonar.exclude", "**src/test/**")
+        property("sonar.exclusions", "**/test/**,**/*Test.java,**/Test*.java")
+        property("sonar.java.source", "21")
     }
 }
 
@@ -74,8 +74,10 @@ dependencies {
     }
     implementation("org.bstats", "bstats-bukkit", Constants.BSTATS_VERSION)
     implementation("co.aikar", "acf-paper", Constants.ACF_VERSION)
+    testRuntimeOnly("org.junit.platform", "junit-platform-launcher")
     testImplementation("io.papermc.paper", "paper-api", Constants.PAPER_VERSION)
-    testImplementation("org.junit.jupiter", "junit-jupiter", Constants.JUPITER_VERSION)
+    testImplementation(platform("org.junit:junit-bom:${Constants.JUPITER_VERSION}"))
+    testImplementation("org.junit.jupiter", "junit-jupiter")
     testImplementation("org.mockito", "mockito-core", Constants.MOCKITO_VERSION)
     testImplementation("org.mockito", "mockito-junit-jupiter", Constants.MOCKITO_VERSION)
 }
@@ -119,7 +121,7 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.sonar {
+tasks.named("sonar") {
     dependsOn(tasks.jacocoTestReport)
 }
 
