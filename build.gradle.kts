@@ -16,7 +16,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("jacoco")
-    id("org.sonarqube") version("7.0.1.6134")
+    id("org.sonarqube") version("6.3.1.5724")
     id("io.freefair.lombok") version("9.1.0")
     id("com.gradleup.shadow") version("9.2.2")
 }
