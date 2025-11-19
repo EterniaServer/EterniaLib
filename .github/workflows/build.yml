@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build, Test and Validate
+      - name: Build, Test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew clean build test jacocoTestReport
@@ -47,7 +47,7 @@ jobs:
       - name: Validate
         env:
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
-        run: ./gradlew sonar -Dsonar.login=$SONAR_TOKEN
+        run: ./gradlew sonar
 
   publish:
     name: Publish to repository branch
