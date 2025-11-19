@@ -121,13 +121,6 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.named("sonarResolver") {
-    outputs.upToDateWhen { false }
-    doFirst {
-        project.layout.buildDirectory.get().asFile.mkdirs()
-    }
-}
-
 tasks.named("sonar") {
     dependsOn(tasks.jacocoTestReport)
 }
