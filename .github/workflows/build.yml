@@ -1,9 +1,10 @@
-name: SonarCloud
+name: Build and Push
 
 on:
   push:
     branches:
       - main
+      - development
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -38,11 +39,15 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build, Test and Validate
+      - name: Build, Test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew clean build test jacocoTestReport
+
+      - name: Validate
+        env:
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
-        run: ./gradlew clean build test jacocoTestReport sonar --info --stacktrace
+        run: ./gradlew sonar
 
   publish:
     name: Publish to repository branch
