@@ -43,7 +43,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
-        run: ./gradlew clean build test jacocoTestReport sonar --info --stacktrace
+        run: |
+          mkdir -p build
+          ./gradlew clean build test jacocoTestReport sonar --info --stacktrace
 
   publish:
     name: Publish to repository branch
