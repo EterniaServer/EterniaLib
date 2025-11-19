@@ -1,5 +1,5 @@
 object Constants {
-    const val PROJECT_VERSION = "4.5.7"
+    const val PROJECT_VERSION = "4.5.8"
 
     const val JAVA_VERSION = "21"
     const val JACOCO_VERSION = "0.8.12"
