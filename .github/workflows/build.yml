@@ -42,10 +42,12 @@ jobs:
       - name: Build, Test and Validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew clean build test jacocoTestReport
+
+      - name: Validate
+        env:
           SONAR_TOKEN: ${{ secrets.ETERNIALIB_SONAR_TOKEN }}
-        run: |
-          mkdir -p build
-          ./gradlew clean build test jacocoTestReport sonar --info --stacktrace
+        run: ./gradlew sonar -Dsonar.login=$SONAR_TOKEN
 
   publish:
     name: Publish to repository branch
